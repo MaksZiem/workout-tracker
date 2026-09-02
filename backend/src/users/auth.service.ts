@@ -24,9 +24,9 @@ export class AuthService {
       throw new BadRequestException('User already exists');
     }
 
-    const result = hashPassword(password);
+    const hashedPassword = await hashPassword(password);
 
-    const user = await this.usersService.create(email, password, name, surname);
+    const user = await this.usersService.create(email, hashedPassword, name, surname);
 
     const payload = {
       id: user.id,

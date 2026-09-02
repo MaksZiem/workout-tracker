@@ -1,0 +1,43 @@
+@baseUrl = http://localhost:3000
+
+### Create a new user
+POST {{baseUrl}}/auth/signup
+content-type: application/json
+
+{
+  "email": "maks@mail.com",
+  "password": "Haslo123",
+  "name": "Maks",
+  "surname": "Ziembicki"
+}
+
+### Sign in as existing user
+# @name signin
+POST {{baseUrl}}/auth/signin
+content-type: application/json
+
+{
+  "email": "maks@mail.com",
+  "password": "Haslo123"
+}
+
+###
+
+@authToken = {{signin.response.body.access_token}}
+
+### Get the current logged user
+GET {{baseUrl}}/auth/context
+Authorization: Bearer {{authToken}}
+
+### delete user with a given id
+DELETE {{baseUrl}}/auth/1
+Authorization: Bearer {{authToken}}
+
+### update user with given id
+PATCH {{baseUrl}}/auth/2
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "role": "ADMIN"
+}

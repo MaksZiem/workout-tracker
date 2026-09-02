@@ -3,6 +3,7 @@ import { APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
+import { User } from './users/user.entity';
 
 @Module({
   imports: [
@@ -19,8 +20,7 @@ import { UsersModule } from './users/users.module';
         username: config.get('DB_USER'),
         password: config.get('DB_PASS'),
         database: config.get('DB_NAME'),
-        entities: [
-        ],
+        entities: [User],
         synchronize: true,
       }),
     }),
