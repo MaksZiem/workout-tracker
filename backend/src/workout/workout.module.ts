@@ -5,9 +5,13 @@ import { WorkoutController } from './workout.controller';
 import { Workout } from './workout.entity';
 import { WorkoutExercise } from './workout-exercise.entity';
 import { ExerciseSet } from './exercise-set.entity';
+import { ExerciseModule } from 'src/exercise/exercise.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Workout, WorkoutExercise, ExerciseSet])],
+  imports: [
+    TypeOrmModule.forFeature([Workout, WorkoutExercise, ExerciseSet]),
+    ExerciseModule,
+  ],
   controllers: [WorkoutController],
   providers: [WorkoutService],
 })

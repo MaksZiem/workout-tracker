@@ -13,10 +13,22 @@ import { CreateWorkoutDto } from './dtos/create-workout.dto';
 import { FindWorkoutDto } from './dtos/find-workout.dto';
 import { assignDefined } from 'src/helpers/assign-defined';
 import { UpdateWorkoutDto } from './dtos/update-workout.dto';
+import { WorkoutExercise } from './workout-exercise.entity';
+import { AddExerciseToWorkoutDto } from './dtos/add-exercise-to-workout.dto';
+import { ExerciseService } from 'src/exercise/exercise.service';
+import { UpdateWorkoutExerciseDto } from './dtos/update-workout-exercise.dto';
+import { AddSetDto } from './dtos/add-set.dto';
+import { ExerciseSet } from './exercise-set.entity';
 
 @Injectable()
 export class WorkoutService {
-  constructor(@InjectRepository(Workout) private repo: Repository<Workout>) {}
+  constructor(
+    @InjectRepository(Workout) private repo: Repository<Workout>,
+    @InjectRepository(WorkoutExercise)
+    private workoutExerciseRepo: Repository<WorkoutExercise>,
+    @InjectRepository(ExerciseSet) private exerciseSetRepo: Repository<ExerciseSet>,
+    private exerciseService: ExerciseService,
+  ) {}
 
   create(user: User, dto: CreateWorkoutDto) {
     const workout = this.repo.create({ ...dto, user });
@@ -67,4 +79,70 @@ export class WorkoutService {
     }
     return this.repo.remove(workout);
   }
+
+  async addExercise(
+    userId: number,
+    workoutId: number,
+    dto: AddExerciseToWorkoutDto,
+  ) {
+    const workout = await this.repo.findOne({
+      where: { id: workoutId, user: { id: userId } },
+    });
+    if (!workout) {
+      throw new NotFoundException('Workout not found');
+    }
+
+    const exercise = await this.exerciseService.findOne(dto.exerciseId);
+    if (!exercise) {
+      throw new NotFoundException('Exercise not found');
+    }
+
+    const workoutExercise = this.workoutExerciseRepo.create({
+      workout,
+      exercise,
+      order: dto.order,
+    });
+    return this.workoutExerciseRepo.save(workoutExercise);
+  }
+
+  async updateExercise(
+    userId: number,
+    workoutId: number,
+    weId: number,
+    dto: UpdateWorkoutExerciseDto,
+  ) {
+    const we = await this.workoutExerciseRepo.findOne({
+      where: { id: weId, workout: { id: workoutId, user: { id: userId } } },
+    })
+    if(!we) {
+      throw new NotFoundException('Workout exercise not found')
+    }
+    assignDefined(we, dto)
+    return this.workoutExerciseRepo.save(we)
+  }
+
+  async removeExercise(userId: number, workoutId: number, weId: number) {
+    const we = await this.workoutExerciseRepo.findOne({
+      where: { id: weId, workout: { id: workoutId, user: { id: userId } } },
+    })
+    if(!we) {
+      throw new NotFoundException('Workout exercise not found')
+    }
+    return this.workoutExerciseRepo.remove(we)
+  }
+
+  async addSet(userId: number, workoutId: number, weId: number, dto: AddSetDto) {
+     const we = await this.workoutExerciseRepo.findOne({
+      where: { id: weId, workout: { id: workoutId, user: { id: userId } } },
+    })
+    if(!we) {
+      throw new NotFoundException('Workout exercise not found')
+    }
+    const exerciseSet = this.exerciseSetRepo.create({
+      ...dto,
+      workoutExercise: we,
+    })
+    return this.exerciseSetRepo.save(exerciseSet)
+  }
+
 }
