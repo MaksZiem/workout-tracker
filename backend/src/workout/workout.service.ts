@@ -82,6 +82,39 @@ export class WorkoutService {
     return this.repo.remove(workout);
   }
 
+  async duplicateWorkout(userId: number, id: number) {
+    const workout = await this.repo.findOne({
+      where: { id, user: { id: userId } },
+      relations: ['exercises', 'exercises.exercise', 'exercises.sets'],
+    });
+    if (!workout) {
+      throw new NotFoundException('Workout not found');
+    }
+
+    const duplicate = this.repo.create({
+      date: new Date().toISOString().slice(0, 10),
+      notes: workout.notes,
+      user: workout.user,
+      exercises: workout.exercises.map((we) =>
+        this.workoutExerciseRepo.create({
+          exercise: we.exercise,
+          order: we.order,
+          sets: we.sets.map((set) =>
+            this.exerciseSetRepo.create({
+              setNumber: set.setNumber,
+              weight: set.weight,
+              reps: set.reps,
+              restSeconds: set.restSeconds,
+              completed: false,
+            }),
+          ),
+        }),
+      ),
+    });
+
+    return this.repo.save(duplicate);
+  }
+
   async addExercise(
     userId: number,
     workoutId: number,

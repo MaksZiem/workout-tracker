@@ -66,6 +66,15 @@ export class WorkoutController {
     return this.workoutService.remove(user.id, id);
   }
 
+  @Post('/:id/duplicate')
+  @UseGuards(AuthGuard)
+  duplicateWorkout(
+    @CurrentUser() user: User,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.workoutService.duplicateWorkout(user.id, id);
+  }
+
   // workout exercise
 
   @Post('/:workoutId/exercise')
