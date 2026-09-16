@@ -14,7 +14,15 @@ export class ExerciseSet {
   @Column({ default: 1 })
   setNumber: number;
 
-  @Column({ type: 'decimal', precision: 6, scale: 2 })
+  @Column({
+    type: 'decimal',
+    precision: 6,
+    scale: 2,
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string) => (value === null ? null : parseFloat(value)),
+    },
+  })
   weight: number;
 
   @Column()

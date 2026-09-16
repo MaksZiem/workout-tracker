@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { ExerciseModule } from './exercise/exercise.module';
 import { WorkoutModule } from './workout/workout.module';
+import { StatsModule } from './stats/stats.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { WorkoutModule } from './workout/workout.module';
     UsersModule,
     ExerciseModule,
     WorkoutModule,
+    StatsModule,
   ],
   controllers: [],
   providers: [
