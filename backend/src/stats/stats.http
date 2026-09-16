@@ -1,0 +1,125 @@
+@baseUrl = http://localhost:3000
+
+### Sign in as existing user (see users.http to create one first)
+# @name signin
+POST {{baseUrl}}/auth/signin
+content-type: application/json
+
+{
+  "email": "maks@mail.com",
+  "password": "Haslo123"
+}
+
+###
+
+@authToken = {{signin.response.body.access_token}}
+
+### Pick an existing exercise (createExercise needs AdminGuard - seed one
+### via exercise.http / make your user ADMIN first if this array is empty)
+# @name exercises
+GET {{baseUrl}}/exercise
+Authorization: Bearer {{authToken}}
+
+###
+
+@exerciseId = {{exercises.response.body.0.id}}
+
+### Create a workout to seed some data
+# @name createWorkout
+POST {{baseUrl}}/workout
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "date": "2026-09-10",
+  "notes": "Push day"
+}
+
+###
+
+@workoutId = {{createWorkout.response.body.id}}
+
+### Add the exercise to the workout
+# @name addExercise
+POST {{baseUrl}}/workout/{{workoutId}}/exercise
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "exerciseId": {{exerciseId}},
+  "order": 1
+}
+
+###
+
+@weId = {{addExercise.response.body.id}}
+
+### Add a completed set
+POST {{baseUrl}}/workout/{{workoutId}}/exercise/{{weId}}/set
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "setNumber": 1,
+  "weight": 60,
+  "reps": 8,
+  "completed": true
+}
+
+### Add another set with a heavier top weight (for PR testing)
+POST {{baseUrl}}/workout/{{workoutId}}/exercise/{{weId}}/set
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "setNumber": 2,
+  "weight": 65,
+  "reps": 5,
+  "completed": true
+}
+
+### ------------------- stats endpoints -------------------
+
+### Progress for one exercise over time
+GET {{baseUrl}}/stats/exercise/{{exerciseId}}/progress
+Authorization: Bearer {{authToken}}
+
+### Progress filtered by date range
+GET {{baseUrl}}/stats/exercise/{{exerciseId}}/progress?from=2026-01-01&to=2026-12-31
+Authorization: Bearer {{authToken}}
+
+### Personal records for one exercise
+GET {{baseUrl}}/stats/exercise/{{exerciseId}}/records
+Authorization: Bearer {{authToken}}
+
+### Personal records for every exercise
+GET {{baseUrl}}/stats/records
+Authorization: Bearer {{authToken}}
+
+### Set/volume distribution per muscle group
+GET {{baseUrl}}/stats/muscle-groups
+Authorization: Bearer {{authToken}}
+
+### Muscle group distribution filtered by date range
+GET {{baseUrl}}/stats/muscle-groups?from=2026-08-01&to=2026-09-16
+Authorization: Bearer {{authToken}}
+
+### Workout frequency (dense per-day counts - GitHub-style heatmap data)
+GET {{baseUrl}}/stats/frequency
+Authorization: Bearer {{authToken}}
+
+### Workout frequency for a custom range
+GET {{baseUrl}}/stats/frequency?from=2026-08-01&to=2026-09-16
+Authorization: Bearer {{authToken}}
+
+### Current workout streak
+GET {{baseUrl}}/stats/streak
+Authorization: Bearer {{authToken}}
+
+### Dashboard summary
+GET {{baseUrl}}/stats/summary
+Authorization: Bearer {{authToken}}
+
+### Dashboard summary filtered by date range
+GET {{baseUrl}}/stats/summary?from=2026-08-01&to=2026-09-16
+Authorization: Bearer {{authToken}}
