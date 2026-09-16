@@ -20,6 +20,7 @@ import { UpdateWorkoutExerciseDto } from './dtos/update-workout-exercise.dto';
 import { AddSetDto } from './dtos/add-set.dto';
 import { UpdateSetDto } from './dtos/update-set.dto';
 import { ExerciseSet } from './exercise-set.entity';
+import { WorkoutTemplate } from 'src/template/workout-template.entity';
 
 @Injectable()
 export class WorkoutService {
@@ -113,6 +114,30 @@ export class WorkoutService {
     });
 
     return this.repo.save(duplicate);
+  }
+
+  createFromTemplate(user: User, template: WorkoutTemplate, date: string) {
+    const workout = this.repo.create({
+      date,
+      user,
+      exercises: template.exercises.map((te) =>
+        this.workoutExerciseRepo.create({
+          exercise: te.exercise,
+          order: te.order,
+          sets: Array.from({ length: te.targetSets }, (_, i) =>
+            this.exerciseSetRepo.create({
+              setNumber: i + 1,
+              weight: te.targetWeight ?? 0,
+              reps: te.targetReps,
+              restSeconds: te.restSeconds,
+              completed: false,
+            }),
+          ),
+        }),
+      ),
+    });
+
+    return this.repo.save(workout);
   }
 
   async addExercise(

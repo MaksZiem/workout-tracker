@@ -6,6 +6,8 @@ import { UsersModule } from './users/users.module';
 import { ExerciseModule } from './exercise/exercise.module';
 import { WorkoutModule } from './workout/workout.module';
 import { StatsModule } from './stats/stats.module';
+import { TemplateModule } from './template/template.module';
+import { PlannerModule } from './planner/planner.module';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { StatsModule } from './stats/stats.module';
     ExerciseModule,
     WorkoutModule,
     StatsModule,
+    TemplateModule,
+    PlannerModule,
   ],
   controllers: [],
   providers: [
