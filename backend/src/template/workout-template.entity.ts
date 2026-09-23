@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { WorkoutTemplateExercise } from './workout-template-exercise.entity';
+import { WorkoutPlan } from './workout-plan.entity';
 
 @Entity()
 export class WorkoutTemplate {
@@ -22,6 +23,12 @@ export class WorkoutTemplate {
 
   @Column({ nullable: true })
   notes: string;
+
+  @ManyToOne(() => WorkoutPlan, (plan) => plan.templates, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
+  plan: WorkoutPlan | null;
 
   @OneToMany(() => WorkoutTemplateExercise, (te) => te.template, {
     cascade: true,

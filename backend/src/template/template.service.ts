@@ -10,6 +10,7 @@ import { AddTemplateExerciseDto } from './dtos/add-template-exercise.dto';
 import { UpdateTemplateExerciseDto } from './dtos/update-template-exercise.dto';
 import { assignDefined } from 'src/helpers/assign-defined';
 import { ExerciseService } from 'src/exercise/exercise.service';
+import { PlanService } from './plan.service';
 
 @Injectable()
 export class TemplateService {
@@ -19,10 +20,20 @@ export class TemplateService {
     @InjectRepository(WorkoutTemplateExercise)
     private templateExerciseRepo: Repository<WorkoutTemplateExercise>,
     private exerciseService: ExerciseService,
+    private planService: PlanService,
   ) {}
 
-  create(user: User, dto: CreateWorkoutTemplateDto) {
-    const template = this.repo.create({ ...dto, user });
+  async create(user: User, dto: CreateWorkoutTemplateDto) {
+    const plan = dto.planId
+      ? await this.planService.findOwned(user.id, dto.planId)
+      : null;
+
+    const template = this.repo.create({
+      name: dto.name,
+      notes: dto.notes,
+      user,
+      plan,
+    });
     return this.repo.save(template);
   }
 

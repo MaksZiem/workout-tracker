@@ -6,6 +6,7 @@ import { User } from 'src/users/user.entity';
 import { GenerateWorkoutPlanDto } from './dtos/generate-workout-plan.dto';
 import { workoutPlanSchema } from './schemas/workout-plan.schema';
 import { WorkoutTemplate } from 'src/template/workout-template.entity';
+import { PlanService } from 'src/template/plan.service';
 
 interface GeneratedPlan {
   templates: {
@@ -28,6 +29,7 @@ export class AiService {
     private gemini: GeminiService,
     private exerciseService: ExerciseService,
     private templateService: TemplateService,
+    private planService: PlanService,
   ) {}
 
   async generatePlan(user: User, dto: GenerateWorkoutPlanDto) {
@@ -40,11 +42,17 @@ export class AiService {
       workoutPlanSchema,
     );
 
+    const workoutPlan = await this.planService.create(user, {
+      name: `Plan ${dto.goal} — ${dto.daysPerWeek}x/tydzień`,
+      notes: dto.constraints,
+    });
+
     const createdTemplates: (WorkoutTemplate | null)[] = [];
     for (const template of plan.templates) {
       const created = await this.templateService.create(user, {
         name: template.name,
         notes: template.notes,
+        planId: workoutPlan.id,
       });
 
       for (const exercise of template.exercises) {
@@ -66,7 +74,7 @@ export class AiService {
       );
     }
 
-    return createdTemplates;
+    return { plan: workoutPlan, templates: createdTemplates };
   }
 
   private buildPrompt(
