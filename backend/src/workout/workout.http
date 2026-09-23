@@ -1,0 +1,126 @@
+@baseUrl = http://localhost:3000
+
+### Sign in as existing user (see users.http to create one first)
+# @name signin
+POST {{baseUrl}}/auth/signin
+content-type: application/json
+
+{
+  "email": "maks@mail.com",
+  "password": "Haslo123"
+}
+
+###
+
+@authToken = {{signin.response.body.access_token}}
+
+### Pick an existing exercise (seed one via exercise.http first if this is empty)
+# @name exercises
+GET {{baseUrl}}/exercise
+Authorization: Bearer {{authToken}}
+
+###
+
+@exerciseId = {{exercises.response.body.0.id}}
+
+### Create a new (empty) workout
+# @name createWorkout
+POST {{baseUrl}}/workout
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "date": "2026-09-23",
+  "notes": "Push day"
+}
+
+###
+
+@workoutId = {{createWorkout.response.body.id}}
+
+### List my workouts
+GET {{baseUrl}}/workout
+Authorization: Bearer {{authToken}}
+
+### List my workouts filtered by date range
+GET {{baseUrl}}/workout?from=2026-09-01&to=2026-09-30
+Authorization: Bearer {{authToken}}
+
+### Get one workout (with exercises + sets)
+GET {{baseUrl}}/workout/{{workoutId}}
+Authorization: Bearer {{authToken}}
+
+### Update workout notes/date
+PATCH {{baseUrl}}/workout/{{workoutId}}
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "notes": "Push day - czułem się mocny"
+}
+
+### Add an exercise to the workout
+# @name addExercise
+POST {{baseUrl}}/workout/{{workoutId}}/exercise
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "exerciseId": {{exerciseId}},
+  "order": 0
+}
+
+###
+
+@weId = {{addExercise.response.body.id}}
+
+### Reorder that workout exercise
+PATCH {{baseUrl}}/workout/{{workoutId}}/exercise/{{weId}}
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "order": 1
+}
+
+### Add a completed set
+# @name addSet
+POST {{baseUrl}}/workout/{{workoutId}}/exercise/{{weId}}/set
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "setNumber": 1,
+  "weight": 80,
+  "reps": 8,
+  "completed": true
+}
+
+###
+
+@setId = {{addSet.response.body.id}}
+
+### Update that set (e.g. correct the actual weight lifted)
+PATCH {{baseUrl}}/workout/{{workoutId}}/exercise/{{weId}}/set/{{setId}}
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "weight": 82.5
+}
+
+### Delete the set
+DELETE {{baseUrl}}/workout/{{workoutId}}/exercise/{{weId}}/set/{{setId}}
+Authorization: Bearer {{authToken}}
+
+### Remove the exercise from the workout
+DELETE {{baseUrl}}/workout/{{workoutId}}/exercise/{{weId}}
+Authorization: Bearer {{authToken}}
+
+### Duplicate a workout (copies exercises/sets, resets completed to false, dates today)
+POST {{baseUrl}}/workout/{{workoutId}}/duplicate
+Authorization: Bearer {{authToken}}
+
+### Delete the workout
+DELETE {{baseUrl}}/workout/{{workoutId}}
+Authorization: Bearer {{authToken}}

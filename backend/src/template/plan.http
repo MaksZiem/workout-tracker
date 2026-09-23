@@ -1,0 +1,62 @@
+@baseUrl = http://localhost:3000
+
+### Sign in as existing user (see users.http to create one first)
+# @name signin
+POST {{baseUrl}}/auth/signin
+content-type: application/json
+
+{
+  "email": "maks@mail.com",
+  "password": "Haslo123"
+}
+
+###
+
+@authToken = {{signin.response.body.access_token}}
+
+### Create a plan (parent container - groups several templates together)
+# @name createPlan
+POST {{baseUrl}}/plan
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Mój split PPL",
+  "notes": "Ręczny plan na wrzesień"
+}
+
+###
+
+@planId = {{createPlan.response.body.id}}
+
+### Create a template that belongs to this plan (see template.http for standalone templates)
+# @name createTemplate
+POST {{baseUrl}}/template
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Push Day",
+  "planId": {{planId}}
+}
+
+### List my plans
+GET {{baseUrl}}/plan
+Authorization: Bearer {{authToken}}
+
+### Get one plan (with nested templates -> exercises)
+GET {{baseUrl}}/plan/{{planId}}
+Authorization: Bearer {{authToken}}
+
+### Update plan name/notes
+PATCH {{baseUrl}}/plan/{{planId}}
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Mój split PPL (v2)"
+}
+
+### Delete the plan (cascades: deletes its templates + their exercises too)
+DELETE {{baseUrl}}/plan/{{planId}}
+Authorization: Bearer {{authToken}}

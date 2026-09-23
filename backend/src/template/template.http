@@ -1,0 +1,93 @@
+@baseUrl = http://localhost:3000
+
+### Sign in as existing user (see users.http to create one first)
+# @name signin
+POST {{baseUrl}}/auth/signin
+content-type: application/json
+
+{
+  "email": "maks@mail.com",
+  "password": "Haslo123"
+}
+
+###
+
+@authToken = {{signin.response.body.access_token}}
+
+### Pick an existing exercise (seed one via exercise.http first if this is empty)
+# @name exercises
+GET {{baseUrl}}/exercise
+Authorization: Bearer {{authToken}}
+
+###
+
+@exerciseId = {{exercises.response.body.0.id}}
+
+### Create a standalone workout template (not part of any WorkoutPlan)
+# @name createTemplate
+POST {{baseUrl}}/template
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Push Day",
+  "notes": "Klatka, barki, triceps"
+}
+
+###
+
+@templateId = {{createTemplate.response.body.id}}
+
+### List my templates
+GET {{baseUrl}}/template
+Authorization: Bearer {{authToken}}
+
+### Get one template (with exercises)
+GET {{baseUrl}}/template/{{templateId}}
+Authorization: Bearer {{authToken}}
+
+### Update template name/notes
+PATCH {{baseUrl}}/template/{{templateId}}
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "notes": "Klatka, barki, triceps - unikaj OHP przy kontuzji barku"
+}
+
+### Add an exercise to the template with target sets/reps
+# @name addTemplateExercise
+POST {{baseUrl}}/template/{{templateId}}/exercise
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "exerciseId": {{exerciseId}},
+  "order": 0,
+  "targetSets": 4,
+  "targetReps": 8,
+  "targetWeight": 80,
+  "restSeconds": 90
+}
+
+###
+
+@templateExerciseId = {{addTemplateExercise.response.body.id}}
+
+### Update that template exercise's targets
+PATCH {{baseUrl}}/template/{{templateId}}/exercise/{{templateExerciseId}}
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "targetSets": 5,
+  "targetReps": 6
+}
+
+### Remove the exercise from the template
+DELETE {{baseUrl}}/template/{{templateId}}/exercise/{{templateExerciseId}}
+Authorization: Bearer {{authToken}}
+
+### Delete the template
+DELETE {{baseUrl}}/template/{{templateId}}
+Authorization: Bearer {{authToken}}

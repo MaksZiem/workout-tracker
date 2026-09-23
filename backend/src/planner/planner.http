@@ -1,0 +1,93 @@
+@baseUrl = http://localhost:3000
+
+### Sign in as existing user (see users.http to create one first)
+# @name signin
+POST {{baseUrl}}/auth/signin
+content-type: application/json
+
+{
+  "email": "maks@mail.com",
+  "password": "Haslo123"
+}
+
+###
+
+@authToken = {{signin.response.body.access_token}}
+
+### Create a template to schedule (see template.http for the full template CRUD)
+# @name createTemplate
+POST {{baseUrl}}/template
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Push Day"
+}
+
+###
+
+@templateId = {{createTemplate.response.body.id}}
+
+### Schedule that template on a specific date
+# @name createScheduled
+POST {{baseUrl}}/planner/scheduled
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "templateId": {{templateId}},
+  "date": "2026-09-28"
+}
+
+###
+
+@scheduledId = {{createScheduled.response.body.id}}
+
+### Bulk-generate a schedule from templates mapped to days of week
+### dayOfWeek: 0 = Sunday ... 6 = Saturday
+POST {{baseUrl}}/planner/generate
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "from": "2026-09-23",
+  "to": "2026-10-21",
+  "assignments": [
+    { "templateId": {{templateId}}, "dayOfWeek": 1 },
+    { "templateId": {{templateId}}, "dayOfWeek": 4 }
+  ]
+}
+
+### List scheduled workouts in a date range
+GET {{baseUrl}}/planner/scheduled?from=2026-09-01&to=2026-10-31
+Authorization: Bearer {{authToken}}
+
+### What am I training today?
+GET {{baseUrl}}/planner/today
+Authorization: Bearer {{authToken}}
+
+### Reschedule to a different date
+PATCH {{baseUrl}}/planner/scheduled/{{scheduledId}}
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "date": "2026-09-29"
+}
+
+### Mark it as skipped instead
+PATCH {{baseUrl}}/planner/scheduled/{{scheduledId}}
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "status": "SKIPPED"
+}
+
+### Start the scheduled workout (creates a real Workout pre-filled from the template)
+POST {{baseUrl}}/planner/scheduled/{{scheduledId}}/start
+Authorization: Bearer {{authToken}}
+
+### Delete the scheduled entry
+DELETE {{baseUrl}}/planner/scheduled/{{scheduledId}}
+Authorization: Bearer {{authToken}}

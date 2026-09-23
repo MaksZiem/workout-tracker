@@ -1,0 +1,83 @@
+@baseUrl = http://localhost:3000
+
+### Sign in as existing user (see users.http to create one first)
+# @name signin
+POST {{baseUrl}}/auth/signin
+content-type: application/json
+
+{
+  "email": "maks@mail.com",
+  "password": "Haslo123"
+}
+
+###
+
+@authToken = {{signin.response.body.access_token}}
+
+### List all exercises
+GET {{baseUrl}}/exercise
+Authorization: Bearer {{authToken}}
+
+### List exercises filtered by muscle group
+GET {{baseUrl}}/exercise?muscleGroup=CHEST
+Authorization: Bearer {{authToken}}
+
+### Create an exercise (requires ADMIN role - see users.http to promote a user)
+# @name createExercise
+POST {{baseUrl}}/exercise
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Wyciskanie sztangi na ławce płaskiej",
+  "muscleGroup": "CHEST"
+}
+
+###
+
+@exerciseId = {{createExercise.response.body.id}}
+
+### Create a second exercise in the same muscle group (useful for /similar below)
+POST {{baseUrl}}/exercise
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Wyciskanie hantli na ławce płaskiej",
+  "muscleGroup": "CHEST"
+}
+
+### Create a third, unrelated exercise (different muscle group - should NOT show up as similar)
+POST {{baseUrl}}/exercise
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Podciąganie na drążku",
+  "muscleGroup": "BACK"
+}
+
+### Get one exercise
+GET {{baseUrl}}/exercise/{{exerciseId}}
+Authorization: Bearer {{authToken}}
+
+### Find exercises similar to it (embedding is computed automatically on create)
+GET {{baseUrl}}/exercise/{{exerciseId}}/similar
+Authorization: Bearer {{authToken}}
+
+### Update an exercise (name change recomputes its embedding)
+PATCH {{baseUrl}}/exercise/{{exerciseId}}
+content-type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Wyciskanie sztangi na ławce płaskiej (chwyt szeroki)"
+}
+
+### Backfill embeddings for exercises created before this feature existed
+POST {{baseUrl}}/exercise/backfill-embeddings
+Authorization: Bearer {{authToken}}
+
+### Delete an exercise
+DELETE {{baseUrl}}/exercise/{{exerciseId}}
+Authorization: Bearer {{authToken}}
