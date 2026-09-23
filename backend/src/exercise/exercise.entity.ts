@@ -13,6 +13,9 @@ export class Exercise {
   @Column({ type: 'enum', enum: MuscleGroup, nullable: true })
   muscleGroup: MuscleGroup;
 
+  @Column('float8', { array: true, nullable: true })
+  embedding: number[] | null;
+
   @OneToMany(() => WorkoutExercise, (we) => we.exercise)
   workoutExercises: WorkoutExercise[];
 }

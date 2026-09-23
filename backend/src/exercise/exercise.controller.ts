@@ -22,10 +22,22 @@ export class ExerciseController {
     return this.exerciseService.findOne(id)
   }
 
+  @Get('/:id/similar')
+  @UseGuards(AuthGuard)
+  findSimilar(@Param('id', ParseIntPipe) id: number) {
+    return this.exerciseService.findSimilar(id)
+  }
+
   @Post()
   @UseGuards(AdminGuard)
   createExercise(@Body() dto: CreateExerciseDto) {
     return this.exerciseService.create(dto)
+  }
+
+  @Post('/backfill-embeddings')
+  @UseGuards(AdminGuard)
+  backfillEmbeddings() {
+    return this.exerciseService.backfillEmbeddings()
   }
 
   @Patch('/:id')

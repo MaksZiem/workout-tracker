@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { GeminiService } from './gemini.service';
+import { GeminiService } from 'src/gemini/gemini.service';
 import { ExerciseService } from 'src/exercise/exercise.service';
 import { TemplateService } from 'src/template/template.service';
 import { User } from 'src/users/user.entity';
@@ -67,7 +67,6 @@ export class AiService {
       });
 
       for (const exercise of template.exercises) {
-        // Zabezpieczenie na wypadek, gdyby model jednak zwrócił id spoza listy
         if (!validExercisesIds.has(exercise.exerciseId)) continue;
 
         await this.templateService.addExercise(user.id, created.id, {
