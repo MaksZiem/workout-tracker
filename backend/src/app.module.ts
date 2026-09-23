@@ -8,6 +8,7 @@ import { WorkoutModule } from './workout/workout.module';
 import { StatsModule } from './stats/stats.module';
 import { TemplateModule } from './template/template.module';
 import { PlannerModule } from './planner/planner.module';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { PlannerModule } from './planner/planner.module';
     StatsModule,
     TemplateModule,
     PlannerModule,
+    AiModule
   ],
   controllers: [],
   providers: [

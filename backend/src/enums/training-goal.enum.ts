@@ -1,0 +1,6 @@
+export enum TrainingGoal {
+  STRENGTH = 'STRENGTH',
+  HYPERTROPHY = 'HYPERTROPHY',
+  ENDURANCE = 'ENDURANCE',
+  GENERAL = 'GENERAL',
+}
