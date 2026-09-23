@@ -4,6 +4,7 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { User } from 'src/users/user.entity';
 import { GenerateWorkoutPlanDto } from './dtos/generate-workout-plan.dto';
+import { ParseWorkoutDto } from './dtos/parse-workout.dto';
 
 @Controller('ai')
 export class AiController {
@@ -13,5 +14,11 @@ export class AiController {
   @UseGuards(AuthGuard)
   generatePlan(@CurrentUser() user: User, @Body() dto: GenerateWorkoutPlanDto) {
     return this.aiService.generatePlan(user, dto);
+  }
+
+  @Post('/parse-workout')
+  @UseGuards(AuthGuard)
+  parseWorkout(@CurrentUser() user: User, @Body() dto: ParseWorkoutDto) {
+    return this.aiService.parseWorkout(user, dto);
   }
 }
