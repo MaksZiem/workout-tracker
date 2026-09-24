@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import { ArrowDown, ArrowUp, Ellipsis, Plus } from "lucide-react";
 import { clientApi } from "@/lib/api/client";
@@ -31,19 +31,23 @@ const GRID = "sm:grid sm:grid-cols-[minmax(0,1fr)_4.5rem_4.5rem_5.5rem_5.5rem_5r
 /**
  * Edytor jednego szablonu (dnia treningowego): nazwa, tabela celów, kolejność.
  * Każde pole zapisuje się samo; błąd przywraca poprzednią wartość i pokazuje komunikat.
- * Używany w planie, później też na /templates/[id].
+ * Używany w planie (dzień) i na /templates/[id] (strona: nazwę i usuwanie ma nagłówek strony).
  */
 export function TemplateEditor({
   template: initial,
   headingLevel = "h2",
   autoFocusName = false,
+  variant = "day",
   onDeleted,
+  onCountChange,
   showToast,
 }: {
   template: EditorTemplate;
   headingLevel?: "h2" | "h3";
   autoFocusName?: boolean;
-  onDeleted: (id: number) => void;
+  variant?: "day" | "page";
+  onDeleted?: (id: number) => void;
+  onCountChange?: (count: number) => void;
   showToast: (toast: Omit<Toast, "id">) => void;
 }) {
   const t = useTranslations("templateEditor");
@@ -57,6 +61,11 @@ export function TemplateEditor({
   const [deleting, setDeleting] = useState(false);
   const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const Heading = headingLevel;
+  const count = template.exercises.length;
+
+  useEffect(() => {
+    onCountChange?.(count);
+  }, [count, onCountChange]);
 
   /** Wspólna obsługa zapisu: licznik „Zapisywanie…”, potem krótkie „Zapisano”. */
   const save = async (request: () => Promise<unknown>, rollback: () => void) => {
@@ -186,7 +195,7 @@ export function TemplateEditor({
     try {
       await unwrap(clientApi.DELETE("/template/{id}", { params: { path: { id: template.id } } }));
       setConfirming(false);
-      onDeleted(template.id);
+      onDeleted?.(template.id);
     } catch {
       showToast({ message: tCommon("error"), tone: "error" });
     } finally {
@@ -198,6 +207,14 @@ export function TemplateEditor({
 
   return (
     <section aria-label={template.name} className="rounded-xl border border-border bg-surface">
+      {variant === "page" ? (
+        <header className="flex items-baseline justify-between gap-3 px-4 pt-4 pb-3 sm:px-5">
+          <Heading className="text-[17px] leading-snug font-semibold tabular-nums">{t("exercises", { count })}</Heading>
+          <p aria-live="polite" className="text-[13px] text-muted">
+            {status}
+          </p>
+        </header>
+      ) : (
       <header className="flex items-start gap-3 px-4 pt-4 pb-3 sm:px-5">
         <div className="min-w-0 flex-1">
           <Heading className="text-[17px] leading-snug font-semibold">
@@ -226,6 +243,7 @@ export function TemplateEditor({
           actions={[{ label: t("delete"), tone: "danger", onSelect: () => setConfirming(true) }]}
         />
       </header>
+      )}
 
       {template.exercises.length ? (
         <>
@@ -276,14 +294,19 @@ export function TemplateEditor({
           </ol>
         </>
       ) : (
-        <p className="border-t border-border px-4 py-4 text-sm text-muted sm:px-5">{t("empty")}</p>
+        <p className="border-t border-border px-4 py-4 text-sm text-muted sm:px-5">{t(variant === "page" ? "emptyTemplate" : "empty")}</p>
       )}
 
-      <div className="border-t border-border px-2 py-2 sm:px-3">
+      <div className={variant === "page" && count === 0 ? "px-4 pb-4 sm:px-5" : "border-t border-border px-2 py-2 sm:px-3"}>
         <button
           type="button"
           onClick={() => setPicking(true)}
-          className="flex h-11 items-center gap-2 rounded-lg px-3 text-sm font-medium text-accent hover:bg-accent-surface"
+          className={
+            // Pusty szablon na własnej stronie: dodanie ćwiczenia to jedyna sensowna akcja, więc jest niebieska.
+            variant === "page" && count === 0
+              ? "flex h-11 items-center gap-2 rounded-lg bg-accent px-4 text-sm font-semibold text-accent-foreground hover:opacity-90"
+              : "flex h-11 items-center gap-2 rounded-lg px-3 text-sm font-medium text-accent hover:bg-accent-surface"
+          }
         >
           <Plus className="size-4" strokeWidth={2.5} aria-hidden />
           {t("add")}

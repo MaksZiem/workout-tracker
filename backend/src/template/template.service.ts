@@ -40,7 +40,7 @@ export class TemplateService {
   findAllForUser(userId: number) {
     return this.repo.find({
       where: { user: { id: userId } },
-      relations: ['exercises', 'exercises.exercise'],
+      relations: ['plan', 'exercises', 'exercises.exercise'],
       order: { createdAt: 'DESC' },
     });
   }
@@ -48,7 +48,7 @@ export class TemplateService {
   findOne(userId: number, id: number) {
     return this.repo.findOne({
       where: { id, user: { id: userId } },
-      relations: ['exercises', 'exercises.exercise'],
+      relations: ['plan', 'exercises', 'exercises.exercise'],
     });
   }
 

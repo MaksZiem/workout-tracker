@@ -1,30 +1,31 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { PageHeader } from "@/components/page-header";
-import { Placeholder } from "@/components/placeholder";
+import { localDate } from "@/lib/log/model";
+import { loadTemplate } from "@/lib/templates/load";
+import { TemplatePage } from "@/components/templates/template-page";
 
-export async function generateMetadata(props: PageProps<"/templates/[id]">): Promise<Metadata> {
+type Props = PageProps<"/templates/[id]">;
+
+async function templateId(props: Props) {
   const { id } = await props.params;
-  const t = await getTranslations("pages.templateDetail");
-  return { title: t("title", { id }) };
+  const value = Number(id);
+  return Number.isInteger(value) && value > 0 ? value : null;
 }
 
-export default async function Page(props: PageProps<"/templates/[id]">) {
-  const { id } = await props.params;
-  const t = await getTranslations("pages.templateDetail");
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const id = await templateId(props);
+  const detail = id ? await loadTemplate(id) : null;
+  const t = await getTranslations("pages.templates");
+  return { title: detail?.template.name ?? t("title") };
+}
 
-  return (
-    <>
-      <PageHeader title={t("title", { id })} description={t("description")} />
-      <Placeholder
-        endpoints={[
-          "GET /template/:id",
-          "PATCH /template/:id",
-          "POST /template/:templateId/exercise",
-          "PATCH /template/:templateId/exercise/:teId",
-          "DELETE /template/:templateId/exercise/:teId",
-        ]}
-      />
-    </>
-  );
+export default async function TemplateDetailPage(props: Props) {
+  const id = await templateId(props);
+  if (id === null) notFound();
+  const detail = await loadTemplate(id);
+  if (!detail) notFound();
+
+  // key: po odświeżeniu danych z serwera stan edytora zaczyna od nowa.
+  return <TemplatePage key={detail.template.id} detail={detail} today={localDate()} />;
 }

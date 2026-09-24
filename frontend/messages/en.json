@@ -429,11 +429,64 @@
     },
     "templates": {
       "title": "Templates",
-      "description": "Reusable workout templates with target sets, reps, weight, and rest time."
+      "description": "Reusable workout templates with target sets, reps, weight, and rest time.",
+      "new": "New template",
+      "count": "{count, plural, one {# template} other {# templates}}",
+      "standalone": "Single workouts",
+      "standaloneEmpty": "Templates outside a plan, like a hotel-gym session or a quick full body.",
+      "days": "{count, plural, one {# training day} other {# training days}}",
+      "openPlan": "Open plan",
+      "openPlanNamed": "Open plan “{name}”",
+      "exercises": "{count, plural, one {# exercise} other {# exercises}}",
+      "noExercises": "No exercises",
+      "empty": {
+        "title": "No templates yet",
+        "body": "A template is a saved workout: exercises with target sets, reps, and weight. Create a single workout or build a whole plan.",
+        "toPlans": "Go to plans"
+      },
+      "newSheet": {
+        "title": "New template",
+        "hint": "A template outside any plan. You’ll add exercises on the next screen.",
+        "name": "Template name",
+        "placeholder": "e.g. Full body A",
+        "submit": "Create template",
+        "pending": "Creating…",
+        "error": "Couldn’t create the template. Try again."
+      },
+      "inProgress": "In progress"
     },
     "templateDetail": {
-      "title": "Template #{id}",
-      "description": "The template's exercises and their targets."
+      "back": "Templates",
+      "name": "Template name",
+      "notes": "Template note",
+      "notesPlaceholder": "Add a note, e.g. what to focus on",
+      "planDay": "Day of plan <link>{plan}</link>",
+      "start": "Start workout",
+      "continue": "Continue workout",
+      "starting": "Starting…",
+      "startEmpty": "Add an exercise to start this workout",
+      "startError": "Couldn’t start the workout. Try again.",
+      "menu": "Template options",
+      "schedule": "Schedule…",
+      "scheduled": "Scheduled for {date}",
+      "delete": "Delete template",
+      "deleteTitle": "Delete “{name}”?",
+      "deleteBody": "This deletes the template and its exercises. Scheduled workouts stay in the planner without a template, and logged workouts stay in your history. This can’t be undone.",
+      "deleteConfirm": "Delete template",
+      "deleteError": "Couldn’t delete the template.",
+      "cancel": "Cancel",
+      "error": "Couldn’t save your changes. Try again.",
+      "scheduleSheet": {
+        "title": "Schedule workout",
+        "date": "Day",
+        "submit": "Add to planner",
+        "pending": "Adding…",
+        "error": "Couldn’t add the workout to the planner. Try again.",
+        "toPlanner": "Open planner"
+      },
+      "deleteDayTitle": "Delete “{name}” from “{plan}”?",
+      "deleteDayBody": "The day and its exercises will be removed from “{plan}”. Scheduled workouts stay in the planner without a template, and logged workouts stay in your history. This can’t be undone.",
+      "deleteDayConfirm": "Delete day"
     },
     "stats": {
       "title": "Stats",
@@ -626,6 +679,7 @@
     "deleteConfirm": "Delete",
     "invalid": "Invalid value: {field}",
     "saved": "Saved",
-    "saving": "Saving…"
+    "saving": "Saving…",
+    "emptyTemplate": "No exercises yet. Add the first one from the catalog, then set sets, reps, and weight."
   }
 }

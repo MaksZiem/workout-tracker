@@ -429,11 +429,64 @@
     },
     "templates": {
       "title": "Szablony",
-      "description": "Szablony treningów wielokrotnego użytku z docelowymi seriami, powtórzeniami, ciężarem i przerwą."
+      "description": "Szablony treningów wielokrotnego użytku z docelowymi seriami, powtórzeniami, ciężarem i przerwą.",
+      "new": "Nowy szablon",
+      "count": "{count, plural, one {# szablon} few {# szablony} many {# szablonów} other {# szablonów}}",
+      "standalone": "Pojedyncze treningi",
+      "standaloneEmpty": "Szablony poza planem, np. trening na siłowni hotelowej albo szybki full body.",
+      "days": "{count, plural, one {# dzień treningowy} few {# dni treningowe} many {# dni treningowych} other {# dni treningowych}}",
+      "openPlan": "Otwórz plan",
+      "openPlanNamed": "Otwórz plan „{name}”",
+      "exercises": "{count, plural, one {# ćwiczenie} few {# ćwiczenia} many {# ćwiczeń} other {# ćwiczeń}}",
+      "noExercises": "Bez ćwiczeń",
+      "empty": {
+        "title": "Nie masz jeszcze szablonów",
+        "body": "Szablon to zapisany trening: ćwiczenia z docelowymi seriami, powtórzeniami i ciężarem. Utwórz pojedynczy trening albo ułóż cały plan.",
+        "toPlans": "Przejdź do planów"
+      },
+      "newSheet": {
+        "title": "Nowy szablon",
+        "hint": "Szablon poza planem. Ćwiczenia dodasz na następnym ekranie.",
+        "name": "Nazwa szablonu",
+        "placeholder": "np. Full body A",
+        "submit": "Utwórz szablon",
+        "pending": "Tworzenie…",
+        "error": "Nie udało się utworzyć szablonu. Spróbuj ponownie."
+      },
+      "inProgress": "W trakcie"
     },
     "templateDetail": {
-      "title": "Szablon #{id}",
-      "description": "Ćwiczenia szablonu i ich parametry."
+      "back": "Szablony",
+      "name": "Nazwa szablonu",
+      "notes": "Notatka do szablonu",
+      "notesPlaceholder": "Dodaj notatkę, np. na czym się skupić",
+      "planDay": "Dzień planu <link>{plan}</link>",
+      "start": "Rozpocznij trening",
+      "continue": "Kontynuuj trening",
+      "starting": "Uruchamianie…",
+      "startEmpty": "Dodaj ćwiczenie, aby rozpocząć trening",
+      "startError": "Nie udało się rozpocząć treningu. Spróbuj ponownie.",
+      "menu": "Opcje szablonu",
+      "schedule": "Zaplanuj…",
+      "scheduled": "Zaplanowano na {date}",
+      "delete": "Usuń szablon",
+      "deleteTitle": "Usunąć „{name}”?",
+      "deleteBody": "Usuniesz szablon i jego ćwiczenia. Zaplanowane treningi zostaną w planerze, ale bez szablonu, a zapisane treningi pozostaną w historii. Tego nie da się cofnąć.",
+      "deleteConfirm": "Usuń szablon",
+      "deleteError": "Nie udało się usunąć szablonu.",
+      "cancel": "Anuluj",
+      "error": "Nie udało się zapisać zmian. Spróbuj ponownie.",
+      "scheduleSheet": {
+        "title": "Zaplanuj trening",
+        "date": "Dzień",
+        "submit": "Dodaj do planera",
+        "pending": "Dodawanie…",
+        "error": "Nie udało się dodać treningu do planera. Spróbuj ponownie.",
+        "toPlanner": "Otwórz planer"
+      },
+      "deleteDayTitle": "Usunąć dzień „{name}” z planu „{plan}”?",
+      "deleteDayBody": "Dzień i jego ćwiczenia znikną z planu „{plan}”. Zaplanowane treningi zostaną w planerze, ale bez szablonu, a zapisane treningi pozostaną w historii. Tego nie da się cofnąć.",
+      "deleteDayConfirm": "Usuń dzień"
     },
     "stats": {
       "title": "Statystyki",
@@ -626,6 +679,7 @@
     "deleteConfirm": "Usuń",
     "invalid": "Nieprawidłowa wartość: {field}",
     "saved": "Zapisano",
-    "saving": "Zapisywanie…"
+    "saving": "Zapisywanie…",
+    "emptyTemplate": "Brak ćwiczeń. Dodaj pierwsze z katalogu, a potem ustaw serie, powtórzenia i ciężar."
   }
 }
