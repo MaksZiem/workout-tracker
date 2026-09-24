@@ -308,7 +308,76 @@
     },
     "stats": {
       "title": "Stats",
-      "description": "Exercise progress, personal records, muscle group distribution, and training frequency."
+      "description": "Exercise progress, personal records, muscle group distribution, and training frequency.",
+      "range": {
+        "label": "Range",
+        "30d": "30 days",
+        "90d": "3 months",
+        "1y": "Year",
+        "all": "All time"
+      },
+      "kg": "{value} kg",
+      "sectionError": "This section couldn't be loaded.",
+      "retry": "Try again",
+      "empty": {
+        "title": "Your progress will show up here",
+        "body": "Log your first workout to see your weights, records, and consistency grow.",
+        "action": "Log workout"
+      },
+      "main": {
+        "title": "Main lifts",
+        "hint": "Estimated 1RM in the selected range",
+        "e1rm": "est. 1RM",
+        "sessions": "{count, plural, one {# session} other {# sessions}}",
+        "change": "{value} kg in range",
+        "noChange": "One session in range",
+        "record": "Record",
+        "emptyRange": "No workouts in this range.",
+        "showAll": "Show all time",
+        "open": "{name}: estimated 1RM {value} kg, {change}. Open details",
+        "flat": "No change in range"
+      },
+      "summary": {
+        "label": "Range summary",
+        "workouts": "Workouts",
+        "sets": "Sets",
+        "volume": "Volume",
+        "avgSets": "Sets per workout",
+        "topGroup": "Most trained",
+        "tons": "{value} t"
+      },
+      "activity": {
+        "title": "Activity",
+        "days": "{count, plural, one {# training day} other {# training days}} of {total}",
+        "lastYear": "Last 12 months",
+        "phoneWindow": "Last 20 weeks",
+        "day": "{date}: {count, plural, =0 {no workout} one {# workout} other {# workouts}}",
+        "less": "Less",
+        "more": "More"
+      },
+      "muscles": {
+        "title": "Muscle groups",
+        "hint": "Completed sets in range",
+        "sets": "{count, plural, one {# set} other {# sets}}",
+        "empty": "No completed sets in this range."
+      },
+      "records": {
+        "title": "Records",
+        "hint": "All time. Gold marker: record set in the selected range.",
+        "exercise": "Exercise",
+        "e1rm": "Est. 1RM",
+        "maxWeight": "Max weight",
+        "bestSet": "Set volume",
+        "date": "Record date",
+        "newInRange": "New record in this range",
+        "empty": "Records appear after your first completed set.",
+        "hintAll": "All time."
+      },
+      "streak": {
+        "weeks": "{count, plural, =0 {No streak} one {Streak: # week with training} other {Streak: # weeks with training}}",
+        "days": "days in a row: {count}",
+        "scope": "current, all time"
+      }
     },
     "exercises": {
       "title": "Exercise catalog",
@@ -329,6 +398,51 @@
     "adminExercises": {
       "title": "Manage exercises",
       "description": "Add, edit, and delete exercises, and backfill embeddings for similar-exercise search."
+    },
+    "statsExercise": {
+      "back": "Stats",
+      "notFound": "Exercise not found.",
+      "metric": {
+        "label": "Metric",
+        "e1rm": "Est. 1RM",
+        "top": "Top set",
+        "volume": "Volume"
+      },
+      "metricHint": {
+        "e1rm": "Estimated one-rep max (Epley formula), best set of the session.",
+        "top": "Heaviest weight lifted in the session.",
+        "volume": "Sum of weight × reps across all completed sets in the session."
+      },
+      "latest": "Latest session",
+      "change": "{value} kg in range",
+      "noChange": "One session in range",
+      "chart": "Chart: {metric} over time. Use the arrow keys to move between sessions.",
+      "point": "{date}: {value}",
+      "record": "Record",
+      "records": {
+        "title": "Records",
+        "hint": "All-time for this exercise.",
+        "e1rm": "Estimated 1RM",
+        "maxWeight": "Max weight",
+        "bestSet": "Best set (volume)",
+        "on": "{date}",
+        "none": "No completed sets for this exercise yet."
+      },
+      "sessions": {
+        "title": "Sessions",
+        "date": "Date",
+        "sets": "Sets",
+        "top": "Top",
+        "e1rm": "Est. 1RM",
+        "volume": "Volume",
+        "set": "{weight} × {reps}",
+        "recordSession": "Record session"
+      },
+      "never": {
+        "title": "No history for this exercise yet",
+        "body": "Do it in a workout and its progress chart and records will appear here."
+      },
+      "emptyRange": "No sessions of this exercise in the selected range."
     }
   },
   "enums": {

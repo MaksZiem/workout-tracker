@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-24T00:00:00Z",
+  "generatedAt": "2026-09-24T12:00:00Z",
   "title": "Design System: Workout Tracker",
   "extensions": {
     "colorMeta": {
@@ -342,11 +342,15 @@
       },
       "stat": {
         "displayName": "Stat",
-        "purpose": "Finish-summary figures."
+        "purpose": "Finish-summary figures; stats main-lift card value and record-strip values (tracking -0.025em). Line-chart readout steps up to 30px/600."
       },
       "label-column": {
         "displayName": "Column Label",
-        "purpose": "Uppercase; set-table column headers and list-group headers only (list headers use 12px)."
+        "purpose": "Uppercase; set-table column headers, stats records/session table headers, and list-group headers only (list headers use 12px)."
+      },
+      "label-axis": {
+        "displayName": "Axis Label",
+        "purpose": "Chart axis ticks and dates, activity-map weekday/month labels and legend, phone-table metric captions; 11px/400 muted tabular, sentence case."
       }
     },
     "shadows": [
@@ -391,6 +395,11 @@
         "name": "state-colors",
         "value": "background-color/color 150ms (Tailwind transition-colors default)",
         "purpose": "Set row wash and check toggle."
+      },
+      {
+        "name": "chart-point",
+        "value": "width/height 150ms",
+        "purpose": "Line-chart dot grows to 12px under the scrubbing crosshair."
       }
     ],
     "breakpoints": [
@@ -403,11 +412,42 @@
         "name": "md",
         "value": "768px",
         "purpose": "Sidebar replaces bottom tab bar; page padding 40px."
+      },
+      {
+        "name": "lg",
+        "value": "1024px",
+        "purpose": "Stats: summary line becomes one hairline-split row; short ranges put activity map beside muscle groups."
+      },
+      {
+        "name": "xl",
+        "value": "1280px",
+        "purpose": "Planner week becomes 7 columns; stats main-lift cards go from 2 to 4 columns."
       }
     ],
     "colorSchemes": {
       "default": "dark via prefers-color-scheme: dark (frontmatter values)",
       "light": "see colorMeta.*.lightVariant; source frontend/app/globals.css :root"
+    },
+    "dataViz": {
+      "library": "none; hand-drawn SVG line (vector-effect: non-scaling-stroke) with HTML dots, gridlines and labels",
+      "line": "var(--foreground), 2px (detail) / 1.75px at 85% (mini trend)",
+      "gridline": "1px var(--border)",
+      "axisLabel": "11px var(--muted) tabular",
+      "point": "var(--foreground) with 2px var(--surface) ring; 6px rest, 12px active",
+      "recordPoint": "var(--pr) with 2px var(--surface) ring; 10px (detail), 8px (mini)",
+      "crosshair": "1px color-mix(var(--muted) 60%)",
+      "activityScale": [
+        "var(--surface-muted)",
+        "color-mix(in oklch, var(--success) 55%, transparent)",
+        "var(--success)"
+      ],
+      "distributionBar": "8px pill, fill color-mix(var(--foreground) 75%) on var(--surface-muted) track",
+      "forbidden": [
+        "Signal Blue data",
+        "chart library",
+        "pie/donut charts",
+        "area gradients"
+      ]
     }
   },
   "components": [
@@ -498,6 +538,38 @@
       "description": "The single gold moment when a set beats a record; neutral toasts invert to foreground fill.",
       "html": "<div class=\"ds-toast\" role=\"status\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/><path d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22\"/><path d=\"M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22\"/><path d=\"M18 2H6v7a6 6 0 0 0 12 0V2Z\"/></svg><span>New weight record: 82.5 kg</span></div>",
       "css": ".ds-toast { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); display: flex; align-items: center; gap: 12px; max-width: 384px; padding: 12px 16px; border-radius: 12px; background: var(--pr); color: var(--pr-foreground); font-size: 14px; font-weight: 500; box-shadow: 0 12px 32px -12px oklch(0 0 0 / 0.5); }"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "nav",
+      "refersTo": "segmented-control",
+      "description": "Shared either/or switch: planner Tydzień/Miesiąc, stats range and metric. Links with state in the URL; current option is a Surface fill.",
+      "html": "<nav class=\"ds-seg\" aria-label=\"Zakres\"><a href=\"#\" class=\"ds-seg-item\">30 dni</a><a href=\"#\" class=\"ds-seg-item\" aria-current=\"page\">3 mies.</a><a href=\"#\" class=\"ds-seg-item\">Rok</a><a href=\"#\" class=\"ds-seg-item\">Cały czas</a></nav>",
+      "css": ".ds-seg { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); display: inline-flex; max-width: 100%; overflow-x: auto; padding: 4px; border-radius: 8px; background: var(--surface-muted); } .ds-seg-item { display: flex; align-items: center; flex-shrink: 0; height: 36px; padding: 0 12px; border-radius: 6px; color: var(--muted); font-size: 14px; font-weight: 500; white-space: nowrap; text-decoration: none; } .ds-seg-item:hover { color: var(--foreground); } .ds-seg-item[aria-current=page] { background: var(--surface); color: var(--foreground); } .ds-seg-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }"
+    },
+    {
+      "name": "Main-Lift Card",
+      "kind": "card",
+      "refersTo": "stat-card",
+      "description": "Stats overview: one main lift with e1RM, change, mini trend, sessions, and the gold Rekord chip only when the record is news in a non-all-time range.",
+      "html": "<a href=\"#\" class=\"ds-lift\"><span class=\"ds-lift-name\">Wyciskanie sztangi na ławce płaskiej</span><span class=\"ds-lift-group\">Klatka piersiowa</span><span class=\"ds-lift-val\"><b>92,5</b><i>kg</i></span><span class=\"ds-lift-cap\">Szac. 1RM</span><span class=\"ds-lift-chg\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M16 7h6v6\"/><path d=\"m22 7-8.5 8.5-5-5L2 17\"/></svg>+7,5 kg w okresie</span><span class=\"ds-lift-trend\"><svg viewBox=\"0 0 100 48\" preserveAspectRatio=\"none\"><path d=\"M0,40 L22,36 L45,30 L70,22 L100,8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\" opacity=\"0.85\"/></svg><span class=\"ds-lift-dot\" style=\"left:100%;bottom:83%\"></span></span><span class=\"ds-lift-foot\"><span>9 sesji</span><span class=\"ds-lift-pr\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/><path d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22\"/><path d=\"M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22\"/><path d=\"M18 2H6v7a6 6 0 0 0 12 0V2Z\"/></svg>Rekord</span></span></a>",
+      "css": ".ds-lift { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); display: flex; flex-direction: column; width: 240px; padding: 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--foreground); text-decoration: none; transition: background-color 150ms; } .ds-lift:hover { background: var(--surface-muted); } .ds-lift:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; } .ds-lift-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.75em; font-size: 15px; font-weight: 600; line-height: 1.375; } .ds-lift-group, .ds-lift-cap { font-size: 12px; color: var(--muted); } .ds-lift-group { margin-top: 2px; } .ds-lift-val { display: flex; align-items: baseline; gap: 6px; margin-top: 12px; } .ds-lift-val b { font-size: 24px; font-weight: 600; letter-spacing: -0.025em; font-variant-numeric: tabular-nums; } .ds-lift-val i { font-style: normal; font-size: 14px; color: var(--muted); } .ds-lift-chg { display: flex; align-items: center; gap: 4px; margin-top: 6px; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; } .ds-lift-trend { position: relative; display: block; height: 48px; margin-top: 12px; color: var(--foreground); } .ds-lift-trend svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; } .ds-lift-dot { position: absolute; width: 8px; height: 8px; border-radius: 9999px; background: var(--pr); box-shadow: 0 0 0 2px var(--surface); transform: translate(-50%, 50%); } .ds-lift-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; } .ds-lift-pr { display: flex; align-items: center; gap: 4px; font-weight: 500; color: var(--pr); }"
+    },
+    {
+      "name": "Line Chart",
+      "kind": "custom",
+      "refersTo": "stat-card",
+      "description": "Signature: exercise-detail progress chart. Readout above, Chalk line with non-scaling stroke, hairline gridlines, 11px axis labels, gold record point, scrubbing crosshair (pointer + arrow keys, role=slider).",
+      "html": "<div class=\"ds-chart\"><div class=\"ds-readout\"><p class=\"ds-rd-date\">pon., 8 wrz 2026</p><p class=\"ds-rd-val\"><b>92,5</b><i>kg</i><span class=\"ds-rd-pr\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/><path d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22\"/><path d=\"M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22\"/><path d=\"M18 2H6v7a6 6 0 0 0 12 0V2Z\"/></svg>Rekord</span></p><p class=\"ds-rd-det\">80 kg × 8, 8, 6</p></div><div class=\"ds-plot\"><div class=\"ds-area\"><div class=\"ds-grid\" style=\"bottom:0%\"><span>80</span></div><div class=\"ds-grid\" style=\"bottom:33.3%\"><span>85</span></div><div class=\"ds-grid\" style=\"bottom:66.6%\"><span>90</span></div><div class=\"ds-grid\" style=\"bottom:100%\"><span>95</span></div><svg viewBox=\"0 0 1000 1000\" preserveAspectRatio=\"none\"><path d=\"M0,900 L200,820 L420,700 L640,560 L820,420 L1000,500\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\"/></svg><div class=\"ds-cross\" style=\"left:82%\"></div><span class=\"ds-pt\" style=\"left:0%;bottom:10%\"></span><span class=\"ds-pt\" style=\"left:20%;bottom:18%\"></span><span class=\"ds-pt\" style=\"left:42%;bottom:30%\"></span><span class=\"ds-pt\" style=\"left:64%;bottom:44%\"></span><span class=\"ds-pt ds-pt--pr ds-pt--on\" style=\"left:82%;bottom:58%\"></span><span class=\"ds-pt\" style=\"left:100%;bottom:50%\"></span><div class=\"ds-hit\" role=\"slider\" tabindex=\"0\" aria-label=\"Wykres: szac. 1RM\" aria-valuemin=\"0\" aria-valuemax=\"5\" aria-valuenow=\"4\" aria-valuetext=\"pon., 8 wrz 2026: 92,5 kg. 80 kg × 8, 8, 6\"></div><div class=\"ds-xl\"><span style=\"left:0\">2 cze</span><span style=\"left:50%;transform:translateX(-50%)\">24 lip</span><span style=\"left:100%;transform:translateX(-100%)\">22 wrz</span></div></div></div></div>",
+      "css": ".ds-chart { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); width: 560px; padding: 20px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--foreground); } .ds-readout { min-height: 88px; } .ds-readout p { margin: 0; } .ds-rd-date, .ds-rd-det { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; } .ds-rd-val { display: flex; align-items: baseline; gap: 8px; margin-top: 2px !important; } .ds-rd-val b { font-size: 30px; font-weight: 600; letter-spacing: -0.025em; font-variant-numeric: tabular-nums; } .ds-rd-val i { font-style: normal; color: var(--muted); } .ds-rd-pr { display: flex; align-items: center; gap: 4px; align-self: center; font-size: 13px; font-weight: 500; color: var(--pr); } .ds-plot { position: relative; height: 288px; margin-top: 16px; } .ds-area { position: absolute; top: 8px; right: 8px; bottom: 28px; left: 48px; } .ds-grid { position: absolute; left: 0; right: 0; border-top: 1px solid var(--border); } .ds-grid span, .ds-xl span { position: absolute; font-size: 11px; line-height: 1; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; } .ds-grid span { left: -48px; width: 40px; text-align: right; transform: translateY(-50%); } .ds-area svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; color: var(--foreground); } .ds-cross { position: absolute; top: 0; bottom: 0; width: 1px; background: color-mix(in oklch, var(--muted) 60%, transparent); } .ds-pt { position: absolute; width: 6px; height: 6px; border-radius: 9999px; background: var(--foreground); box-shadow: 0 0 0 2px var(--surface); transform: translate(-50%, 50%); transition: width 150ms, height 150ms; } .ds-pt--pr { width: 10px; height: 10px; background: var(--pr); } .ds-pt--on { width: 12px; height: 12px; } .ds-hit { position: absolute; top: 0; bottom: 0; left: -8px; right: -8px; cursor: crosshair; touch-action: pan-y; border-radius: 6px; } .ds-hit:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; } .ds-xl { position: absolute; left: 0; right: 0; bottom: -24px; height: 16px; }"
+    },
+    {
+      "name": "Record Strip",
+      "kind": "custom",
+      "refersTo": "record-strip",
+      "description": "Three all-time records in one hairline-divided panel; gold trophy per label, Stat values, zero shown as —.",
+      "html": "<dl class=\"ds-rs\"><div><dt><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/><path d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22\"/><path d=\"M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22\"/><path d=\"M18 2H6v7a6 6 0 0 0 12 0V2Z\"/></svg>Szac. 1RM</dt><dd class=\"ds-rs-v\"><b>102,5</b><i>kg</i></dd><dd class=\"ds-rs-d\">8 wrz 2026</dd></div><div><dt><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/><path d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22\"/><path d=\"M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22\"/><path d=\"M18 2H6v7a6 6 0 0 0 12 0V2Z\"/></svg>Maks. ciężar</dt><dd class=\"ds-rs-v\"><b>90</b><i>kg</i></dd><dd class=\"ds-rs-d\">8 wrz 2026</dd></div><div><dt><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/><path d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22\"/><path d=\"M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22\"/><path d=\"M18 2H6v7a6 6 0 0 0 12 0V2Z\"/></svg>Najlepsza seria</dt><dd class=\"ds-rs-v\"><b>720</b><i>kg</i></dd><dd class=\"ds-rs-d\">21 lip 2026</dd></div></dl>",
+      "css": ".ds-rs { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--foreground); } .ds-rs > div { padding: 14px 16px; } .ds-rs > div + div { border-left: 1px solid var(--border); } .ds-rs dt { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); } .ds-rs dt svg { color: var(--pr); } .ds-rs dd { margin: 0; } .ds-rs-v { display: flex; align-items: baseline; gap: 6px; margin-top: 4px !important; } .ds-rs-v b { font-size: 24px; font-weight: 600; letter-spacing: -0.025em; font-variant-numeric: tabular-nums; } .ds-rs-v i { font-style: normal; font-size: 14px; color: var(--muted); } .ds-rs-d { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }"
     }
   ],
   "narrative": {
@@ -519,12 +591,17 @@
       },
       {
         "name": "The Gold Is Earned Rule",
-        "body": "Record Gold appears only when a set beats a personal record, or when a record is being reported. It is never used for emphasis, badges, premium cues, or warnings.",
+        "body": "Record Gold appears only when a set beats a personal record, or when a record is being reported. It is never used for emphasis, badges, premium cues, or warnings. On stats, gold that announces a record as news is gated by the selected range. The \"Rekord\" chip on a main-lift card and the trophy in the records table appear only when the record was set inside a range shorter than all time; under \"cały czas\" every record is in range, so the marker would say nothing. Gold that locates a record (the point on a trend line, the trophy beside the session that set it) marks where that record sits within the plotted or listed range.",
         "section": "colors"
       },
       {
         "name": "The Green Means Done Rule",
         "body": "Done Green marks completed work and nothing else: a completed set, or a scheduled workout that was completed. A completed row or entry card is tinted in full, and its check is green (solid on the set check, a green check icon beside \"Wykonany\" on the entry card).",
+        "section": "colors"
+      },
+      {
+        "name": "The Chalk Data Rule",
+        "body": "Data is drawn in Chalk, never in Signal Blue. Lines, dots, and bars are foreground ink on hairline gridlines. Blue stays with the controls around the chart, and the only other colours inside a chart are semantic ones: gold for a record point, and Done Green intensities in the activity map and nowhere else.",
         "section": "colors"
       },
       {
@@ -536,6 +613,11 @@
         "name": "The One Face Rule",
         "body": "Geist is the only face. Use weight 600 for emphasis. Never add a display face, and never use italics or a monospace for data.",
         "section": "typography"
+      },
+      {
+        "name": "The Range Shapes The Layout Rule",
+        "body": "Short ranges pair the small activity map with the muscle groups. Long ranges give the map the full width, and the muscle groups split into two columns so the section does not run tall.",
+        "section": "layout"
       },
       {
         "name": "The Thumb Column Rule",
@@ -560,16 +642,22 @@
       "Do keep interactive targets at 44px or taller on the logging surface, with the check in the far-right column.",
       "Do define every new colour as a role token with both a light value and a dark value in `globals.css`.",
       "Do show depth by stepping Ground, Surface, Muted, Strong, and keep shadows for floating overlays only.",
-      "Do gate motion behind `prefers-reduced-motion: no-preference`, and keep it to the sheet rise (220ms) and the PR pop (420ms)."
+      "Do gate motion behind `prefers-reduced-motion: no-preference`, and keep it to the sheet rise (220ms) and the PR pop (420ms).",
+      "Do draw charts by hand, with an SVG line in Chalk using a non-scaling stroke, HTML dots with a 2px Surface ring, 1px Hairline gridlines, and 11px muted tabular axis labels.",
+      "Do put a chart's readout above the plot, and make scrubbing work by pointer and by arrow keys through a `role=\"slider\"` with a spoken `aria-valuetext`.",
+      "Do keep stats state (range, metric) in the URL and switch it with the shared segmented control.",
+      "Do show summary figures as a hairline-split row of label and value pairs, not as a grid of metric tiles."
     ],
     "donts": [
       "Don't use Record Gold for anything except a personal record.",
-      "Don't use Done Green for anything except a completed set or a completed scheduled workout.",
+      "Don't use Done Green for anything except a completed set, a completed scheduled workout, or a training day in the activity map.",
       "Don't nest cards inside cards. Exercise blocks are open sections, not containers.",
       "Don't add a second typeface, a display face, or monospace data. Geist and its tabular figures cover everything.",
       "Don't put uppercase tracked labels above headings. Uppercase is only for table column headers and list-group headers.",
       "Don't add shadows to resting surfaces, cards, or buttons.",
-      "Don't add invented-world chrome, novelty treatments, or ironic takes on category conventions."
+      "Don't add invented-world chrome, novelty treatments, or ironic takes on category conventions.",
+      "Don't plot data in Signal Blue, and don't add a chart library, pie or donut charts, or area gradients under lines.",
+      "Don't show a gold record chip or row trophy under the all-time range, where every record is in range and the marker carries no news."
     ]
   }
 }

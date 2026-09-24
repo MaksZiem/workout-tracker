@@ -308,7 +308,76 @@
     },
     "stats": {
       "title": "Statystyki",
-      "description": "Postępy w ćwiczeniach, rekordy, rozkład grup mięśniowych i częstotliwość treningów."
+      "description": "Postępy w ćwiczeniach, rekordy, rozkład grup mięśniowych i częstotliwość treningów.",
+      "range": {
+        "label": "Zakres",
+        "30d": "30 dni",
+        "90d": "3 mies.",
+        "1y": "Rok",
+        "all": "Cały czas"
+      },
+      "kg": "{value} kg",
+      "sectionError": "Nie udało się wczytać tej sekcji.",
+      "retry": "Spróbuj ponownie",
+      "empty": {
+        "title": "Tu pojawią się Twoje postępy",
+        "body": "Zapisz pierwszy trening, a zobaczysz, jak rosną Twoje ciężary, rekordy i regularność.",
+        "action": "Zapisz trening"
+      },
+      "main": {
+        "title": "Główne ćwiczenia",
+        "hint": "Szacowane 1RM w wybranym okresie",
+        "e1rm": "szac. 1RM",
+        "sessions": "{count, plural, one {# sesja} few {# sesje} many {# sesji} other {# sesji}}",
+        "change": "{value} kg w okresie",
+        "noChange": "Jedna sesja w okresie",
+        "record": "Rekord",
+        "emptyRange": "Brak treningów w tym okresie.",
+        "showAll": "Pokaż cały czas",
+        "open": "{name}: szacowane 1RM {value} kg, {change}. Otwórz szczegóły",
+        "flat": "Bez zmian w okresie"
+      },
+      "summary": {
+        "label": "Podsumowanie okresu",
+        "workouts": "Treningi",
+        "sets": "Serie",
+        "volume": "Objętość",
+        "avgSets": "Serie na trening",
+        "topGroup": "Najczęściej",
+        "tons": "{value} t"
+      },
+      "activity": {
+        "title": "Aktywność",
+        "days": "{count, plural, one {# dzień treningowy} few {# dni treningowe} many {# dni treningowych} other {# dni treningowych}} z {total}",
+        "lastYear": "Ostatnie 12 miesięcy",
+        "phoneWindow": "Ostatnie 20 tygodni",
+        "day": "{date}: {count, plural, =0 {brak treningu} one {# trening} few {# treningi} many {# treningów} other {# treningów}}",
+        "less": "Mniej",
+        "more": "Więcej"
+      },
+      "muscles": {
+        "title": "Partie mięśniowe",
+        "hint": "Ukończone serie w okresie",
+        "sets": "{count, plural, one {# seria} few {# serie} many {# serii} other {# serii}}",
+        "empty": "Brak ukończonych serii w tym okresie."
+      },
+      "records": {
+        "title": "Rekordy",
+        "hint": "Z całej historii. Złoty znacznik: rekord pobity w wybranym okresie.",
+        "exercise": "Ćwiczenie",
+        "e1rm": "Szac. 1RM",
+        "maxWeight": "Maks. ciężar",
+        "bestSet": "Objętość serii",
+        "date": "Data rekordu",
+        "newInRange": "Nowy rekord w tym okresie",
+        "empty": "Rekordy pojawią się po pierwszej ukończonej serii.",
+        "hintAll": "Z całej historii."
+      },
+      "streak": {
+        "weeks": "{count, plural, =0 {Brak passy} one {Passa: # tydzień z treningiem} few {Passa: # tygodnie z treningiem} many {Passa: # tygodni z treningiem} other {Passa: # tygodni z treningiem}}",
+        "days": "dni z rzędu: {count}",
+        "scope": "obecna, z całej historii"
+      }
     },
     "exercises": {
       "title": "Katalog ćwiczeń",
@@ -329,6 +398,51 @@
     "adminExercises": {
       "title": "Zarządzanie ćwiczeniami",
       "description": "Dodawanie, edycja i usuwanie ćwiczeń oraz uzupełnianie embeddingów dla wyszukiwania podobnych."
+    },
+    "statsExercise": {
+      "back": "Statystyki",
+      "notFound": "Nie znaleziono ćwiczenia.",
+      "metric": {
+        "label": "Miara",
+        "e1rm": "Szac. 1RM",
+        "top": "Najcięższa seria",
+        "volume": "Objętość"
+      },
+      "metricHint": {
+        "e1rm": "Szacowany ciężar na jedno powtórzenie (wzór Epleya), najlepsza seria sesji.",
+        "top": "Najcięższy ciężar podniesiony w sesji.",
+        "volume": "Suma ciężar × powtórzenia ze wszystkich ukończonych serii sesji."
+      },
+      "latest": "Ostatnia sesja",
+      "change": "{value} kg w okresie",
+      "noChange": "Jedna sesja w okresie",
+      "chart": "Wykres: {metric} w czasie. Użyj strzałek, aby przejść między sesjami.",
+      "point": "{date}: {value}",
+      "record": "Rekord",
+      "records": {
+        "title": "Rekordy",
+        "hint": "Z całej historii ćwiczenia.",
+        "e1rm": "Szacowane 1RM",
+        "maxWeight": "Maksymalny ciężar",
+        "bestSet": "Najlepsza seria (objętość)",
+        "on": "{date}",
+        "none": "Brak ukończonych serii tego ćwiczenia."
+      },
+      "sessions": {
+        "title": "Sesje",
+        "date": "Data",
+        "sets": "Serie",
+        "top": "Najcięższa",
+        "e1rm": "Szac. 1RM",
+        "volume": "Objętość",
+        "set": "{weight} × {reps}",
+        "recordSession": "Sesja z rekordem"
+      },
+      "never": {
+        "title": "To ćwiczenie nie ma jeszcze historii",
+        "body": "Wykonaj je w treningu, a tu pojawi się wykres postępu i rekordy."
+      },
+      "emptyRange": "Brak sesji tego ćwiczenia w wybranym okresie."
     }
   },
   "enums": {

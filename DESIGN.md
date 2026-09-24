@@ -72,6 +72,12 @@ typography:
     fontWeight: 600
     lineHeight: 1.5
     letterSpacing: "0.025em"
+  label-axis:
+    fontFamily: "Geist, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "11px"
+    fontWeight: 400
+    lineHeight: 1
+    fontFeature: "\"tnum\""
 rounded:
   sm: "6px"
   md: "8px"
@@ -186,6 +192,30 @@ components:
     textColor: "{colors.record-gold-foreground}"
     rounded: "{rounded.lg}"
     padding: "12px 16px"
+  segmented-control:
+    backgroundColor: "{colors.graphite-muted}"
+    textColor: "{colors.slate-muted}"
+    rounded: "{rounded.md}"
+    padding: "4px"
+  segmented-control-active:
+    backgroundColor: "{colors.graphite-surface}"
+    textColor: "{colors.chalk-foreground}"
+    rounded: "{rounded.sm}"
+    padding: "0 12px"
+    height: "36px"
+  stat-card:
+    backgroundColor: "{colors.graphite-surface}"
+    textColor: "{colors.chalk-foreground}"
+    rounded: "{rounded.lg}"
+    padding: "16px"
+  stat-card-hover:
+    backgroundColor: "{colors.graphite-muted}"
+  record-strip:
+    backgroundColor: "{colors.graphite-surface}"
+    textColor: "{colors.chalk-foreground}"
+    typography: "{typography.stat}"
+    rounded: "{rounded.lg}"
+    padding: "14px 16px"
 ---
 
 # Design System: Workout Tracker
@@ -216,19 +246,19 @@ The palette is neutral graphite in cool 260-hue greys, with four semantic hues, 
 - **Signal Blue** (`signal-blue`): the only action colour. Used for primary buttons (Start, Finish, Finish workout), the focus outline and caret, the elapsed-time readout, the progress-bar fill, exercise titles, the active nav "log" button, and text links. On the planner it fills the single primary "Generuj z planu" button and the entry card's Rozpocznij/Kontynuuj action, marks today (a filled 28–32px circle behind the date number, blue weekday text), rings the selected month day over a Signal Blue Tint fill, and colours the "Dziś" and "Dodaj trening" quiet links. **Signal Blue Tint** (`signal-blue-tint`) is the fill for the secondary-but-affirmative "Add exercise" button and for link hover.
 
 ### Secondary
-- **Done Green** (`done-green`): completion only. It fills the checked set's check button solid, and **Done Green Tint** (`done-green-tint`) washes the whole completed set row. On the planner a completed scheduled workout gets the same pairing: the entry card is filled Done Green Tint with its border dropped, and its status row reads "Wykonany" in Done Green behind a check icon. In the month grid a completed entry is a Done Green dot.
+- **Done Green** (`done-green`): completion only. It fills the checked set's check button solid, and **Done Green Tint** (`done-green-tint`) washes the whole completed set row. On the planner a completed scheduled workout gets the same pairing: the entry card is filled Done Green Tint with its border dropped, and its status row reads "Wykonany" in Done Green behind a check icon. In the month grid a completed entry is a Done Green dot. On stats it is the only colour of the activity map, where a day with a finished workout is a Done Green square: Graphite Muted for no workout, Done Green at 55% for one, solid Done Green for two or more.
 
 ### Tertiary
-- **Record Gold** (`record-gold`): personal records only. Used for the circular medal that replaces the set number, the PR toast, the PR count in the finish summary, and the per-exercise medal on the finish list.
+- **Record Gold** (`record-gold`): personal records only. Used for the circular medal that replaces the set number, the PR toast, the PR count in the finish summary, and the per-exercise medal on the finish list. On stats it marks record points on the trend lines, the "Rekord" chip and trophy on a main-lift card, the 14px trophy beside a record in the records and session tables, and the trophy before each label in the record strip.
 
 ### Neutral
 - **Graphite Ground** (`graphite-ground`): the page background, and the sticky header at 85–95% opacity with a backdrop blur.
 - **Graphite Surface** (`graphite-surface`): raised planes, meaning sheets, the sidebar, the mobile tab bar, list cards, and menus.
 - **Graphite Muted** (`graphite-muted`): the quiet fills. The active set row, secondary buttons, the search field, and hover states on rows and icon buttons.
 - **Graphite Strong** (`graphite-strong`): the editable fills. Number cells, the unchecked check button, the progress track, hover on secondary buttons, and the scrollbar thumb.
-- **Chalk Foreground** (`chalk-foreground`): primary text, plus the fill of the neutral toast (inverted).
-- **Slate Muted** (`slate-muted`): metadata, previous-set numbers, column headers, and inactive nav.
-- **Hairline Border** (`hairline-border`): 1px dividers, the sticky-header rule, the stepper outline, and card and menu strokes.
+- **Chalk Foreground** (`chalk-foreground`): primary text, plus the fill of the neutral toast (inverted). On stats it is the ink of data: chart lines, chart dots, and the distribution bars (at 75%).
+- **Slate Muted** (`slate-muted`): metadata, previous-set numbers, column headers, and inactive nav. On stats it is the axis labels and the scrubbing crosshair (at 60%).
+- **Hairline Border** (`hairline-border`): 1px dividers, the sticky-header rule, the stepper outline, and card and menu strokes. On stats it also draws chart gridlines and the rules that split the summary line and the record strip.
 - **Danger Red** (`danger-red`) with **Danger Red Tint** (`danger-red-tint`): destructive menu items, save-failure retry links, invalid number input, form errors, and the planner's overdue status (a red "Zaległy" status row with a warning-triangle icon, and a red dot in the month grid).
 
 ### Named Rules
@@ -236,7 +266,11 @@ The palette is neutral graphite in cool 260-hue greys, with four semantic hues, 
 
 **The Gold Is Earned Rule.** Record Gold appears only when a set beats a personal record, or when a record is being reported. It is never used for emphasis, badges, premium cues, or warnings.
 
+On stats, gold that announces a record as news is gated by the selected range. The "Rekord" chip on a main-lift card and the trophy in the records table appear only when the record was set inside a range shorter than all time; under "cały czas" every record is in range, so the marker would say nothing. Gold that locates a record (the point on a trend line, the trophy beside the session that set it) marks where that record sits within the plotted or listed range.
+
 **The Green Means Done Rule.** Done Green marks completed work and nothing else: a completed set, or a scheduled workout that was completed. A completed row or entry card is tinted in full, and its check is green (solid on the set check, a green check icon beside "Wykonany" on the entry card).
+
+**The Chalk Data Rule.** Data is drawn in Chalk, never in Signal Blue. Lines, dots, and bars are foreground ink on hairline gridlines. Blue stays with the controls around the chart, and the only other colours inside a chart are semantic ones: gold for a record point, and Done Green intensities in the activity map and nowhere else.
 
 ## Typography
 
@@ -255,7 +289,9 @@ The palette is neutral graphite in cool 260-hue greys, with four semantic hues, 
 - **Meta** (400, 13px, tabular): the previous-set line, muscle-group lines, and header counters.
 - **Data Cell** (600, 16px, tabular, centred): weight and rep inputs. 16px also stops iOS from zooming on focus.
 - **Stat** (600, 24px, tabular): the finish-summary figures.
-- **Column Label** (600, 11–12px, uppercase, tracking 0.025em, Slate Muted): only for set-table column headers and muscle-group section headers in lists.
+- **Column Label** (600, 11–12px, uppercase, tracking 0.025em, Slate Muted): only for set-table column headers, the column headers of the stats records and session tables, and muscle-group section headers in lists.
+- **Axis Label** (400, 11px, tabular, Slate Muted): chart axis ticks and dates, activity-map weekday and month labels and its legend, and the metric caption under a value in a phone table row. Sentence case, never uppercase.
+- On stats, **Stat** (24px/600, tabular, tracking −0.025em, with a 14px muted "kg") is the value on a main-lift card and in the record strip. The line chart's readout value steps up to 30px/600. Summary-line values are 17px/600 under a 12px muted label. Section titles on stats are Title (17px/600) with an optional 13px muted hint below, never above.
 
 ### Named Rules
 **The Tabular Numbers Rule.** Every number that changes or lines up with another number uses tabular figures: weights, reps, timers, counts, and stats.
@@ -279,6 +315,15 @@ The planner uses the full 1024px content area rather than the logger's 576px col
 
 **Month.** A grid of full Monday-first weeks, 7 columns with a 4px gap under muted short weekday labels. Cells are 8px-cornered buttons, 56px tall on phones and 96px from `md`. Days outside the month are shown at 40% opacity. Hover gives a Graphite Muted fill, and the selected day has a Signal Blue Tint fill with a 1px Signal Blue ring. From `md` a cell lists up to two entries as template labels (12px, 16px line height, led by a 6px status dot). A single entry wraps to two lines and two entries clamp to one line each, with a muted tabular "+N" for the rest. Skipped labels are muted and struck through. On phones a cell shows up to three 6px status dots instead of labels. The selected day's full entry cards and a "Dodaj trening" link open in a panel below the grid (two card columns from `sm`), and only from `2xl` does that panel sit beside the grid as a 272px column.
 
+### Stats
+Stats uses the full content area, stacked in sections 32px apart. Each section opens with a 17px/600 title and an optional 13px muted hint, with any aside (the streak note) on the right of the same row. The page header puts the headline on the left and the range segmented control on the right, and wraps on phones.
+
+**Overview.** First comes the main-lift section: a grid of main-lift cards, 2 columns and then 4 from `xl`, with a 12px gap, and directly under it (16px) the summary line. Below it the layout depends on the range. For short ranges (30 days, 3 months), the activity map and muscle groups sit side by side from `lg`, 32px apart and top-aligned. For long ranges (year, all time), the activity map takes the full width, and the muscle groups follow full width in two columns read downwards (ranks 1–4 on the left, 5–8 on the right) from `md`. The records table comes last.
+
+**Exercise detail.** A 40px muted back link, then the exercise headline with its muscle group, with the range control on the right. The chart sits in a single 12px Surface panel (16px padding, 20px from `sm`) with the metric control and a 13px muted hint above it. The record strip and the session table follow.
+
+**The Range Shapes The Layout Rule.** Short ranges pair the small activity map with the muscle groups. Long ranges give the map the full width, and the muscle groups split into two columns so the section does not run tall.
+
 **The Thumb Column Rule.** The completion check always sits in the far-right column and is at least 44px square, so the right thumb can reach it while the phone is held one-handed.
 
 **The 44 Floor Rule.** No interactive element on the logging surface is shorter than 44px, except compact header actions (40px) and icon buttons (40px round).
@@ -296,7 +341,7 @@ The system is flat and builds depth through tonal steps: Ground, then Surface, t
 
 ## Shapes
 
-Corners are soft and they nest. Controls, rows, and buttons use 8px. Menu items and shell nav rows, which sit inside those containers, use 6px. List cards and toasts use 12px. Sheets use 16px, on the top corners only when they are bottom sheets on phones and on all corners when centred on desktop. Round shapes are reserved for icon buttons, avatars, the PR medal, the primary tab-bar button, and the progress bar. Borders are always 1px Hairline Border. Steppers are a single outlined pill split by a 1px divider, not two separate buttons.
+Corners are soft and they nest. Controls, rows, and buttons use 8px. Menu items and shell nav rows, which sit inside those containers, use 6px. List cards and toasts use 12px. Sheets use 16px, on the top corners only when they are bottom sheets on phones and on all corners when centred on desktop. Round shapes are reserved for icon buttons, avatars, the PR medal, the primary tab-bar button, and the progress bar. Borders are always 1px Hairline Border. Steppers are a single outlined pill split by a 1px divider, not two separate buttons. Data marks keep their own small forms. Activity-map squares and their legend swatches have 3px corners. Distribution bars and their tracks are 8px-tall rounded pills. Chart points are circles with a 2px Surface ring, so they lift off the line and the gridlines.
 
 ## Components
 
@@ -340,6 +385,40 @@ One scheduled workout, used in the week columns, the phone day list, and the mon
   - **Zaległy (Overdue):** derived on the client, not stored. It applies to a planned entry whose date is before today. The card keeps the Planned surface, and the status reads in Danger Red weight 500 behind a warning-triangle icon.
 - **Month-grid dots** (6px round): Planned is Slate Muted, In progress is Chalk (foreground; blue stays reserved for actions), Completed is Done Green, Skipped is a 1px Slate Muted ring with no fill, and Overdue is Danger Red.
 
+### Segmented Control
+One look for every either/or switch: the planner's Tydzień/Miesiąc control and the stats range (30 dni / 3 mies. / rok / cały czas) and metric (1RM / top set / volume) switches. A Graphite Muted track with 8px corners and 4px padding holds 36px options with 6px corners and 14px/500 text. The current option is a Surface fill with foreground text. The others are muted and hover to foreground. On stats, each option is a link, the state lives in the URL (`?range=`, `?metric=`), and the current one carries `aria-current`. The track scrolls sideways rather than wrapping when space runs out.
+
+### Main-Lift Card (stats)
+One of the three or four most-trained lifts in the range, as a link to its detail page. It has 12px corners, a hairline border, and a Surface fill that steps to Graphite Muted on hover, with 12px padding (16px from `sm`). Top to bottom: the name (15px/600, clamped to two lines with the height reserved), the muscle group (12px muted), the estimated 1RM in Stat with "kg", a 12px muted "e1RM" caption, and a 13px change line behind a 14px trend icon (trending up, down, or a dash). A gain reads in foreground weight 500, while flat, down, or single-session changes stay muted, never green. At the bottom is the mini trend, then a 12px muted tabular session count, with the gold "Rekord" chip (trophy and label) on the right only under the Gold Is Earned range gate.
+
+### Mini Trend
+A 48px-tall line inside the main-lift card. The stroke is Chalk at 1.75px and 85% opacity, with x spaced by date so gaps in training show. There is one 8px Chalk dot on the latest session and an 8px Record Gold dot on the record, both with a 2px Surface ring. It has no axes and is hidden from screen readers, because the card's label carries the numbers.
+
+### Line Chart (exercise detail, signature)
+The progress chart is drawn by hand: SVG for the line, HTML for the dots, gridlines, and labels. It uses no chart library.
+- **Readout:** it sits above the plot and holds its height (88px) so nothing jumps. A 13px muted tabular date line ("Ostatnia · …" at rest), then the value at 30px/600 tabular with a muted "kg" and, on the record session, a 13px gold trophy and "Rekord". Under that is a 13px muted line: the change over the range at rest, or the session's sets ("80 kg × 8, 8, 6") while scrubbing.
+- **Plot:** 224px tall, 288px from `sm`. The line is 2px Chalk with round joins and `vector-effect: non-scaling-stroke`, so it keeps its weight at any width. Gridlines are 1px Hairline Border at 3–5 rounded ticks. Y labels are Axis Label, right-aligned in a 40px gutter. The first, middle, and last dates are Axis Labels under the plot. X is spaced by date.
+- **Points:** Chalk dots with a 2px Surface ring, 6px at rest, 10px for the Record Gold point, and 12px for the session under the crosshair (size eases over 150ms). Past 60 sessions, only the record and active points are drawn.
+- **Scrubbing:** a pointer move or press snaps to the nearest session and draws a 1px Slate Muted crosshair at 60%. Arrow keys step, and Home and End jump. Leaving with a mouse or blurring returns the readout to the latest session. The interaction layer is a focusable `role="slider"` whose `aria-valuetext` reads the date, value, and sets. It uses `touch-action: pan-y`, so vertical scrolling still works on phones.
+
+### Summary Line
+The range's totals as one row of numbers, not tiles. It is a `dl` between a top and bottom hairline, with 12px vertical padding. Each pair is a 12px muted label over a 17px/600 tabular value. From `lg` the pairs run in one row, 20px apart and split by 1px hairline rules. Below `lg` they fall into a 2-column grid, then 3 columns from `sm`.
+
+### Record Strip
+The three all-time records of one exercise (e1RM, max weight, best set) in one Surface panel with 12px corners and a hairline border, split into three by hairlines (stacked on phones, side by side from `sm`). Each cell has 14px vertical and 16px horizontal padding, a 13px muted label led by a 14px gold trophy, the value in Stat with a muted "kg", and a 13px muted tabular date. A zero value (bodyweight work) reads "—" with no unit.
+
+### Data Tables (records, sessions)
+Tables sit inside a 12px Surface panel with a hairline border and rows divided by hairlines. Headers are Column Labels above a hairline. Numbers are right-aligned and tabular, and the lead value (e1RM, or the selected metric in the session table, whose header switches to foreground) is weight 600 while the rest are regular or muted. Cells have 10px vertical padding and 16px at the outer edges. Record rows carry a 14px gold trophy after the name or date, with a screen-reader label. A zero-weight value (bodyweight work) reads "—", not "0 kg", in both the records and session tables. Records-table rows link to the exercise and take a Graphite Muted hover. Below `sm` each table becomes a hairline-divided list: name or date with a 13px muted secondary line on the left, and the lead value (14px/600) over an Axis Label caption on the right (records rows at least 56px tall).
+
+### Activity Map
+Training days as a week-column grid (Monday first) inside a 12px Surface panel with 16px padding. A 13px header line gives the training-day count in foreground weight 500, with a muted scope note on the right. Squares have 3px corners and a 3px gap, 20px for ranges up to 20 weeks and 14px for longer ones, and 11px on phones, where only the latest 20 weeks show. Alternate weekday labels and month labels are Axis Labels, and a "less … more" legend of the three steps sits bottom right. The grid is hidden from screen readers. Each square has a date-and-count title, and the header line carries the count in text.
+
+### Distribution Bars (muscle groups)
+Horizontal bars in a 12px Surface panel, sorted largest first. Each row is a 120px name, an 8px Graphite Muted track with a Chalk fill at 75% scaled to the largest group, and a right-aligned 13px muted tabular set count followed by the share in foreground. There are no pie or donut charts.
+
+### Section Error
+When one stats section fails, a Danger Red Tint panel (12px corners, 12px/16px padding) replaces only that section, with 14px Danger Red text and an underlined "retry" link. The rest of the page still renders.
+
 ### Inputs / Fields
 - **Style:** the search field is a Graphite Muted fill, 44px, 8px corners, and a leading muted search icon. Auth fields are a Surface fill with a hairline border and 6px corners.
 - **Focus:** the Signal Blue caret plus the global blue outline. Auth fields shift their border to blue.
@@ -367,12 +446,18 @@ A bottom-centred bar, max width 384px, with 12px corners and the Toast shadow. T
 - **Do** define every new colour as a role token with both a light value and a dark value in `globals.css`.
 - **Do** show depth by stepping Ground, Surface, Muted, Strong, and keep shadows for floating overlays only.
 - **Do** gate motion behind `prefers-reduced-motion: no-preference`, and keep it to the sheet rise (220ms) and the PR pop (420ms).
+- **Do** draw charts by hand, with an SVG line in Chalk using a non-scaling stroke, HTML dots with a 2px Surface ring, 1px Hairline gridlines, and 11px muted tabular axis labels.
+- **Do** put a chart's readout above the plot, and make scrubbing work by pointer and by arrow keys through a `role="slider"` with a spoken `aria-valuetext`.
+- **Do** keep stats state (range, metric) in the URL and switch it with the shared segmented control.
+- **Do** show summary figures as a hairline-split row of label and value pairs, not as a grid of metric tiles.
 
 ### Don't:
 - **Don't** use Record Gold for anything except a personal record.
-- **Don't** use Done Green for anything except a completed set or a completed scheduled workout.
+- **Don't** use Done Green for anything except a completed set, a completed scheduled workout, or a training day in the activity map.
 - **Don't** nest cards inside cards. Exercise blocks are open sections, not containers.
 - **Don't** add a second typeface, a display face, or monospace data. Geist and its tabular figures cover everything.
 - **Don't** put uppercase tracked labels above headings. Uppercase is only for table column headers and list-group headers.
 - **Don't** add shadows to resting surfaces, cards, or buttons.
 - **Don't** add invented-world chrome, novelty treatments, or ironic takes on category conventions.
+- **Don't** plot data in Signal Blue, and don't add a chart library, pie or donut charts, or area gradients under lines.
+- **Don't** show a gold record chip or row trophy under the all-time range, where every record is in range and the marker carries no news.
