@@ -12,6 +12,7 @@ import { ConfirmSheet } from "@/components/ui/confirm-sheet";
 import type { Toast } from "@/components/ui/toast";
 import { AddExerciseSheet } from "@/components/log/add-exercise-sheet";
 import { InlineText } from "./inline-text";
+import { SwapExerciseSheet } from "./swap-exercise-sheet";
 
 const DEFAULT_SETS = 3;
 const DEFAULT_REPS = 10;
@@ -57,6 +58,9 @@ export function TemplateEditor({
   const [pending, setPending] = useState(0);
   const [saved, setSaved] = useState(false);
   const [picking, setPicking] = useState(false);
+  const [swapping, setSwapping] = useState<EditorExercise | null>(null);
+  /** Zamiana z pełnego katalogu (gdy podobnych brak albo nie pasują). */
+  const [swappingFromCatalog, setSwappingFromCatalog] = useState<EditorExercise | null>(null);
   const [confirming, setConfirming] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -168,6 +172,39 @@ export function TemplateEditor({
     }, () => {});
   };
 
+  /** Zamiana ćwiczenia w miejscu: cele i kolejność zostają, wpis ma to samo id. */
+  const swap = (exercise: EditorExercise, picked: { id: number; name: string; muscleGroup: string }, undoable = true) => {
+    setSwapping(null);
+    setSwappingFromCatalog(null);
+    if (picked.id === exercise.exerciseId) return;
+    if (template.exercises.some((e) => e.id !== exercise.id && e.exerciseId === picked.id)) {
+      showToast({ message: t("swap.duplicate", { name: picked.name }), tone: "error" });
+      return;
+    }
+    const next = { exerciseId: picked.id, name: picked.name, muscleGroup: picked.muscleGroup as MuscleGroup };
+    const previous = { exerciseId: exercise.exerciseId, name: exercise.name, muscleGroup: exercise.muscleGroup };
+    const apply = (v: typeof next) =>
+      setTemplate((tpl) => ({ ...tpl, exercises: tpl.exercises.map((e) => (e.id === exercise.id ? { ...e, ...v } : e)) }));
+    apply(next);
+    void save(
+      () =>
+        unwrap(
+          clientApi.PATCH("/template/{templateId}/exercise/{teId}", {
+            params: { path: { templateId: template.id, teId: exercise.id } },
+            body: { exerciseId: picked.id },
+          }),
+        ),
+      () => apply(previous),
+    ).then((ok) => {
+      if (!ok || !undoable) return;
+      showToast({
+        message: t("swap.done", { from: exercise.name, to: picked.name }),
+        tone: "default",
+        undo: () => swap({ ...exercise, ...next }, { id: previous.exerciseId, name: previous.name, muscleGroup: previous.muscleGroup }, false),
+      });
+    });
+  };
+
   const remove = (exercise: EditorExercise) => {
     const before = template.exercises;
     setTemplate((tpl) => ({ ...tpl, exercises: tpl.exercises.filter((e) => e.id !== exercise.id) }));
@@ -268,7 +305,7 @@ export function TemplateEditor({
                   {/* Telefon: kolejność i menu obok nazwy. */}
                   <div className="flex shrink-0 items-center sm:hidden">
                     <MoveButtons index={index} count={template.exercises.length} name={exercise.name} onMove={move} />
-                    <ExerciseMenu name={exercise.name} onRemove={() => remove(exercise)} />
+                    <ExerciseMenu name={exercise.name} onSwap={() => setSwapping(exercise)} onRemove={() => remove(exercise)} />
                   </div>
                 </div>
                 <div className="mt-2 grid grid-cols-4 gap-2 sm:contents">
@@ -287,7 +324,7 @@ export function TemplateEditor({
                   <MoveButtons index={index} count={template.exercises.length} name={exercise.name} onMove={move} />
                 </div>
                 <div className="hidden sm:flex sm:justify-end">
-                  <ExerciseMenu name={exercise.name} onRemove={() => remove(exercise)} />
+                  <ExerciseMenu name={exercise.name} onSwap={() => setSwapping(exercise)} onRemove={() => remove(exercise)} />
                 </div>
               </li>
             ))}
@@ -314,6 +351,21 @@ export function TemplateEditor({
       </div>
 
       <AddExerciseSheet open={picking} onClose={() => setPicking(false)} onPick={(ex) => void add(ex)} />
+      <SwapExerciseSheet
+        exercise={swapping}
+        taken={new Set(template.exercises.map((e) => e.exerciseId))}
+        onClose={() => setSwapping(null)}
+        onPick={(picked) => swapping && swap(swapping, picked)}
+        onBrowse={() => {
+          setSwappingFromCatalog(swapping);
+          setSwapping(null);
+        }}
+      />
+      <AddExerciseSheet
+        open={swappingFromCatalog !== null}
+        onClose={() => setSwappingFromCatalog(null)}
+        onPick={(picked) => swappingFromCatalog && swap(swappingFromCatalog, picked)}
+      />
       <ConfirmSheet
         open={confirming}
         title={t("deleteTitle", { name: template.name })}
@@ -360,7 +412,7 @@ function MoveButtons({
   );
 }
 
-function ExerciseMenu({ name, onRemove }: { name: string; onRemove: () => void }) {
+function ExerciseMenu({ name, onSwap, onRemove }: { name: string; onSwap: () => void; onRemove: () => void }) {
   const t = useTranslations("templateEditor");
   return (
     <ActionMenu
@@ -368,7 +420,10 @@ function ExerciseMenu({ name, onRemove }: { name: string; onRemove: () => void }
       align="right"
       trigger={<Ellipsis className="size-5" strokeWidth={2} aria-hidden />}
       triggerClassName="grid size-10 place-items-center rounded-full text-muted hover:bg-surface-muted hover:text-foreground"
-      actions={[{ label: t("remove"), tone: "danger", onSelect: onRemove }]}
+      actions={[
+        { label: t("swap.action"), onSelect: onSwap },
+        { label: t("remove"), tone: "danger", onSelect: onRemove },
+      ]}
     />
   );
 }

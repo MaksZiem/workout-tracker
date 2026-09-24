@@ -1335,6 +1335,11 @@ export interface components {
         };
         UpdateTemplateExerciseDto: {
             /**
+             * @description Zamiana ćwiczenia na inne z katalogu (np. podobne); cele i kolejność zostają
+             * @example 2
+             */
+            exerciseId?: number;
+            /**
              * @description Nowa kolejność ćwiczenia w szablonie
              * @example 1
              */

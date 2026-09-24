@@ -107,7 +107,15 @@ export class TemplateService {
     if (!te) {
       throw new NotFoundException('Template exercise not found');
     }
-    assignDefined(te, dto);
+    const { exerciseId, ...targets } = dto;
+    if (exerciseId !== undefined) {
+      const exercise = await this.exerciseService.findOne(exerciseId);
+      if (!exercise) {
+        throw new NotFoundException('Exercise not found');
+      }
+      te.exercise = exercise;
+    }
+    assignDefined(te, targets);
     return this.templateExerciseRepo.save(te);
   }
 

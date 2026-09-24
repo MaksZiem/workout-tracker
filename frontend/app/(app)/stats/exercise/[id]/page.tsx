@@ -3,13 +3,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { ChevronLeft, Trophy } from "lucide-react";
-import type { PersonalRecords } from "@/lib/api/extra-types";
 import { localDate } from "@/lib/log/model";
 import { displayDate } from "@/lib/planner/dates";
 import { loadExercise } from "@/lib/stats/load";
 import { metricValue, roundKg, type Session } from "@/lib/stats/model";
 import { parseMetric, parseRange, STATS_METRICS, STATS_RANGES, statsHref, type StatsMetric } from "@/lib/stats/range";
 import { LineChart } from "@/components/stats/line-chart";
+import { RecordStrip } from "@/components/stats/record-strip";
 import { SegmentedLinks } from "@/components/stats/segmented-links";
 import { SectionError, StatsSection } from "@/components/stats/section";
 
@@ -176,41 +176,6 @@ export default async function ExerciseStatsPage(props: Props) {
 }
 
 /** Trzy rekordy w jednym pasku rozdzielonym liniami, bez osobnych kafelków. */
-function RecordStrip({
-  records,
-  kg,
-  date,
-  labels,
-}: {
-  records: PersonalRecords;
-  kg: (v: number) => string;
-  date: (iso: string) => string;
-  labels: { e1rm: string; maxWeight: string; bestSet: string };
-}) {
-  const items = [
-    { label: labels.e1rm, value: records.bestEstimatedOneRepMax, date: records.bestEstimatedOneRepMaxDate },
-    { label: labels.maxWeight, value: records.maxWeight, date: records.maxWeightDate },
-    { label: labels.bestSet, value: records.bestVolumeInSingleSet, date: records.bestVolumeDate },
-  ];
-  return (
-    <dl className="grid divide-y divide-border rounded-xl border border-border bg-surface sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-      {items.map((item) => (
-        <div key={item.label} className="px-4 py-3.5">
-          <dt className="flex items-center gap-1.5 text-[13px] text-muted">
-            <Trophy className="size-3.5 text-pr" strokeWidth={2.25} aria-hidden />
-            {item.label}
-          </dt>
-          <dd className="mt-1 flex items-baseline gap-1.5">
-            <span className="text-2xl font-semibold tracking-tight tabular-nums">{item.value > 0 ? kg(item.value) : "—"}</span>
-            {item.value > 0 ? <span className="text-sm text-muted">kg</span> : null}
-          </dd>
-          <dd className="text-[13px] text-muted tabular-nums">{date(item.date)}</dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
-
 function SessionList({
   sessions,
   metric,

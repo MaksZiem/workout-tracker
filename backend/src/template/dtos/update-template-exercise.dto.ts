@@ -2,6 +2,14 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsInt, IsNumber, IsOptional, Min } from 'class-validator';
 
 export class UpdateTemplateExerciseDto {
+  @ApiPropertyOptional({
+    description: 'Zamiana ćwiczenia na inne z katalogu (np. podobne); cele i kolejność zostają',
+    example: 2,
+  })
+  @IsOptional()
+  @IsInt()
+  exerciseId?: number;
+
   @ApiPropertyOptional({ description: 'Nowa kolejność ćwiczenia w szablonie', example: 1, minimum: 0 })
   @IsOptional()
   @IsInt()

@@ -563,11 +563,32 @@
     },
     "exercises": {
       "title": "Katalog ćwiczeń",
-      "description": "Wszystkie ćwiczenia pogrupowane według partii mięśniowych."
+      "description": "Wszystkie ćwiczenia pogrupowane według partii mięśniowych.",
+      "count": "{count, plural, one {# ćwiczenie} few {# ćwiczenia} many {# ćwiczeń} other {# ćwiczeń}}",
+      "doneCount": "{count, plural, one {# z twoimi wynikami} other {# z twoimi wynikami}}",
+      "search": "Szukaj ćwiczenia",
+      "filter": "Grupa mięśniowa",
+      "all": "Wszystkie",
+      "e1rmOn": "e1RM · {date}",
+      "bodyweight": "Masa ciała",
+      "notDone": "Jeszcze nie robione",
+      "noResults": "Brak ćwiczeń pasujących do „{query}”.",
+      "clear": "Wyczyść wyszukiwanie",
+      "recordsError": "Nie udało się wczytać twoich wyników. Katalog działa, odśwież stronę, żeby spróbować ponownie."
     },
     "exerciseDetail": {
-      "title": "Ćwiczenie #{id}",
-      "description": "Szczegóły ćwiczenia, twoje rekordy i podobne ćwiczenia."
+      "back": "Katalog ćwiczeń",
+      "records": "Twoje rekordy",
+      "fullStats": "Pełne statystyki",
+      "noRecords": "Nie masz jeszcze ukończonych serii w tym ćwiczeniu. Rekordy pojawią się po pierwszym treningu.",
+      "similar": "Podobne ćwiczenia",
+      "similarHint": "Zamienniki z tej samej grupy, np. gdy sprzęt jest zajęty albo coś boli.",
+      "match": "{value}% podobieństwa",
+      "notDone": "Jeszcze nie robione",
+      "similarNone": "Brak innych ćwiczeń z tej grupy w katalogu.",
+      "similarUnavailable": "Podobne ćwiczenia nie są jeszcze dostępne dla tego ćwiczenia.",
+      "e1rmOn": "e1RM · {date}",
+      "bodyweight": "Masa ciała"
     },
     "account": {
       "title": "Konto",
@@ -680,6 +701,20 @@
     "invalid": "Nieprawidłowa wartość: {field}",
     "saved": "Zapisano",
     "saving": "Zapisywanie…",
-    "emptyTemplate": "Brak ćwiczeń. Dodaj pierwsze z katalogu, a potem ustaw serie, powtórzenia i ciężar."
+    "emptyTemplate": "Brak ćwiczeń. Dodaj pierwsze z katalogu, a potem ustaw serie, powtórzenia i ciężar.",
+    "swap": {
+      "action": "Zamień na podobne",
+      "title": "Zamień „{name}”",
+      "hint": "Serie, powtórzenia, ciężar i przerwa zostaną bez zmian.",
+      "loading": "Szukanie podobnych ćwiczeń…",
+      "error": "Nie udało się wczytać podobnych ćwiczeń.",
+      "unavailable": "Podobne ćwiczenia nie są jeszcze dostępne dla tego ćwiczenia.",
+      "none": "Brak innych ćwiczeń z tej grupy.",
+      "browse": "Wybierz z całego katalogu",
+      "match": "{value}%",
+      "done": "Zamieniono „{from}” na „{to}”",
+      "taken": "Już w tym dniu",
+      "duplicate": "„{name}” jest już w tym dniu."
+    }
   }
 }

@@ -563,11 +563,32 @@
     },
     "exercises": {
       "title": "Exercise catalog",
-      "description": "All exercises, grouped by muscle group."
+      "description": "All exercises grouped by muscle group.",
+      "count": "{count, plural, one {# exercise} other {# exercises}}",
+      "doneCount": "{count} with your results",
+      "search": "Search exercises",
+      "filter": "Muscle group",
+      "all": "All",
+      "e1rmOn": "e1RM · {date}",
+      "bodyweight": "Bodyweight",
+      "notDone": "Not done yet",
+      "noResults": "No exercises match “{query}”.",
+      "clear": "Clear search",
+      "recordsError": "Couldn’t load your results. The catalog still works; refresh the page to try again."
     },
     "exerciseDetail": {
-      "title": "Exercise #{id}",
-      "description": "Exercise details, your records, and similar exercises."
+      "back": "Exercise catalog",
+      "records": "Your records",
+      "fullStats": "Full stats",
+      "noRecords": "You don’t have any completed sets in this exercise yet. Records show up after your first workout.",
+      "similar": "Similar exercises",
+      "similarHint": "Substitutes from the same group, e.g. when the equipment is taken or something hurts.",
+      "match": "{value}% similar",
+      "notDone": "Not done yet",
+      "similarNone": "No other exercises from this group in the catalog.",
+      "similarUnavailable": "Similar exercises aren’t available for this exercise yet.",
+      "e1rmOn": "e1RM · {date}",
+      "bodyweight": "Bodyweight"
     },
     "account": {
       "title": "Account",
@@ -680,6 +701,20 @@
     "invalid": "Invalid value: {field}",
     "saved": "Saved",
     "saving": "Saving…",
-    "emptyTemplate": "No exercises yet. Add the first one from the catalog, then set sets, reps, and weight."
+    "emptyTemplate": "No exercises yet. Add the first one from the catalog, then set sets, reps, and weight.",
+    "swap": {
+      "action": "Swap for similar",
+      "title": "Swap “{name}”",
+      "hint": "Sets, reps, weight, and rest stay the same.",
+      "loading": "Finding similar exercises…",
+      "error": "Couldn’t load similar exercises.",
+      "unavailable": "Similar exercises aren’t available for this exercise yet.",
+      "none": "No other exercises from this group.",
+      "browse": "Choose from the full catalog",
+      "match": "{value}%",
+      "done": "Swapped “{from}” for “{to}”",
+      "taken": "Already in this day",
+      "duplicate": "“{name}” is already in this day."
+    }
   }
 }
