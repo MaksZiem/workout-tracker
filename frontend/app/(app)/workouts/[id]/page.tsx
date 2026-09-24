@@ -1,29 +1,32 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
-import { PageHeader } from "@/components/page-header";
-import { Placeholder } from "@/components/placeholder";
+import { notFound } from "next/navigation";
+import { getFormatter, getTranslations } from "next-intl/server";
+import { displayDate } from "@/lib/planner/dates";
+import { loadWorkoutDetail } from "@/lib/workouts/load";
+import { WorkoutPage } from "@/components/workouts/workout-page";
 
-export async function generateMetadata(props: PageProps<"/workouts/[id]">): Promise<Metadata> {
+type Props = PageProps<"/workouts/[id]">;
+
+async function workoutId(props: Props) {
   const { id } = await props.params;
-  const t = await getTranslations("pages.workoutDetail");
-  return { title: t("title", { id }) };
+  const value = Number(id);
+  return Number.isInteger(value) && value > 0 ? value : null;
 }
 
-export default async function Page(props: PageProps<"/workouts/[id]">) {
-  const { id } = await props.params;
-  const t = await getTranslations("pages.workoutDetail");
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const id = await workoutId(props);
+  const workout = id ? await loadWorkoutDetail(id) : null;
+  const t = await getTranslations("pages.workouts");
+  if (!workout) return { title: t("title") };
+  const format = await getFormatter();
+  return { title: format.dateTime(displayDate(workout.date), { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }) };
+}
 
-  return (
-    <>
-      <PageHeader title={t("title", { id })} description={t("description")} />
-      <Placeholder
-        endpoints={[
-          "GET /workout/:id",
-          "PATCH /workout/:id",
-          "PATCH /workout/:workoutId/exercise/:weId",
-          "DELETE /workout/:workoutId/exercise/:weId",
-        ]}
-      />
-    </>
-  );
+export default async function WorkoutDetailPage(props: Props) {
+  const id = await workoutId(props);
+  if (id === null) notFound();
+  const workout = await loadWorkoutDetail(id);
+  if (!workout) notFound();
+  // key: po zmianie daty lub odświeżeniu stan klienta zaczyna od nowa.
+  return <WorkoutPage key={`${workout.id}-${workout.date}`} workout={workout} />;
 }

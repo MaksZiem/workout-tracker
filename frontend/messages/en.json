@@ -278,11 +278,95 @@
     },
     "workouts": {
       "title": "Workout history",
-      "description": "Your logged workouts, with date filtering and duplication."
+      "description": "Your logged workouts, filterable by date, with duplication.",
+      "monthNav": "Choose month",
+      "prev": "Previous month",
+      "next": "Next month",
+      "thisMonth": "This month",
+      "thisWeek": "This week",
+      "count": "{count, plural, one {# workout} other {# workouts}}",
+      "sets": "{count, plural, one {# set} other {# sets}}",
+      "minutes": "{count} min",
+      "inProgress": "In progress",
+      "more": "+{count}",
+      "noExercises": "No exercises",
+      "summary": {
+        "label": "Month summary",
+        "workouts": "Workouts",
+        "sets": "Sets",
+        "volume": "Volume",
+        "days": "Training days",
+        "tons": "{value} t"
+      },
+      "empty": {
+        "title": "No workouts this month",
+        "current": "Log your first workout and it will show up here.",
+        "past": "There are no workouts this month.",
+        "earlier": "Latest workouts: {month}",
+        "log": "Log a workout",
+        "oldest": "There are no earlier workouts."
+      }
     },
     "workoutDetail": {
-      "title": "Workout #{id}",
-      "description": "Workout details: exercises, sets, and notes."
+      "title": "Workout",
+      "description": "Workout details: exercises, sets, and notes.",
+      "inProgress": "In progress",
+      "startedAt": "started {time}",
+      "finished": "Finished",
+      "finishedSpan": "{from}–{to} · {minutes} min",
+      "notes": "Workout note",
+      "notesPlaceholder": "Add a note, e.g. how it felt or what to improve",
+      "repeat": "Repeat today",
+      "repeating": "Copying…",
+      "repeatError": "Couldn’t copy the workout. Try again.",
+      "continue": "Continue",
+      "edit": "Edit",
+      "menu": "Workout options",
+      "changeDate": "Change date",
+      "delete": "Delete workout",
+      "deleteTitle": "Delete the workout from {date}?",
+      "deleteBody": "This deletes the workout and its {sets, plural, one {# set} other {# sets}}. Records and stats recalculate without it, and the planner entry stays. This can’t be undone.",
+      "deleteConfirm": "Delete workout",
+      "deleteError": "Couldn’t delete the workout.",
+      "cancel": "Cancel",
+      "error": "Couldn’t save your changes. Try again.",
+      "minutes": "{count} min",
+      "summary": {
+        "label": "Workout summary",
+        "sets": "Sets",
+        "setsValue": "{done} of {total}",
+        "volume": "Volume",
+        "exercises": "Exercises",
+        "duration": "Duration"
+      },
+      "sets": "{count, plural, one {# set} other {# sets}}",
+      "col": {
+        "set": "Set",
+        "weight": "kg",
+        "reps": "Reps",
+        "done": "Done"
+      },
+      "setNumber": "Set {n}",
+      "done": "Done",
+      "skipped": "Skipped",
+      "record": {
+        "e1rm": "e1RM record",
+        "maxWeight": "weight record",
+        "bestSet": "best set"
+      },
+      "recordSr": "{kinds}",
+      "empty": "This workout has no exercises yet.",
+      "emptyAction": "Add exercises in the logger",
+      "noSets": "No sets.",
+      "dateSheet": {
+        "title": "Change workout date",
+        "hint": "The workout moves to the chosen day in your history and stats.",
+        "date": "Day",
+        "submit": "Save date",
+        "pending": "Saving…",
+        "error": "Couldn’t change the date. Try again.",
+        "saved": "Moved to {date}"
+      }
     },
     "planner": {
       "title": "Planner",

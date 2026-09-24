@@ -278,11 +278,95 @@
     },
     "workouts": {
       "title": "Historia treningów",
-      "description": "Lista zapisanych treningów z filtrowaniem po dacie i możliwością duplikowania."
+      "description": "Lista zapisanych treningów z filtrowaniem po dacie i możliwością duplikowania.",
+      "monthNav": "Wybór miesiąca",
+      "prev": "Poprzedni miesiąc",
+      "next": "Następny miesiąc",
+      "thisMonth": "Ten miesiąc",
+      "thisWeek": "Ten tydzień",
+      "count": "{count, plural, one {# trening} few {# treningi} many {# treningów} other {# treningów}}",
+      "sets": "{count, plural, one {# seria} few {# serie} many {# serii} other {# serii}}",
+      "minutes": "{count} min",
+      "inProgress": "W trakcie",
+      "more": "+{count}",
+      "noExercises": "Bez ćwiczeń",
+      "summary": {
+        "label": "Podsumowanie miesiąca",
+        "workouts": "Treningi",
+        "sets": "Serie",
+        "volume": "Objętość",
+        "days": "Dni treningowe",
+        "tons": "{value} t"
+      },
+      "empty": {
+        "title": "Brak treningów w tym miesiącu",
+        "current": "Zapisz pierwszy trening, a pojawi się tutaj.",
+        "past": "W tym miesiącu nie ma treningów.",
+        "earlier": "Ostatnie treningi: {month}",
+        "log": "Zapisz trening",
+        "oldest": "Wcześniej nie ma zapisanych treningów."
+      }
     },
     "workoutDetail": {
-      "title": "Trening #{id}",
-      "description": "Szczegóły treningu: ćwiczenia, serie i notatki."
+      "title": "Trening",
+      "description": "Szczegóły treningu: ćwiczenia, serie i notatki.",
+      "inProgress": "W trakcie",
+      "startedAt": "rozpoczęty {time}",
+      "finished": "Zakończony",
+      "finishedSpan": "{from}–{to} · {minutes} min",
+      "notes": "Notatka do treningu",
+      "notesPlaceholder": "Dodaj notatkę, np. samopoczucie albo co poprawić",
+      "repeat": "Powtórz dziś",
+      "repeating": "Kopiowanie…",
+      "repeatError": "Nie udało się skopiować treningu. Spróbuj ponownie.",
+      "continue": "Kontynuuj",
+      "edit": "Edytuj",
+      "menu": "Opcje treningu",
+      "changeDate": "Zmień datę",
+      "delete": "Usuń trening",
+      "deleteTitle": "Usunąć trening z {date}?",
+      "deleteBody": "Usuniesz ten trening i {sets, plural, one {# serię} few {# serie} other {# serii}}. Rekordy i statystyki przeliczą się bez niego, a wpis w planerze zostanie. Tego nie da się cofnąć.",
+      "deleteConfirm": "Usuń trening",
+      "deleteError": "Nie udało się usunąć treningu.",
+      "cancel": "Anuluj",
+      "error": "Nie udało się zapisać zmian. Spróbuj ponownie.",
+      "minutes": "{count} min",
+      "summary": {
+        "label": "Podsumowanie treningu",
+        "sets": "Serie",
+        "setsValue": "{done} z {total}",
+        "volume": "Objętość",
+        "exercises": "Ćwiczenia",
+        "duration": "Czas"
+      },
+      "sets": "{count, plural, one {# seria} few {# serie} many {# serii} other {# serii}}",
+      "col": {
+        "set": "Seria",
+        "weight": "kg",
+        "reps": "Powt.",
+        "done": "Wykonana"
+      },
+      "setNumber": "Seria {n}",
+      "done": "Wykonana",
+      "skipped": "Pominięta",
+      "record": {
+        "e1rm": "rekord szac. 1RM",
+        "maxWeight": "rekord ciężaru",
+        "bestSet": "najlepsza seria"
+      },
+      "recordSr": "{kinds}",
+      "empty": "Ten trening nie ma jeszcze ćwiczeń.",
+      "emptyAction": "Dodaj ćwiczenia w loggerze",
+      "noSets": "Brak serii.",
+      "dateSheet": {
+        "title": "Zmień datę treningu",
+        "hint": "Trening przeniesie się do wybranego dnia w historii i statystykach.",
+        "date": "Dzień",
+        "submit": "Zapisz datę",
+        "pending": "Zapisywanie…",
+        "error": "Nie udało się zmienić daty. Spróbuj ponownie.",
+        "saved": "Przeniesiono na {date}"
+      }
     },
     "planner": {
       "title": "Planer",

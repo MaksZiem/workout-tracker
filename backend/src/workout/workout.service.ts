@@ -72,8 +72,23 @@ export class WorkoutService {
       where.date = LessThanOrEqual(filters.to);
     }
 
+    // Lista z ćwiczeniami i seriami, ale bez embeddingów ćwiczeń (duże tablice liczb).
     return this.repo.find({
       where,
+      relations: ['exercises', 'exercises.exercise', 'exercises.sets'],
+      select: {
+        id: true,
+        date: true,
+        notes: true,
+        finishedAt: true,
+        createdAt: true,
+        exercises: {
+          id: true,
+          order: true,
+          exercise: { id: true, name: true, muscleGroup: true },
+          sets: { id: true, setNumber: true, weight: true, reps: true, restSeconds: true, completed: true },
+        },
+      },
       order: { date: 'desc' },
     });
   }
@@ -118,7 +133,8 @@ export class WorkoutService {
     const duplicate = this.repo.create({
       date: new Date().toISOString().slice(0, 10),
       notes: workout.notes,
-      user: workout.user,
+      // Relacja `user` nie jest wczytywana powyżej, więc właściciela bierzemy z żądania.
+      user: { id: userId } as User,
       exercises: workout.exercises.map((we) =>
         this.workoutExerciseRepo.create({
           exercise: we.exercise,
