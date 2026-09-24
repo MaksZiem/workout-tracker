@@ -83,9 +83,87 @@
     "dashboard": {
       "title": "Dashboard",
       "greeting": "Hi, {name}",
-      "description": "Today's workouts from the planner, your training streak, and a quick summary.",
-      "summary": "Streak: {streak, plural, one {# day} other {# days}} in a row · Workouts logged: {total}",
-      "summaryUnavailable": "Couldn't load your stats."
+      "today": {
+        "label": "Today",
+        "start": "Start",
+        "starting": "Starting…",
+        "continue": "Continue",
+        "startedAt": "In progress · since {time}",
+        "unfinishedFrom": "Unfinished workout from {date}",
+        "setsDone": "{done} of {total} sets",
+        "exercises": "{count, plural, one {# exercise} other {# exercises}}",
+        "sets": "{count, plural, one {# set} other {# sets}}",
+        "done": "Completed",
+        "details": "View workout",
+        "restTitle": "Rest day",
+        "restBody": "Nothing planned for today. Rest, or start a workout from scratch.",
+        "startEmpty": "Start empty workout",
+        "toPlanner": "Open planner",
+        "untitled": "Workout without template",
+        "startError": "Couldn't start the workout. Try again."
+      },
+      "week": {
+        "title": "This week",
+        "progress": "{done} of {total} done",
+        "nothing": "Nothing planned this week",
+        "open": "Planner",
+        "day": "{date}: {summary}",
+        "trained": "workout logged",
+        "free": "free",
+        "planned": "{count, plural, one {# workout planned} other {# workouts planned}}"
+      },
+      "ai": {
+        "title": "Describe a workout",
+        "hint": "AI matches exercises from the catalog and creates today's workout. You'll review and fix it in the logger before finishing.",
+        "placeholder": "e.g. squat 3×5 100 kg, then rows 3×8 60 kg",
+        "submit": "Recognize",
+        "pending": "Recognizing…",
+        "errors": {
+          "empty": "Describe the workout first.",
+          "ai": "AI is temporarily unavailable. Try again shortly or start an empty workout.",
+          "nothing": "AI didn't recognize any exercises. Include the exercise name, sets, reps and weight.",
+          "failed": "Couldn't create the workout. Try again."
+        }
+      },
+      "recent": {
+        "title": "Recent workouts",
+        "all": "Full history",
+        "sets": "{count, plural, one {# set} other {# sets}}",
+        "minutes": "{count} min",
+        "inProgress": "In progress",
+        "more": "+{count}",
+        "noExercises": "No exercises",
+        "empty": "Your workouts will show up here."
+      },
+      "records": {
+        "title": "Fresh records",
+        "hint": "Last 30 days",
+        "e1rm": "Est. 1RM",
+        "maxWeight": "Max weight",
+        "all": "Stats",
+        "empty": "No new records in the last 30 days. Strength grows slowly, that's normal.",
+        "emptyNew": "Records will appear after your first workouts."
+      },
+      "onboarding": {
+        "title": "Getting started",
+        "progress": "{done} of 3",
+        "doneLabel": "Done",
+        "workout": {
+          "title": "Log your first workout",
+          "body": "Exercises, sets, weights. From your phone, between sets.",
+          "action": "Log workout"
+        },
+        "plan": {
+          "title": "Build a plan",
+          "body": "Templates for training days, by hand or with AI.",
+          "action": "Plans"
+        },
+        "schedule": {
+          "title": "Schedule your week",
+          "body": "Generate a schedule from a plan in the planner.",
+          "action": "Planner"
+        }
+      }
     },
     "log": {
       "title": "Log workout",

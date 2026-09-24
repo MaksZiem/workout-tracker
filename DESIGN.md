@@ -216,6 +216,27 @@ components:
     typography: "{typography.stat}"
     rounded: "{rounded.lg}"
     padding: "14px 16px"
+  button-outline:
+    backgroundColor: "transparent"
+    textColor: "{colors.chalk-foreground}"
+    rounded: "{rounded.md}"
+    padding: "0 16px"
+    height: "44px"
+  button-outline-hover:
+    backgroundColor: "{colors.graphite-muted}"
+  today-card:
+    backgroundColor: "{colors.graphite-surface}"
+    textColor: "{colors.chalk-foreground}"
+    rounded: "{rounded.lg}"
+    padding: "16px"
+  today-row-done:
+    backgroundColor: "{colors.done-green-tint}"
+    textColor: "{colors.chalk-foreground}"
+    padding: "16px"
+  week-day-trained:
+    backgroundColor: "{colors.done-green-tint}"
+    rounded: "{rounded.md}"
+    height: "72px"
 ---
 
 # Design System: Workout Tracker
@@ -243,20 +264,20 @@ The system turns away from invented worlds, novelty chrome, and ironic or quirky
 The palette is neutral graphite in cool 260-hue greys, with four semantic hues, each kept to a single meaning. The frontmatter values are the dark (primary) scheme. The light-scheme counterparts are defined in `frontend/app/globals.css` and recorded in the sidecar.
 
 ### Primary
-- **Signal Blue** (`signal-blue`): the only action colour. Used for primary buttons (Start, Finish, Finish workout), the focus outline and caret, the elapsed-time readout, the progress-bar fill, exercise titles, the active nav "log" button, and text links. On the planner it fills the single primary "Generuj z planu" button and the entry card's Rozpocznij/Kontynuuj action, marks today (a filled 28–32px circle behind the date number, blue weekday text), rings the selected month day over a Signal Blue Tint fill, and colours the "Dziś" and "Dodaj trening" quiet links. **Signal Blue Tint** (`signal-blue-tint`) is the fill for the secondary-but-affirmative "Add exercise" button and for link hover.
+- **Signal Blue** (`signal-blue`): the only action colour. Used for primary buttons (Start, Finish, Finish workout), the focus outline and caret, the elapsed-time readout, the progress-bar fill, exercise titles, the active nav "log" button, and text links. On the planner it fills the single primary "Generuj z planu" button and the entry card's Rozpocznij/Kontynuuj action, marks today (a filled 28–32px circle behind the date number, blue weekday text), rings the selected month day over a Signal Blue Tint fill, and colours the "Dziś" and "Dodaj trening" quiet links. On the dashboard it fills only the first actionable Dziś row's Rozpocznij/Kontynuuj button, marks today in the week strip the same way the planner does (a filled circle behind the date, blue weekday), and colours the section-header links ("Otwórz planer", "Cała historia", "Wszystkie"). **Signal Blue Tint** (`signal-blue-tint`) is the fill for the secondary-but-affirmative "Add exercise" button and for link hover.
 
 ### Secondary
-- **Done Green** (`done-green`): completion only. It fills the checked set's check button solid, and **Done Green Tint** (`done-green-tint`) washes the whole completed set row. On the planner a completed scheduled workout gets the same pairing: the entry card is filled Done Green Tint with its border dropped, and its status row reads "Wykonany" in Done Green behind a check icon. In the month grid a completed entry is a Done Green dot. On stats it is the only colour of the activity map, where a day with a finished workout is a Done Green square: Graphite Muted for no workout, Done Green at 55% for one, solid Done Green for two or more.
+- **Done Green** (`done-green`): completion only. It fills the checked set's check button solid, and **Done Green Tint** (`done-green-tint`) washes the whole completed set row. On the planner a completed scheduled workout gets the same pairing: the entry card is filled Done Green Tint with its border dropped, and its status row reads "Wykonany" in Done Green behind a check icon. In the month grid a completed entry is a Done Green dot. On stats it is the only colour of the activity map, where a day with a finished workout is a Done Green square: Graphite Muted for no workout, Done Green at 55% for one, solid Done Green for two or more. On the dashboard it marks the same fact at a glance: a Dziś row for a workout finished today is washed Done Green Tint behind a 32px solid Done Green check circle and a "Wykonany" label in Done Green, and a week-strip day on which a workout was finished is a Done Green Tint cell.
 
 ### Tertiary
-- **Record Gold** (`record-gold`): personal records only. Used for the circular medal that replaces the set number, the PR toast, the PR count in the finish summary, and the per-exercise medal on the finish list. On stats it marks record points on the trend lines, the "Rekord" chip and trophy on a main-lift card, the 14px trophy beside a record in the records and session tables, and the trophy before each label in the record strip.
+- **Record Gold** (`record-gold`): personal records only. Used for the circular medal that replaces the set number, the PR toast, the PR count in the finish summary, and the per-exercise medal on the finish list. On stats it marks record points on the trend lines, the "Rekord" chip and trophy on a main-lift card, the 14px trophy beside a record in the records and session tables, and the trophy before each label in the record strip. On the dashboard it is the only gold on the page: the 32px round medal holding a trophy that leads each "Świeże rekordy" row.
 
 ### Neutral
 - **Graphite Ground** (`graphite-ground`): the page background, and the sticky header at 85–95% opacity with a backdrop blur.
 - **Graphite Surface** (`graphite-surface`): raised planes, meaning sheets, the sidebar, the mobile tab bar, list cards, and menus.
 - **Graphite Muted** (`graphite-muted`): the quiet fills. The active set row, secondary buttons, the search field, and hover states on rows and icon buttons.
 - **Graphite Strong** (`graphite-strong`): the editable fills. Number cells, the unchecked check button, the progress track, hover on secondary buttons, and the scrollbar thumb.
-- **Chalk Foreground** (`chalk-foreground`): primary text, plus the fill of the neutral toast (inverted). On stats it is the ink of data: chart lines, chart dots, and the distribution bars (at 75%).
+- **Chalk Foreground** (`chalk-foreground`): primary text, plus the fill of the neutral toast (inverted). On stats it is the ink of data: chart lines, chart dots, and the distribution bars (at 75%). On the dashboard it fills the Dziś card's in-progress bar (on a Graphite Muted track) and draws the 2px ring around the next "Na start" step number.
 - **Slate Muted** (`slate-muted`): metadata, previous-set numbers, column headers, and inactive nav. On stats it is the axis labels and the scrubbing crosshair (at 60%).
 - **Hairline Border** (`hairline-border`): 1px dividers, the sticky-header rule, the stepper outline, and card and menu strokes. On stats it also draws chart gridlines and the rules that split the summary line and the record strip.
 - **Danger Red** (`danger-red`) with **Danger Red Tint** (`danger-red-tint`): destructive menu items, save-failure retry links, invalid number input, form errors, and the planner's overdue status (a red "Zaległy" status row with a warning-triangle icon, and a red dot in the month grid).
@@ -269,6 +290,8 @@ The palette is neutral graphite in cool 260-hue greys, with four semantic hues, 
 On stats, gold that announces a record as news is gated by the selected range. The "Rekord" chip on a main-lift card and the trophy in the records table appear only when the record was set inside a range shorter than all time; under "cały czas" every record is in range, so the marker would say nothing. Gold that locates a record (the point on a trend line, the trophy beside the session that set it) marks where that record sits within the plotted or listed range.
 
 **The Green Means Done Rule.** Done Green marks completed work and nothing else: a completed set, or a scheduled workout that was completed. A completed row or entry card is tinted in full, and its check is green (solid on the set check, a green check icon beside "Wykonany" on the entry card).
+
+On the dashboard the rule reaches two glances at the same completed work: today's finished workout on the Dziś card, and the week-strip days on which a workout was finished (the activity map's meaning, at week scale).
 
 **The Chalk Data Rule.** Data is drawn in Chalk, never in Signal Blue. Lines, dots, and bars are foreground ink on hairline gridlines. Blue stays with the controls around the chart, and the only other colours inside a chart are semantic ones: gold for a record point, and Done Green intensities in the activity map and nowhere else.
 
@@ -292,6 +315,7 @@ On stats, gold that announces a record as news is gated by the selected range. T
 - **Column Label** (600, 11–12px, uppercase, tracking 0.025em, Slate Muted): only for set-table column headers, the column headers of the stats records and session tables, and muscle-group section headers in lists.
 - **Axis Label** (400, 11px, tabular, Slate Muted): chart axis ticks and dates, activity-map weekday and month labels and its legend, and the metric caption under a value in a phone table row. Sentence case, never uppercase.
 - On stats, **Stat** (24px/600, tabular, tracking −0.025em, with a 14px muted "kg") is the value on a main-lift card and in the record strip. The line chart's readout value steps up to 30px/600. Summary-line values are 17px/600 under a 12px muted label. Section titles on stats are Title (17px/600) with an optional 13px muted hint below, never above.
+- On the dashboard, the greeting is Headline (24px rising to 30px at `sm`) over a 14px muted date line, with nothing above it. A Dziś row's title is the template name at 20px/600 (24px from `sm`, tight leading, tracking −0.025em). Dashboard section titles are Title (17px/600), with a 13px muted hint or count on the same baseline to the right, never above.
 
 ### Named Rules
 **The Tabular Numbers Rule.** Every number that changes or lines up with another number uses tabular figures: weights, reps, timers, counts, and stats.
@@ -324,6 +348,9 @@ Stats uses the full content area, stacked in sections 32px apart. Each section o
 
 **The Range Shapes The Layout Rule.** Short ranges pair the small activity map with the muscle groups. Long ranges give the map the full width, and the muscle groups split into two columns so the section does not run tall.
 
+### Dashboard
+The dashboard (`/`, Pulpit) uses the full content area. From the top: a header with the greeting and date, then a full-width stack 12px apart (16px from `sm`) holding the Dziś card, the "Na start" checklist (new accounts only), and the week strip. Below that stack, 24px down (32px from `sm`), it is one column on phones, and from `lg` a two-column grid, 3fr | 2fr, top-aligned with a 32px gap: recent workouts on the left, and the AI shortcut above fresh records on the right. Each section fails on its own: a failed load swaps in the stats Section Error for that section only. Section headers put the Title on the left and a 36px quiet Signal Blue link with a trailing chevron on the right (the link's padding is pulled out to the edge with a negative margin, so the text lines up with the content below).
+
 **The Thumb Column Rule.** The completion check always sits in the far-right column and is at least 44px square, so the right thumb can reach it while the phone is held one-handed.
 
 **The 44 Floor Rule.** No interactive element on the logging surface is shorter than 44px, except compact header actions (40px) and icon buttons (40px round).
@@ -352,6 +379,7 @@ Buttons are solid, full-width on phones, and confident without being loud.
 - **Accent Tint:** a Signal Blue Tint fill with blue text, for the second affirmative action (Add exercise).
 - **Secondary:** a Graphite Muted fill with foreground text that steps to Graphite Strong on hover. Used for Add set, Add from description, and Empty workout.
 - **Quiet:** transparent with muted or blue text, taking a Muted or Tint fill on hover (Cancel, To planner).
+- **Outline:** transparent with a 1px Hairline Border, foreground 14px/600 text, 44px tall with 16px padding, full width on phones and hugging its label from `sm`, taking a Graphite Muted fill on hover. It is the dashboard's secondary action wherever a blue button already leads the page: later Dziś rows, "Zacznij pusty trening" on a rest day, the AI submit, and the next "Na start" step (40px with 12px padding beside the text from `sm`).
 - **Focus:** the global 2px Signal Blue outline with a 2px offset.
 
 ### Set Row (signature)
@@ -359,7 +387,7 @@ This is the core of the product.
 - **Default:** transparent, showing the set number, the previous numbers (tap to copy), two number cells, and the check.
 - **Active:** a Graphite Muted wash, with a stepper line underneath (±2.5 kg, ±1 rep).
 - **Completed:** a Done Green Tint wash. The number cells drop their fill, and the check turns solid Done Green with a heavier stroke.
-- **Record:** the set number is replaced by a 32px round Record Gold medal holding a trophy icon, which pops in once.
+- **Record:** the set number is replaced by a 32px round Record Gold medal holding a trophy icon, which pops in once. The same medal, without the pop, later leads each dashboard "Świeże rekordy" row (see Fresh Records).
 - **Sync:** unsaved rows show a muted cloud-off note. A failed save shows a red underlined retry link.
 
 ### Number Cell
@@ -383,7 +411,31 @@ One scheduled workout, used in the week columns, the phone day list, and the mon
   - **Wykonany (Completed):** a Done Green Tint fill with the border made transparent, and the status in Done Green weight 500 behind a check icon (see the Green Means Done Rule).
   - **Pominięty (Skipped):** a dashed Hairline Border on a transparent fill, with the status in muted text behind a skip-forward icon. The title stays at full foreground contrast. The card is never dimmed, only unlinked.
   - **Zaległy (Overdue):** derived on the client, not stored. It applies to a planned entry whose date is before today. The card keeps the Planned surface, and the status reads in Danger Red weight 500 behind a warning-triangle icon.
-- **Month-grid dots** (6px round): Planned is Slate Muted, In progress is Chalk (foreground; blue stays reserved for actions), Completed is Done Green, Skipped is a 1px Slate Muted ring with no fill, and Overdue is Danger Red.
+- **Month-grid dots** (6px round): Planned is Slate Muted, In progress is Chalk (foreground; blue stays reserved for actions), Completed is Done Green, Skipped is a 1px Slate Muted ring with no fill, and Overdue is Danger Red. The dashboard week strip uses the same dots from the same shared map (`STATUS_DOT` in `lib/planner/model.ts`).
+
+### Today Card (dashboard, signature)
+The "Dziś" card answers what today is and starts it. It is one Surface section with 12px corners and a hairline border. With several items it is a list of rows divided by hairlines, ordered in progress, then planned, then done. Rows have 16px padding (20px from `sm`). The body sits above the action on phones and beside it from `sm`, with the action on the right. The row title is the template name (see Typography) with a visually hidden "Dziś:" prefix, and the section carries the accessible name "Dziś". There is no visible "Dziś" label or eyebrow.
+- **Planned:** a 13px muted tabular meta line (exercises · sets · muscle groups) and a Rozpocznij button with a filled play icon.
+- **In progress:** the planner's In progress status line, a 14px CircleDot and the start time (or "unfinished since …") in foreground weight 500, then muted exercise count. Under it sits a 6px round bar, 160px wide, with a Chalk fill on a Graphite Muted track and a 13px/500 "x z y serii" count. The action is Kontynuuj.
+- **Done:** the row is washed Done Green Tint. A 32px solid Done Green circle with a heavy check leads the title, the meta line opens with "Wykonany" in Done Green weight 500 and continues muted (exercises · sets · volume), and a 44px blue text link opens the workout.
+- **Rest day:** "Dziś wolne" with a muted line, an Outline "Zacznij pusty trening" with a plus icon, and a quiet blue "Otwórz planer" link (below the button on phones, left of it from `sm`).
+- **One blue action:** only the first actionable row (in progress or planned) gets the Signal Blue primary (48px, 15px/600, full width on phones). Every later row's action is an Outline button.
+- **Done row keeps the border:** unlike the planner's completed Entry Card, which drops its border, the Dziś card keeps its 1px hairline. The wash sits on one row inside a section that may hold several rows, so the section's outline stays and only the row is tinted.
+
+### Week Strip (dashboard)
+The current Monday-to-Sunday week from the planner, in a Surface section with 12px corners, a hairline border, and 16px padding (20px from `sm`). The header row holds the Title, a 13px muted tabular "x z y wykonanych" (skipped entries not counted) with the weekly streak after a middle dot, and the section-header link to the planner. Seven day cells follow in a 7-column grid with a 4px gap (8px from `sm`). Each cell is an 8px-cornered link, 72px tall (80px from `sm`), stacking an 11px/500 short weekday, the day number at 14px/600 tabular in a 28px circle, and up to three 6px planner status dots. A day with a finished workout is a Done Green Tint cell. Today has a Signal Blue weekday and a filled Signal Blue number circle, and carries `aria-current="date"`. Other cells hover to Graphite Muted. Each cell's accessible name reads the full date and a summary (trained, N planned, or free), and the dots are hidden from screen readers.
+
+### Na start Checklist (dashboard)
+Shown only to new accounts, until the first workout, first plan, and first scheduled workout all exist. The steps tick themselves from the data. It is a Surface section with 12px corners, a hairline border, and a Title with a muted tabular "x z 3" on the right. Each step has a 28px round marker: a hairline ring with a muted number when waiting, a 2px Chalk ring for the next step, and a Chalk check on a Graphite Strong fill when done (neutral, not Done Green: finishing setup is not a completed workout). The title is 15px/500 over a 13px muted line. A done step's title turns muted and struck through, and its line is dropped. Only the next step carries an action, an Outline button: 44px under the text on phones, and 40px on the right from `sm`.
+
+### AI Shortcut (dashboard)
+A Surface section (12px corners, hairline border) with the Title led by a 16px muted Sparkles icon and a 13px muted hint. The textarea is a Graphite Muted fill with a hairline border, 8px corners, three rows, and 15px text, and its border turns Signal Blue on focus. The submit is an Outline button with a Sparkles icon, never blue, because the Dziś card owns the page's one blue action. A failure shows a Danger Red Tint alert (8px corners, 14px Danger Red text), and the typed text is put back in the field.
+
+### Workout List Row (recent workouts)
+Rows in one Surface list panel (12px corners, hairline border, hairline dividers), each a link at least 64px tall with 16px side padding, hovering to Graphite Muted. On the left is a 56px centred date block: an 11px/500 muted short weekday over the day and month at 15px/600 tabular. In the middle, the first two exercise names at 14px/500 truncate, and a muted tabular "+N" for the rest sits outside the truncation so it always shows. Under it is a 13px muted tabular line: sets · volume in kg · minutes, opened by "W trakcie" in foreground weight 500 for an unfinished workout. A muted chevron closes the row. Phones show three rows, and five show from `sm`.
+
+### Fresh Records (dashboard)
+Records from the last 30 days, at most four, as rows in one Surface list panel (12px corners, hairline border, hairline dividers). Each row is a link at least 56px tall to the exercise's stats, hovering to Graphite Muted. It leads with the 32px round Record Gold medal holding a trophy: the same medal that replaces the set number in the logger when the record lands, shown here as the row's glyph. Next come the exercise name (14px/500, truncated) over a 13px muted tabular kind-and-date line, and the value at 15px/600 tabular with "kg" on the right. This is a sanctioned use of the medal next to the logger's. The Gold Is Earned Rule holds, because every row reports a record. An empty list is a muted line in a plain Surface panel.
 
 ### Segmented Control
 One look for every either/or switch: the planner's Tydzień/Miesiąc control and the stats range (30 dni / 3 mies. / rok / cały czas) and metric (1RM / top set / volume) switches. A Graphite Muted track with 8px corners and 4px padding holds 36px options with 6px corners and 14px/500 text. The current option is a Surface fill with foreground text. The others are muted and hover to foreground. On stats, each option is a link, the state lives in the URL (`?range=`, `?metric=`), and the current one carries `aria-current`. The track scrolls sideways rather than wrapping when space runs out.
@@ -439,7 +491,8 @@ A bottom-centred bar, max width 384px, with 12px corners and the Toast shadow. T
 ## Do's and Don'ts
 
 ### Do:
-- **Do** use Signal Blue for every primary action, focus state, and progress indicator, and for nothing decorative.
+- **Do** use Signal Blue for every primary action, focus state, and progress indicator, and for nothing decorative. (The Dziś card's in-progress bar is the exception. It is drawn in Chalk so the card's one blue element stays the action.)
+- **Do** keep one Signal Blue action per dashboard. Only the first actionable Dziś row is blue, and the other dashboard actions are Outline buttons or quiet links.
 - **Do** keep the five-column set grid (36px | flexible | 84px | 84px | 44px) identical across the header and every row.
 - **Do** use tabular figures for every weight, rep, time, and count.
 - **Do** keep interactive targets at 44px or taller on the logging surface, with the check in the far-right column.
@@ -453,7 +506,7 @@ A bottom-centred bar, max width 384px, with 12px corners and the Toast shadow. T
 
 ### Don't:
 - **Don't** use Record Gold for anything except a personal record.
-- **Don't** use Done Green for anything except a completed set, a completed scheduled workout, or a training day in the activity map.
+- **Don't** use Done Green for anything except a completed set, a completed scheduled workout, a training day in the activity map or the dashboard week strip, or today's finished workout on the Dziś card.
 - **Don't** nest cards inside cards. Exercise blocks are open sections, not containers.
 - **Don't** add a second typeface, a display face, or monospace data. Geist and its tabular figures cover everything.
 - **Don't** put uppercase tracked labels above headings. Uppercase is only for table column headers and list-group headers.

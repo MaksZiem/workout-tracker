@@ -23,6 +23,15 @@ export type PlanOption = { id: number; name: string };
 /** Status widoczny w UI: backendowy albo wyliczony „zaległy”. */
 export type DisplayStatus = ScheduledWorkoutStatus | "OVERDUE";
 
+/** Kolor kropki statusu (miesiąc w planerze, pasek tygodnia na pulpicie). */
+export const STATUS_DOT: Record<DisplayStatus, string> = {
+  PLANNED: "bg-muted",
+  IN_PROGRESS: "bg-foreground",
+  COMPLETED: "bg-success",
+  SKIPPED: "border border-muted",
+  OVERDUE: "bg-danger",
+};
+
 export function displayStatus(entry: PlannerEntry, today: string): DisplayStatus {
   return entry.status === "PLANNED" && entry.date < today ? "OVERDUE" : entry.status;
 }

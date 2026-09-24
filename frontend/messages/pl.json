@@ -83,9 +83,87 @@
     "dashboard": {
       "title": "Pulpit",
       "greeting": "Cześć, {name}",
-      "description": "Dzisiejsze treningi z planera, seria dni treningowych i krótkie podsumowanie.",
-      "summary": "Seria: {streak, plural, one {# dzień} other {# dni}} z rzędu · Zapisane treningi: {total}",
-      "summaryUnavailable": "Nie udało się pobrać statystyk."
+      "today": {
+        "label": "Dziś",
+        "start": "Rozpocznij",
+        "starting": "Uruchamianie…",
+        "continue": "Kontynuuj",
+        "startedAt": "W trakcie · od {time}",
+        "unfinishedFrom": "Niezakończony trening z {date}",
+        "setsDone": "{done} z {total} serii",
+        "exercises": "{count, plural, one {# ćwiczenie} few {# ćwiczenia} many {# ćwiczeń} other {# ćwiczeń}}",
+        "sets": "{count, plural, one {# seria} few {# serie} many {# serii} other {# serii}}",
+        "done": "Wykonany",
+        "details": "Zobacz trening",
+        "restTitle": "Dziś wolne",
+        "restBody": "Nic nie zaplanowano na dziś. Możesz odpocząć albo zacząć trening od zera.",
+        "startEmpty": "Zacznij pusty trening",
+        "toPlanner": "Otwórz planer",
+        "untitled": "Trening bez szablonu",
+        "startError": "Nie udało się rozpocząć treningu. Spróbuj ponownie."
+      },
+      "week": {
+        "title": "Ten tydzień",
+        "progress": "{done} z {total} wykonanych",
+        "nothing": "Nic nie zaplanowano w tym tygodniu",
+        "open": "Planer",
+        "day": "{date}: {summary}",
+        "trained": "trening zapisany",
+        "free": "wolne",
+        "planned": "{count, plural, one {# trening w planie} few {# treningi w planie} many {# treningów w planie} other {# treningów w planie}}"
+      },
+      "ai": {
+        "title": "Opisz trening tekstem",
+        "hint": "AI rozpozna ćwiczenia z katalogu i utworzy dzisiejszy trening. Zanim go zakończysz, przejrzysz i poprawisz go w zapisie treningu.",
+        "placeholder": "np. przysiad 3×5 100 kg, potem wiosłowanie 3×8 60 kg",
+        "submit": "Rozpoznaj",
+        "pending": "Rozpoznawanie…",
+        "errors": {
+          "empty": "Wpisz opis treningu.",
+          "ai": "AI jest chwilowo niedostępne. Spróbuj za chwilę albo zacznij pusty trening.",
+          "nothing": "AI nie rozpoznało żadnych ćwiczeń. Podaj nazwę ćwiczenia, serie, powtórzenia i ciężar.",
+          "failed": "Nie udało się utworzyć treningu. Spróbuj ponownie."
+        }
+      },
+      "recent": {
+        "title": "Ostatnie treningi",
+        "all": "Cała historia",
+        "sets": "{count, plural, one {# seria} few {# serie} many {# serii} other {# serii}}",
+        "minutes": "{count} min",
+        "inProgress": "W trakcie",
+        "more": "+{count}",
+        "noExercises": "Bez ćwiczeń",
+        "empty": "Tu pojawią się Twoje treningi."
+      },
+      "records": {
+        "title": "Świeże rekordy",
+        "hint": "Ostatnie 30 dni",
+        "e1rm": "Szac. 1RM",
+        "maxWeight": "Maks. ciężar",
+        "all": "Statystyki",
+        "empty": "Brak nowych rekordów w ostatnich 30 dniach. Ciężary rosną powoli, to normalne.",
+        "emptyNew": "Rekordy pojawią się po pierwszych treningach."
+      },
+      "onboarding": {
+        "title": "Na start",
+        "progress": "{done} z 3",
+        "doneLabel": "Zrobione",
+        "workout": {
+          "title": "Zapisz pierwszy trening",
+          "body": "Ćwiczenia, serie, ciężary. Z telefonu, między seriami.",
+          "action": "Zapisz trening"
+        },
+        "plan": {
+          "title": "Ułóż plan",
+          "body": "Szablony na dni treningowe, ręcznie albo z pomocą AI.",
+          "action": "Plany"
+        },
+        "schedule": {
+          "title": "Zaplanuj tydzień",
+          "body": "Wygeneruj harmonogram z planu w planerze.",
+          "action": "Planer"
+        }
+      }
     },
     "log": {
       "title": "Zapisz trening",

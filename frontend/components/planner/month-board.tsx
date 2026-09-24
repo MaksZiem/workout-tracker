@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
 import { daysBetween, displayDate } from "@/lib/planner/dates";
-import { displayStatus, type DisplayStatus, type PlannerEntry } from "@/lib/planner/model";
+import { displayStatus, STATUS_DOT as DOT, type PlannerEntry } from "@/lib/planner/model";
 import { EntryCard } from "./entry-card";
 import { groupByDate } from "./week-board";
 import type { PlannerApi } from "./use-planner";
@@ -20,13 +20,6 @@ type Props = {
   onMove: (entry: PlannerEntry) => void;
 };
 
-const DOT: Record<DisplayStatus, string> = {
-  PLANNED: "bg-muted",
-  IN_PROGRESS: "bg-foreground",
-  COMPLETED: "bg-success",
-  SKIPPED: "border border-muted",
-  OVERDUE: "bg-danger",
-};
 
 /**
  * Miesiąc: siatka pełnych tygodni. Na desktopie komórki pokazują nazwy

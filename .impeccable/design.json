@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-24T12:00:00Z",
+  "generatedAt": "2026-09-24T20:00:00Z",
   "title": "Design System: Workout Tracker",
   "extensions": {
     "colorMeta": {
@@ -406,7 +406,7 @@
       {
         "name": "sm",
         "value": "640px",
-        "purpose": "Sheets become centred panels; page padding 24px; action row goes horizontal."
+        "purpose": "Sheets become centred panels; page padding 24px; action row goes horizontal. Dashboard: Dziś actions move beside the row body and stop being full width."
       },
       {
         "name": "md",
@@ -416,7 +416,7 @@
       {
         "name": "lg",
         "value": "1024px",
-        "purpose": "Stats: summary line becomes one hairline-split row; short ranges put activity map beside muscle groups."
+        "purpose": "Stats: summary line becomes one hairline-split row; short ranges put activity map beside muscle groups. Dashboard: recent workouts | AI shortcut + fresh records split 3fr/2fr."
       },
       {
         "name": "xl",
@@ -447,7 +447,8 @@
         "chart library",
         "pie/donut charts",
         "area gradients"
-      ]
+      ],
+      "zeroValue": "A zero-weight value (bodyweight work) reads \"—\" with no unit, never \"0 kg\": in the record strip and in both the records and session tables."
     }
   },
   "components": [
@@ -570,6 +571,38 @@
       "description": "Three all-time records in one hairline-divided panel; gold trophy per label, Stat values, zero shown as —.",
       "html": "<dl class=\"ds-rs\"><div><dt><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/><path d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22\"/><path d=\"M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22\"/><path d=\"M18 2H6v7a6 6 0 0 0 12 0V2Z\"/></svg>Szac. 1RM</dt><dd class=\"ds-rs-v\"><b>102,5</b><i>kg</i></dd><dd class=\"ds-rs-d\">8 wrz 2026</dd></div><div><dt><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/><path d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22\"/><path d=\"M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22\"/><path d=\"M18 2H6v7a6 6 0 0 0 12 0V2Z\"/></svg>Maks. ciężar</dt><dd class=\"ds-rs-v\"><b>90</b><i>kg</i></dd><dd class=\"ds-rs-d\">8 wrz 2026</dd></div><div><dt><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/><path d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22\"/><path d=\"M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22\"/><path d=\"M18 2H6v7a6 6 0 0 0 12 0V2Z\"/></svg>Najlepsza seria</dt><dd class=\"ds-rs-v\"><b>720</b><i>kg</i></dd><dd class=\"ds-rs-d\">21 lip 2026</dd></div></dl>",
       "css": ".ds-rs { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--foreground); } .ds-rs > div { padding: 14px 16px; } .ds-rs > div + div { border-left: 1px solid var(--border); } .ds-rs dt { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); } .ds-rs dt svg { color: var(--pr); } .ds-rs dd { margin: 0; } .ds-rs-v { display: flex; align-items: baseline; gap: 6px; margin-top: 4px !important; } .ds-rs-v b { font-size: 24px; font-weight: 600; letter-spacing: -0.025em; font-variant-numeric: tabular-nums; } .ds-rs-v i { font-style: normal; font-size: 14px; color: var(--muted); } .ds-rs-d { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Hairline-outlined secondary action used on the dashboard wherever a blue primary already leads: later Dziś rows, rest-day empty workout, AI submit, next onboarding step.",
+      "html": "<button class=\"ds-btn-outline\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z\"/></svg>Zamień na trening</button>",
+      "css": ".ds-btn-outline { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 16px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--foreground); font-size: 14px; font-weight: 600; cursor: pointer; } .ds-btn-outline:hover { background: var(--surface-muted); } .ds-btn-outline:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; } .ds-btn-outline:disabled { opacity: .6; }"
+    },
+    {
+      "name": "Today Card",
+      "kind": "card",
+      "refersTo": "today-card",
+      "description": "Dashboard Dziś card: hairline-divided rows; only the first actionable row is blue; a done row takes the Done Green Tint wash while the section keeps its hairline border.",
+      "html": "<section class=\"ds-today\" aria-label=\"Dziś\"><ul><li><div class=\"ds-today-body\"><h2><span class=\"ds-sr\">Dziś: </span>Nogi i pośladki</h2><p class=\"ds-today-status\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"1\"/></svg><b>Rozpoczęty 17:05</b><span>· 5 ćwiczeń</span></p><div class=\"ds-today-prog\"><span class=\"ds-bar\"><span style=\"width:40%\"></span></span><b>6 z 15 serii</b></div></div><a class=\"ds-today-primary\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"currentColor\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 3 20 12 6 21 6 3z\"/></svg>Kontynuuj</a></li><li><div class=\"ds-today-body\"><h2><span class=\"ds-sr\">Dziś: </span>Push — klatka i barki</h2><p class=\"ds-today-meta\">6 ćwiczeń · 18 serii · Klatka, Barki</p></div><button class=\"ds-today-outline\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"currentColor\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 3 20 12 6 21 6 3z\"/></svg>Rozpocznij</button></li><li class=\"ds-today-done\"><div class=\"ds-today-body ds-today-donebody\"><span class=\"ds-today-check\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg></span><div><h2><span class=\"ds-sr\">Dziś: </span>Pull — plecy i biceps</h2><p class=\"ds-today-meta\"><b class=\"ds-ok\">Wykonany</b> · 5 ćwiczeń · 15 serii · 4 820 kg</p></div></div><a class=\"ds-today-link\" href=\"#\">Szczegóły</a></li></ul></section>",
+      "css": ".ds-today { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); overflow: hidden; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--foreground); } .ds-today ul { list-style: none; margin: 0; padding: 0; } .ds-today li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 20px; } .ds-today li + li { border-top: 1px solid var(--border); } .ds-today-done { background: var(--success-surface); } .ds-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } .ds-today h2 { margin: 0; font-size: 24px; line-height: 1.25; font-weight: 600; letter-spacing: -0.025em; } .ds-today-meta { margin: 4px 0 0; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; } .ds-ok { color: var(--success); font-weight: 500; } .ds-today-status { display: flex; align-items: center; gap: 6px; margin: 6px 0 0; font-size: 13px; font-variant-numeric: tabular-nums; } .ds-today-status b { font-weight: 500; } .ds-today-status span { color: var(--muted); } .ds-today-prog { display: flex; align-items: center; gap: 12px; margin-top: 12px; font-size: 13px; font-variant-numeric: tabular-nums; } .ds-today-prog b { font-weight: 500; } .ds-bar { display: block; width: 160px; height: 6px; overflow: hidden; border-radius: 9999px; background: var(--surface-muted); } .ds-bar span { display: block; height: 100%; border-radius: 9999px; background: var(--foreground); } .ds-today-primary, .ds-today-outline { display: inline-flex; align-items: center; gap: 8px; border-radius: 8px; font-weight: 600; text-decoration: none; cursor: pointer; } .ds-today-primary { height: 48px; padding: 0 24px; border: 0; background: var(--accent); color: var(--accent-foreground); font-size: 15px; } .ds-today-primary:hover { opacity: .9; } .ds-today-outline { height: 44px; padding: 0 16px; border: 1px solid var(--border); background: transparent; color: var(--foreground); font-size: 14px; } .ds-today-outline:hover { background: var(--surface-muted); } .ds-today-primary:focus-visible, .ds-today-outline:focus-visible, .ds-today-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; } .ds-today-donebody { display: flex; align-items: flex-start; gap: 12px; } .ds-today-check { display: grid; place-items: center; width: 32px; height: 32px; margin-top: 2px; border-radius: 9999px; background: var(--success); color: var(--success-foreground); } .ds-today-link { display: flex; align-items: center; height: 44px; font-size: 14px; font-weight: 500; color: var(--accent); text-decoration: none; } .ds-today-link:hover { text-decoration: underline; }"
+    },
+    {
+      "name": "Week Strip",
+      "kind": "custom",
+      "refersTo": "week-day-trained",
+      "description": "Mon–Sun planner week on the dashboard: Done Green Tint cell for a day with a finished workout, planner status dots, today as a filled blue number circle.",
+      "html": "<section class=\"ds-week\"><div class=\"ds-week-head\"><h2>Ten tydzień</h2><p>2 z 4 wykonanych · 3 tygodnie z rzędu</p></div><ol><li><a href=\"#\" class=\"ds-trained\"><span class=\"ds-wd\">Pon</span><span class=\"ds-num\">22</span><span class=\"ds-dots\"><i style=\"background:var(--success)\"></i></span></a></li><li><a href=\"#\" class=\"\"><span class=\"ds-wd\">Wt</span><span class=\"ds-num\">23</span><span class=\"ds-dots\"></span></a></li><li><a href=\"#\" class=\"ds-trained ds-today-day\" aria-current=\"date\"><span class=\"ds-wd\">Śr</span><span class=\"ds-num\">24</span><span class=\"ds-dots\"><i style=\"background:var(--success)\"></i></span></a></li><li><a href=\"#\" class=\"\"><span class=\"ds-wd\">Czw</span><span class=\"ds-num\">25</span><span class=\"ds-dots\"><i style=\"background:var(--muted)\"></i></span></a></li><li><a href=\"#\" class=\"\"><span class=\"ds-wd\">Pt</span><span class=\"ds-num\">26</span><span class=\"ds-dots\"></span></a></li><li><a href=\"#\" class=\"\"><span class=\"ds-wd\">Sob</span><span class=\"ds-num\">27</span><span class=\"ds-dots\"><i style=\"background:var(--muted)\"></i></span></a></li><li><a href=\"#\" class=\"\"><span class=\"ds-wd\">Nd</span><span class=\"ds-num\">28</span><span class=\"ds-dots\"></span></a></li></ol></section>",
+      "css": ".ds-week { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); padding: 20px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--foreground); } .ds-week-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; margin-bottom: 12px; } .ds-week-head h2 { margin: 0; font-size: 17px; font-weight: 600; } .ds-week-head p { margin: 0; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; } .ds-week ol { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; list-style: none; margin: 0; padding: 0; } .ds-week a { display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 80px; padding: 8px 0; border-radius: 8px; color: inherit; text-decoration: none; transition: background-color .15s; } .ds-week a:hover { background: var(--surface-muted); } .ds-week a.ds-trained { background: var(--success-surface); } .ds-week a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; } .ds-wd { font-size: 11px; font-weight: 500; color: var(--muted); } .ds-num { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 9999px; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; } .ds-today-day .ds-wd { color: var(--accent); } .ds-today-day .ds-num { background: var(--accent); color: var(--accent-foreground); } .ds-dots { display: flex; gap: 4px; height: 6px; } .ds-dots i { width: 6px; height: 6px; border-radius: 9999px; }"
+    },
+    {
+      "name": "Fresh Records",
+      "kind": "custom",
+      "refersTo": "pr-medal",
+      "description": "Dashboard record rows led by the 32px Record Gold medal, the same medal that replaces the set number in the logger when a PR lands.",
+      "html": "<ul class=\"ds-fr\"><li><a href=\"#\"><span class=\"ds-medal\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/><path d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22\"/><path d=\"M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22\"/><path d=\"M18 2H6v7a6 6 0 0 0 12 0V2Z\"/></svg></span><span class=\"ds-fr-t\"><b>Wyciskanie sztangi leżąc</b><span>Szac. 1RM · 22 wrz</span></span><span class=\"ds-fr-v\">96,3 kg</span></a></li><li><a href=\"#\"><span class=\"ds-medal\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/><path d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22\"/><path d=\"M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22\"/><path d=\"M18 2H6v7a6 6 0 0 0 12 0V2Z\"/></svg></span><span class=\"ds-fr-t\"><b>Przysiad ze sztangą</b><span>Maks. ciężar · 18 wrz</span></span><span class=\"ds-fr-v\">120 kg</span></a></li></ul>",
+      "css": ".ds-fr { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); list-style: none; margin: 0; padding: 0; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--foreground); overflow: hidden; } .ds-fr li + li { border-top: 1px solid var(--border); } .ds-fr a { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 10px 16px; color: inherit; text-decoration: none; } .ds-fr a:hover { background: var(--surface-muted); } .ds-fr a:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; } .ds-medal { display: grid; place-items: center; flex-shrink: 0; width: 32px; height: 32px; border-radius: 9999px; background: var(--pr); color: var(--pr-foreground); } .ds-fr-t { flex: 1; min-width: 0; } .ds-fr-t b { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 14px; font-weight: 500; } .ds-fr-t span { display: block; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; } .ds-fr-v { flex-shrink: 0; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }"
     }
   ],
   "narrative": {
@@ -596,7 +629,7 @@
       },
       {
         "name": "The Green Means Done Rule",
-        "body": "Done Green marks completed work and nothing else: a completed set, or a scheduled workout that was completed. A completed row or entry card is tinted in full, and its check is green (solid on the set check, a green check icon beside \"Wykonany\" on the entry card).",
+        "body": "Done Green marks completed work and nothing else: a completed set, or a scheduled workout that was completed. A completed row or entry card is tinted in full, and its check is green (solid on the set check, a green check icon beside \"Wykonany\" on the entry card). On the dashboard the rule reaches two glances at the same completed work: today's finished workout on the Dziś card, and the week-strip days on which a workout was finished (the activity map's meaning, at week scale).",
         "section": "colors"
       },
       {
@@ -636,7 +669,8 @@
       }
     ],
     "dos": [
-      "Do use Signal Blue for every primary action, focus state, and progress indicator, and for nothing decorative.",
+      "Do use Signal Blue for every primary action, focus state, and progress indicator, and for nothing decorative. (The Dziś card's in-progress bar is the exception. It is drawn in Chalk so the card's one blue element stays the action.)",
+      "Do keep one Signal Blue action per dashboard. Only the first actionable Dziś row is blue, and the other dashboard actions are Outline buttons or quiet links.",
       "Do keep the five-column set grid (36px | flexible | 84px | 84px | 44px) identical across the header and every row.",
       "Do use tabular figures for every weight, rep, time, and count.",
       "Do keep interactive targets at 44px or taller on the logging surface, with the check in the far-right column.",
@@ -650,7 +684,7 @@
     ],
     "donts": [
       "Don't use Record Gold for anything except a personal record.",
-      "Don't use Done Green for anything except a completed set, a completed scheduled workout, or a training day in the activity map.",
+      "Don't use Done Green for anything except a completed set, a completed scheduled workout, a training day in the activity map or the dashboard week strip, or today's finished workout on the Dziś card.",
       "Don't nest cards inside cards. Exercise blocks are open sections, not containers.",
       "Don't add a second typeface, a display face, or monospace data. Geist and its tabular figures cover everything.",
       "Don't put uppercase tracked labels above headings. Uppercase is only for table column headers and list-group headers.",
