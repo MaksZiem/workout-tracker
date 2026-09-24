@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { Trophy } from "lucide-react";
-import type { Toast } from "@/lib/log/use-workout-log";
+export type Toast = { id: number; message: string; tone: "default" | "pr" | "error"; undo?: () => void };
 
 const DURATION = 5000;
 

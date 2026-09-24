@@ -120,6 +120,20 @@ export class WorkoutController {
     return this.workoutService.duplicateWorkout(user.id, id);
   }
 
+  @Post('/:id/finish')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: 'Zakończ trening',
+    description:
+      'Ustawia finishedAt (jeśli jeszcze nie ustawione) i oznacza powiązany zaplanowany trening jako COMPLETED. Operacja idempotentna.',
+  })
+  @ApiParam({ name: 'id', type: Number, example: 1, description: 'Identyfikator treningu' })
+  @ApiResponse({ status: 201, description: 'Zakończony trening', type: Workout })
+  @ApiNotFoundResponse({ description: 'Trening nie istnieje lub nie należy do zalogowanego użytkownika', type: NotFoundErrorDto })
+  finish(@CurrentUser() user: User, @Param('id', ParseIntPipe) id: number) {
+    return this.workoutService.finish(user.id, id);
+  }
+
   // workout exercise
 
   @Post('/:workoutId/exercise')

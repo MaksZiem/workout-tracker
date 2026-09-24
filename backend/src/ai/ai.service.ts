@@ -19,7 +19,7 @@ interface GeneratedPlan {
       exerciseId: number;
       order: number;
       targetSets: number;
-      targetReps: number;
+      targetReps: number;Ń
       targetWeight?: number;
       restSeconds?: number;
     }[];

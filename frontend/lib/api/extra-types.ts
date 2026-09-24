@@ -11,6 +11,7 @@ export type Workout = Schemas["Workout"];
 export type WorkoutPlan = Schemas["WorkoutPlan"];
 export type WorkoutTemplate = Schemas["WorkoutTemplate"];
 export type UserDto = Schemas["UserDto"];
+export type ScheduledWorkout = Schemas["ScheduledWorkout"];
 
 export const USER_ROLES = ["USER", "ADMIN"] as const;
 export type UserRole = (typeof USER_ROLES)[number];
@@ -32,7 +33,7 @@ export type MuscleGroup = (typeof MUSCLE_GROUPS)[number];
 export const TRAINING_GOALS = ["STRENGTH", "HYPERTROPHY", "ENDURANCE", "GENERAL"] as const;
 export type TrainingGoal = (typeof TRAINING_GOALS)[number];
 
-export const SCHEDULED_WORKOUT_STATUSES = ["PLANNED", "COMPLETED", "SKIPPED"] as const;
+export const SCHEDULED_WORKOUT_STATUSES = ["PLANNED", "IN_PROGRESS", "COMPLETED", "SKIPPED"] as const;
 export type ScheduledWorkoutStatus = (typeof SCHEDULED_WORKOUT_STATUSES)[number];
 
 /** GET /stats/exercise/:exerciseId/progress (tablica) */

@@ -9,7 +9,7 @@ import { ExerciseBlock } from "./exercise-block";
 import { AddExerciseSheet } from "./add-exercise-sheet";
 import { ParseSheet } from "./parse-sheet";
 import { FinishSheet } from "./finish-sheet";
-import { ToastView } from "./toast-view";
+import { ToastView } from "@/components/ui/toast";
 
 type SheetName = "exercise" | "parse" | "finish" | null;
 
@@ -151,6 +151,7 @@ export function WorkoutLogger({ workout }: { workout: LogWorkout }) {
         exercises={log.exercises}
         pendingCount={log.pendingCount}
         onFinish={log.flush}
+        onFinishNow={log.finishNow}
       />
 
       <ToastView toast={log.toast} onDismiss={log.dismissToast} undoLabel={t("toast.undo")} />

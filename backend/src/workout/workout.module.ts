@@ -7,10 +7,11 @@ import { WorkoutExercise } from './workout-exercise.entity';
 import { ExerciseSet } from './exercise-set.entity';
 import { ExerciseModule } from 'src/exercise/exercise.module';
 import { UsersModule } from 'src/users/users.module';
+import { ScheduledWorkout } from 'src/planner/scheduled-workout.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workout, WorkoutExercise, ExerciseSet]),
+    TypeOrmModule.forFeature([Workout, WorkoutExercise, ExerciseSet, ScheduledWorkout]),
     ExerciseModule,
     UsersModule,
   ],

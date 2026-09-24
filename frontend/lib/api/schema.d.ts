@@ -246,6 +246,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/workout/{id}/finish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Zakończ trening
+         * @description Ustawia finishedAt (jeśli jeszcze nie ustawione) i oznacza powiązany zaplanowany trening jako COMPLETED. Operacja idempotentna.
+         */
+        post: operations["WorkoutController_finish"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/workout/{workoutId}/exercise": {
         parameters: {
             query?: never;
@@ -678,7 +698,7 @@ export interface paths {
         head?: never;
         /**
          * Zaktualizuj zaplanowany trening
-         * @description Pozwala zmienić datę i/lub status (PLANNED, COMPLETED, SKIPPED).
+         * @description Pozwala zmienić datę i/lub status (PLANNED, IN_PROGRESS, COMPLETED, SKIPPED).
          */
         patch: operations["PlannerController_update"];
         trace?: never;
@@ -694,7 +714,7 @@ export interface paths {
         put?: never;
         /**
          * Rozpocznij zaplanowany trening
-         * @description Tworzy rzeczywisty trening (Workout) na podstawie szablonu przypisanego do zaplanowanej pozycji, wypełniając serie wartościami docelowymi z szablonu, a następnie oznacza pozycję w kalendarzu jako COMPLETED.
+         * @description Tworzy rzeczywisty trening (Workout) na podstawie szablonu przypisanego do zaplanowanej pozycji, wypełniając serie wartościami docelowymi z szablonu, a następnie oznacza pozycję w kalendarzu jako IN_PROGRESS. Status COMPLETED ustawia POST /workout/{id}/finish.
          */
         post: operations["PlannerController_start"];
         delete?: never;
@@ -1007,6 +1027,12 @@ export interface components {
             notes?: string;
             /** @description Ćwiczenia wykonane w ramach treningu wraz z seriami (zwracane przy pobieraniu pojedynczego treningu) */
             exercises?: components["schemas"]["WorkoutExercise"][];
+            /**
+             * Format: date-time
+             * @description Moment zakończenia treningu (null = trening w trakcie). Ustawiany przez POST /workout/{id}/finish.
+             * @example 2026-09-22T19:40:00.000Z
+             */
+            finishedAt?: string | null;
             /**
              * Format: date-time
              * @description Data utworzenia rekordu w systemie
@@ -1389,7 +1415,7 @@ export interface components {
              * @example PLANNED
              * @enum {string}
              */
-            status: "PLANNED" | "COMPLETED" | "SKIPPED";
+            status: "PLANNED" | "IN_PROGRESS" | "COMPLETED" | "SKIPPED";
             /** @description Faktyczny trening utworzony po rozpoczęciu zaplanowanej sesji (patrz POST /planner/scheduled/{id}/start) */
             workout?: components["schemas"]["Workout"] | null;
             user: components["schemas"]["User"];
@@ -1447,7 +1473,7 @@ export interface components {
              * @example SKIPPED
              * @enum {string}
              */
-            status?: "PLANNED" | "COMPLETED" | "SKIPPED";
+            status?: "PLANNED" | "IN_PROGRESS" | "COMPLETED" | "SKIPPED";
         };
         GenerateWorkoutPlanDto: {
             /**
@@ -2220,6 +2246,47 @@ export interface operations {
                 };
             };
             /** @description Trening źródłowy nie istnieje lub nie należy do zalogowanego użytkownika */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundErrorDto"];
+                };
+            };
+        };
+    };
+    WorkoutController_finish: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Identyfikator treningu */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Zakończony trening */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Workout"];
+                };
+            };
+            /** @description Brak tokenu lub token nieprawidłowy */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthorizedErrorDto"];
+                };
+            };
+            /** @description Trening nie istnieje lub nie należy do zalogowanego użytkownika */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -3380,7 +3447,10 @@ export interface operations {
     };
     PlannerController_findToday: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Dzisiejsza data w strefie użytkownika (YYYY-MM-DD). Domyślnie bieżący dzień w UTC. */
+                date?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;

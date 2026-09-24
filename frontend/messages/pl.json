@@ -182,7 +182,9 @@
         "cancel": "Wróć do treningu",
         "pendingWarning": "Część zmian nie jest jeszcze zapisana. Zaczekaj na połączenie.",
         "exerciseLine": "{done}/{total} serii · najlepsza {best}",
-        "exerciseNone": "{done}/{total} serii"
+        "exerciseNone": "{done}/{total} serii",
+        "failed": "Nie udało się zapisać wszystkich zmian. Sprawdź połączenie i spróbuj ponownie.",
+        "finishAnyway": "Zakończ mimo to"
       },
       "toast": {
         "undo": "Cofnij",
@@ -206,7 +208,87 @@
     },
     "planner": {
       "title": "Planer",
-      "description": "Kalendarz zaplanowanych treningów: generowanie harmonogramu z planu, zmiana statusu i rozpoczynanie treningu."
+      "description": "Kalendarz zaplanowanych treningów: generowanie harmonogramu z planu, zmiana statusu i rozpoczynanie treningu.",
+      "view": {
+        "label": "Widok",
+        "week": "Tydzień",
+        "month": "Miesiąc"
+      },
+      "nav": {
+        "prevWeek": "Poprzedni tydzień",
+        "nextWeek": "Następny tydzień",
+        "prevMonth": "Poprzedni miesiąc",
+        "nextMonth": "Następny miesiąc",
+        "today": "Dziś"
+      },
+      "generate": {
+        "open": "Generuj z planu",
+        "title": "Generuj z planu",
+        "plan": "Plan",
+        "choosePlan": "Wybierz plan",
+        "loadingPlan": "Wczytywanie planu…",
+        "noTemplates": "Ten plan nie ma jeszcze szablonów.",
+        "days": "Dni treningowe",
+        "dayFor": "Dzień dla szablonu {name}",
+        "weeks": "Liczba tygodni",
+        "weeksValue": "{count, plural, one {# tydzień} few {# tygodnie} other {# tygodni}}",
+        "range": "Od {from} do {to}",
+        "preview": "{count, plural, =0 {Nic nie zostanie utworzone} one {Utworzysz # trening} few {Utworzysz # treningi} other {Utworzysz # treningów}}",
+        "skipped": "{count, plural, one {# dzień pominięty, bo jest już zajęty} few {# dni pominięte, bo są już zajęte} other {# dni pominiętych, bo są już zajęte}}",
+        "submit": "Generuj",
+        "pending": "Generowanie…",
+        "done": "{count, plural, one {Zaplanowano # trening} few {Zaplanowano # treningi} other {Zaplanowano # treningów}}",
+        "error": "Nie udało się wygenerować harmonogramu. Spróbuj ponownie.",
+        "noPlans": "Nie masz jeszcze żadnego planu. Utwórz plan albo wygeneruj go z AI.",
+        "toPlans": "Przejdź do planów",
+        "decrease": "Mniej tygodni",
+        "increase": "Więcej tygodni"
+      },
+      "entry": {
+        "exercises": "{count, plural, one {# ćwiczenie} few {# ćwiczenia} other {# ćwiczeń}}",
+        "overdue": "Zaległy",
+        "noTemplate": "Usunięty szablon",
+        "menu": "Opcje: {name}",
+        "start": "Rozpocznij",
+        "continue": "Kontynuuj",
+        "viewWorkout": "Zobacz trening",
+        "move": "Przenieś",
+        "skip": "Oznacz jako pominięty",
+        "restore": "Przywróć do planu",
+        "delete": "Usuń z planu"
+      },
+      "day": {
+        "add": "Dodaj trening",
+        "addTo": "Dodaj trening: {date}",
+        "empty": "Brak treningów",
+        "today": "Dziś",
+        "rest": "Odpoczynek"
+      },
+      "add": {
+        "title": "Dodaj trening",
+        "subtitle": "{date}",
+        "noTemplates": "Nie masz szablonów. Utwórz szablon albo plan.",
+        "toTemplates": "Przejdź do szablonów"
+      },
+      "move": {
+        "title": "Przenieś trening",
+        "date": "Nowa data",
+        "submit": "Przenieś"
+      },
+      "empty": {
+        "title": "Nic nie zaplanowane w tym tygodniu",
+        "monthTitle": "Nic nie zaplanowane w tym miesiącu",
+        "body": "Wygeneruj harmonogram z planu, a treningi pojawią się w kalendarzu."
+      },
+      "summary": "{done} z {total} wykonanych",
+      "toast": {
+        "removed": "Usunięto z planu",
+        "skipped": "Oznaczono jako pominięty",
+        "restored": "Przywrócono do planu",
+        "moved": "Przeniesiono na {date}",
+        "added": "Dodano {name}",
+        "error": "Nie udało się zapisać zmiany. Spróbuj ponownie."
+      }
     },
     "plans": {
       "title": "Plany treningowe",
@@ -270,6 +352,7 @@
     },
     "scheduledWorkoutStatus": {
       "PLANNED": "Zaplanowany",
+      "IN_PROGRESS": "W trakcie",
       "COMPLETED": "Wykonany",
       "SKIPPED": "Pominięty"
     }

@@ -40,6 +40,7 @@ export class TemplateService {
   findAllForUser(userId: number) {
     return this.repo.find({
       where: { user: { id: userId } },
+      relations: ['exercises', 'exercises.exercise'],
       order: { createdAt: 'DESC' },
     });
   }

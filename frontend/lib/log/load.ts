@@ -79,14 +79,10 @@ export type StartedItem = {
 export async function loadToday() {
   const api = await serverApi();
   const today = localDate();
-  // Backend liczy „dziś” planera w UTC, a trening z planu dostaje datę z planu.
-  // Między północą a 2:00 w Polsce to różne dni, więc bierzemy oba.
-  const utcToday = new Date().toISOString().slice(0, 10);
-  const [from, to] = [today, utcToday].sort();
 
   const [{ data: scheduled }, { data: workouts }] = await Promise.all([
-    api.GET("/planner/today"),
-    api.GET("/workout", { params: { query: { from, to } } }),
+    api.GET("/planner/today", { params: { query: { date: today } } }),
+    api.GET("/workout", { params: { query: { from: today, to: today } } }),
   ]);
 
   const planned: PlannedItem[] = (scheduled ?? [])
@@ -103,7 +99,10 @@ export async function loadToday() {
     });
 
   const details = await Promise.all(
-    (workouts ?? []).map((w) => api.GET("/workout/{id}", { params: { path: { id: w.id } } })),
+    // Tylko treningi w trakcie; zakończone (finishedAt) nie wracają do wyboru.
+    (workouts ?? [])
+      .filter((w) => !w.finishedAt)
+      .map((w) => api.GET("/workout/{id}", { params: { path: { id: w.id } } })),
   );
   const started: StartedItem[] = details
     .map(({ data }) => data)

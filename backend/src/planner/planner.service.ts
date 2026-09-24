@@ -106,16 +106,18 @@ export class PlannerService {
 
     return this.repo.find({
       where,
-      relations: ['template'],
+      relations: ['template', 'workout'],
       order: { date: 'ASC' },
     });
   }
 
-  findToday(userId: number) {
-    const today = new Date().toISOString().slice(0, 10);
+  // `date` pozwala klientowi podać własny „dzisiaj” (strefa użytkownika);
+  // bez niego liczymy dzień w UTC.
+  findToday(userId: number, date?: string) {
+    const today = date ?? new Date().toISOString().slice(0, 10);
     return this.repo.find({
       where: { user: { id: userId }, date: today },
-      relations: ['template', 'template.exercises', 'template.exercises.exercise'],
+      relations: ['template', 'template.exercises', 'template.exercises.exercise', 'workout'],
     });
   }
 
@@ -165,7 +167,7 @@ export class PlannerService {
     );
 
     scheduled.workout = workout;
-    scheduled.status = ScheduledWorkoutStatus.COMPLETED;
+    scheduled.status = ScheduledWorkoutStatus.IN_PROGRESS;
     return this.repo.save(scheduled);
   }
 }

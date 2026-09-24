@@ -7,6 +7,8 @@ import { Trophy } from "lucide-react";
 import { Sheet } from "@/components/ui/sheet";
 import { personalRecords, workoutTotals, type LogExercise, type LogWorkout } from "@/lib/log/model";
 
+const FINISH_TIMEOUT = 12000;
+
 export function FinishSheet({
   open,
   onClose,
@@ -14,6 +16,7 @@ export function FinishSheet({
   exercises,
   pendingCount,
   onFinish,
+  onFinishNow,
 }: {
   open: boolean;
   onClose: () => void;
@@ -21,6 +24,7 @@ export function FinishSheet({
   exercises: LogExercise[];
   pendingCount: number;
   onFinish: (removeUnchecked: boolean) => Promise<void>;
+  onFinishNow: () => Promise<void>;
 }) {
   const t = useTranslations("pages.log.finish");
   const tNav = useTranslations("nav");
@@ -30,15 +34,37 @@ export function FinishSheet({
   const now = useNow({ updateInterval: 30000 });
   const [removeUnchecked, setRemoveUnchecked] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   const totals = workoutTotals(exercises);
   const unchecked = totals.total - totals.done;
   const minutes = Math.max(1, Math.round((now.getTime() - new Date(workout.createdAt).getTime()) / 60000));
 
+  // Kolejka zapisów może ponawiać bez końca przy braku sieci, więc czekamy
+  // ograniczony czas, a potem dajemy wybór zamiast wiecznego „Zapisywanie…”.
   const finish = async () => {
     setSaving(true);
-    await onFinish(unchecked > 0 && removeUnchecked);
-    router.push(`/workouts/${workout.id}`);
+    setFailed(false);
+    try {
+      await Promise.race([
+        onFinish(unchecked > 0 && removeUnchecked),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), FINISH_TIMEOUT)),
+      ]);
+      router.push(`/workouts/${workout.id}`);
+    } catch {
+      setFailed(true);
+      setSaving(false);
+    }
+  };
+
+  const finishAnyway = async () => {
+    setSaving(true);
+    try {
+      await onFinishNow();
+      router.push(`/workouts/${workout.id}`);
+    } catch {
+      setSaving(false);
+    }
   };
 
   const stats = [
@@ -64,6 +90,16 @@ export function FinishSheet({
           >
             {saving ? t("saving") : t("confirm")}
           </button>
+          {failed ? (
+            <button
+              type="button"
+              onClick={finishAnyway}
+              disabled={saving}
+              className="h-11 w-full rounded-lg bg-surface-muted text-sm font-medium hover:bg-surface-strong disabled:opacity-60"
+            >
+              {t("finishAnyway")}
+            </button>
+          ) : null}
           <button
             type="button"
             onClick={onClose}
@@ -148,7 +184,13 @@ export function FinishSheet({
         </fieldset>
       ) : null}
 
-      {pendingCount > 0 ? <p className="mt-4 text-sm text-muted">{t("pendingWarning")}</p> : null}
+      {failed ? (
+        <p role="alert" className="mt-4 rounded-lg bg-danger-surface px-3 py-2.5 text-sm text-danger">
+          {t("failed")}
+        </p>
+      ) : pendingCount > 0 ? (
+        <p className="mt-4 text-sm text-muted">{t("pendingWarning")}</p>
+      ) : null}
     </Sheet>
   );
 }

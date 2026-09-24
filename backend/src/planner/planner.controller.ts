@@ -25,6 +25,7 @@ import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { User } from 'src/users/user.entity';
 import { CreateScheduledWorkoutDto } from './dtos/create-scheduled-workout.dto';
 import { UpdateScheduledWorkoutDto } from './dtos/update-scheduled-workout.dto';
+import { FindTodayDto } from './dtos/find-today.dto';
 import { FindScheduledWorkoutDto } from './dtos/find-scheduled-workout.dto';
 import { GenerateScheduleDto } from './dtos/generate-schedule.dto';
 import { ScheduledWorkout } from './scheduled-workout.entity';
@@ -74,13 +75,13 @@ export class PlannerController {
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Pobierz dzisiejsze treningi', description: 'Zwraca treningi zaplanowane na dzisiaj wraz z pełnymi danymi szablonu i ćwiczeń.' })
   @ApiResponse({ status: 200, description: 'Treningi zaplanowane na dziś', type: ScheduledWorkout, isArray: true })
-  findToday(@CurrentUser() user: User) {
-    return this.plannerService.findToday(user.id);
+  findToday(@CurrentUser() user: User, @Query() query: FindTodayDto) {
+    return this.plannerService.findToday(user.id, query.date);
   }
 
   @Patch('/scheduled/:id')
   @UseGuards(AuthGuard)
-  @ApiOperation({ summary: 'Zaktualizuj zaplanowany trening', description: 'Pozwala zmienić datę i/lub status (PLANNED, COMPLETED, SKIPPED).' })
+  @ApiOperation({ summary: 'Zaktualizuj zaplanowany trening', description: 'Pozwala zmienić datę i/lub status (PLANNED, IN_PROGRESS, COMPLETED, SKIPPED).' })
   @ApiParam({ name: 'id', type: Number, example: 1 })
   @ApiResponse({ status: 200, description: 'Zaktualizowany zaplanowany trening', type: ScheduledWorkout })
   @ApiNotFoundResponse({ description: 'Zaplanowany trening nie istnieje lub nie należy do użytkownika', type: NotFoundErrorDto })
@@ -107,7 +108,7 @@ export class PlannerController {
   @ApiOperation({
     summary: 'Rozpocznij zaplanowany trening',
     description:
-      'Tworzy rzeczywisty trening (Workout) na podstawie szablonu przypisanego do zaplanowanej pozycji, wypełniając serie wartościami docelowymi z szablonu, a następnie oznacza pozycję w kalendarzu jako COMPLETED.',
+      'Tworzy rzeczywisty trening (Workout) na podstawie szablonu przypisanego do zaplanowanej pozycji, wypełniając serie wartościami docelowymi z szablonu, a następnie oznacza pozycję w kalendarzu jako IN_PROGRESS. Status COMPLETED ustawia POST /workout/{id}/finish.',
   })
   @ApiParam({ name: 'id', type: Number, example: 1 })
   @ApiResponse({ status: 201, description: 'Zaplanowany trening z powiązanym nowo utworzonym treningiem', type: ScheduledWorkout })

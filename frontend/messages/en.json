@@ -182,7 +182,9 @@
         "cancel": "Back to workout",
         "pendingWarning": "Some changes aren't saved yet. Wait for the connection.",
         "exerciseLine": "{done}/{total} sets · best {best}",
-        "exerciseNone": "{done}/{total} sets"
+        "exerciseNone": "{done}/{total} sets",
+        "failed": "Couldn't save all changes. Check your connection and try again.",
+        "finishAnyway": "Finish anyway"
       },
       "toast": {
         "undo": "Undo",
@@ -206,7 +208,87 @@
     },
     "planner": {
       "title": "Planner",
-      "description": "A calendar of scheduled workouts: generate a schedule from a plan, change status, and start a workout."
+      "description": "A calendar of scheduled workouts: generate a schedule from a plan, change status, and start a workout.",
+      "view": {
+        "label": "View",
+        "week": "Week",
+        "month": "Month"
+      },
+      "nav": {
+        "prevWeek": "Previous week",
+        "nextWeek": "Next week",
+        "prevMonth": "Previous month",
+        "nextMonth": "Next month",
+        "today": "Today"
+      },
+      "generate": {
+        "open": "Generate from plan",
+        "title": "Generate from plan",
+        "plan": "Plan",
+        "choosePlan": "Choose a plan",
+        "loadingPlan": "Loading plan…",
+        "noTemplates": "This plan has no templates yet.",
+        "days": "Training days",
+        "dayFor": "Day for template {name}",
+        "weeks": "Number of weeks",
+        "weeksValue": "{count, plural, one {# week} other {# weeks}}",
+        "range": "From {from} to {to}",
+        "preview": "{count, plural, =0 {Nothing will be created} one {You'll create # workout} other {You'll create # workouts}}",
+        "skipped": "{count, plural, one {# day skipped because it's already taken} other {# days skipped because they're already taken}}",
+        "submit": "Generate",
+        "pending": "Generating…",
+        "done": "{count, plural, one {Scheduled # workout} other {Scheduled # workouts}}",
+        "error": "Couldn't generate the schedule. Try again.",
+        "noPlans": "You don't have any plans yet. Create one or generate it with AI.",
+        "toPlans": "Go to plans",
+        "decrease": "Fewer weeks",
+        "increase": "More weeks"
+      },
+      "entry": {
+        "exercises": "{count, plural, one {# exercise} other {# exercises}}",
+        "overdue": "Overdue",
+        "noTemplate": "Deleted template",
+        "menu": "Options: {name}",
+        "start": "Start",
+        "continue": "Continue",
+        "viewWorkout": "View workout",
+        "move": "Move",
+        "skip": "Mark as skipped",
+        "restore": "Restore to plan",
+        "delete": "Remove from plan"
+      },
+      "day": {
+        "add": "Add workout",
+        "addTo": "Add workout: {date}",
+        "empty": "No workouts",
+        "today": "Today",
+        "rest": "Rest"
+      },
+      "add": {
+        "title": "Add workout",
+        "subtitle": "{date}",
+        "noTemplates": "You don't have any templates. Create a template or a plan.",
+        "toTemplates": "Go to templates"
+      },
+      "move": {
+        "title": "Move workout",
+        "date": "New date",
+        "submit": "Move"
+      },
+      "empty": {
+        "title": "Nothing planned this week",
+        "monthTitle": "Nothing planned this month",
+        "body": "Generate a schedule from a plan and your workouts will appear on the calendar."
+      },
+      "summary": "{done} of {total} done",
+      "toast": {
+        "removed": "Removed from plan",
+        "skipped": "Marked as skipped",
+        "restored": "Restored to plan",
+        "moved": "Moved to {date}",
+        "added": "Added {name}",
+        "error": "Couldn't save the change. Try again."
+      }
     },
     "plans": {
       "title": "Workout plans",
@@ -270,6 +352,7 @@
     },
     "scheduledWorkoutStatus": {
       "PLANNED": "Planned",
+      "IN_PROGRESS": "In progress",
       "COMPLETED": "Completed",
       "SKIPPED": "Skipped"
     }

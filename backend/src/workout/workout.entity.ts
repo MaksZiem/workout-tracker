@@ -35,6 +35,16 @@ export class Workout {
   @OneToMany(() => WorkoutExercise, (we) => we.workout, { cascade: true })
   exercises: WorkoutExercise[];
 
+  @ApiPropertyOptional({
+    description: 'Moment zakończenia treningu (null = trening w trakcie). Ustawiany przez POST /workout/{id}/finish.',
+    example: '2026-09-22T19:40:00.000Z',
+    type: String,
+    format: 'date-time',
+    nullable: true,
+  })
+  @Column({ type: 'timestamptz', nullable: true })
+  finishedAt: Date | null;
+
   @ApiProperty({ description: 'Data utworzenia rekordu w systemie', example: '2026-09-22T18:32:00.000Z' })
   @CreateDateColumn()
   createdAt: Date;

@@ -104,7 +104,8 @@ function waitForRetry(attempt: number) {
 let keySeq = 0;
 const newKey = (prefix: string) => `${prefix}-new-${Date.now()}-${keySeq++}`;
 
-export type Toast = { id: number; message: string; tone: "default" | "pr" | "error"; undo?: () => void };
+import type { Toast } from "@/components/ui/toast";
+export type { Toast };
 
 export type LogMessages = {
   setRemoved: string;
@@ -554,11 +555,18 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
         }
       }
       await Promise.all(chains.current.values());
+      await unwrap(clientApi.POST("/workout/{id}/finish", { params: { path: { id: workoutId } } }));
     },
     [enqueue, saveSet, workoutId],
   );
 
+  /** Oznacza trening jako zakończony bez czekania na kolejkę zapisów. */
+  const finishNow = useCallback(async () => {
+    await unwrap(clientApi.POST("/workout/{id}/finish", { params: { path: { id: workoutId } } }));
+  }, [workoutId]);
+
   return {
+    finishNow,
     exercises,
     toast,
     dismissToast,

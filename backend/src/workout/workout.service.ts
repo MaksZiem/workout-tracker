@@ -21,6 +21,8 @@ import { AddSetDto } from './dtos/add-set.dto';
 import { UpdateSetDto } from './dtos/update-set.dto';
 import { ExerciseSet } from './exercise-set.entity';
 import { WorkoutTemplate } from 'src/template/workout-template.entity';
+import { ScheduledWorkout } from 'src/planner/scheduled-workout.entity';
+import { ScheduledWorkoutStatus } from 'src/enums/scheduled-workout-status.enum';
 
 @Injectable()
 export class WorkoutService {
@@ -30,8 +32,29 @@ export class WorkoutService {
     private workoutExerciseRepo: Repository<WorkoutExercise>,
     @InjectRepository(ExerciseSet)
     private exerciseSetRepo: Repository<ExerciseSet>,
+    @InjectRepository(ScheduledWorkout)
+    private scheduledRepo: Repository<ScheduledWorkout>,
     private exerciseService: ExerciseService,
   ) {}
+
+  // Kończy trening (idempotentnie) i oznacza powiązany wpis w planerze jako wykonany.
+  async finish(userId: number, id: number) {
+    const workout = await this.repo.findOne({
+      where: { id, user: { id: userId } },
+    });
+    if (!workout) {
+      throw new NotFoundException('Workout not found');
+    }
+    if (!workout.finishedAt) {
+      workout.finishedAt = new Date();
+      await this.repo.save(workout);
+    }
+    await this.scheduledRepo.update(
+      { workout: { id }, user: { id: userId } },
+      { status: ScheduledWorkoutStatus.COMPLETED },
+    );
+    return workout;
+  }
 
   create(user: User, dto: CreateWorkoutDto) {
     const workout = this.repo.create({ ...dto, user });
