@@ -1,0 +1,277 @@
+{
+  "meta": {
+    "title": "Workout Tracker",
+    "description": "Log your workouts, plan your week, and track your progress."
+  },
+  "common": {
+    "appName": "Workout Tracker",
+    "loading": "Loading…",
+    "retry": "Try again",
+    "backToDashboard": "Back to dashboard",
+    "language": "Language",
+    "languages": {
+      "pl": "Polski",
+      "en": "English"
+    },
+    "signOut": "Sign out",
+    "role": {
+      "USER": "User",
+      "ADMIN": "Administrator"
+    },
+    "comingSoon": "This screen is in progress",
+    "endpoints": "API data"
+  },
+  "nav": {
+    "label": "Main navigation",
+    "groups": {
+      "training": "Training",
+      "planning": "Planning",
+      "progress": "Progress",
+      "admin": "Administration"
+    },
+    "dashboard": "Dashboard",
+    "log": "Log workout",
+    "workouts": "History",
+    "planner": "Planner",
+    "plans": "Plans",
+    "templates": "Templates",
+    "stats": "Stats",
+    "exercises": "Exercises",
+    "account": "Account",
+    "admin": "Admin panel",
+    "more": "More",
+    "close": "Close menu"
+  },
+  "auth": {
+    "signIn": {
+      "title": "Sign in",
+      "submit": "Sign in",
+      "pending": "Signing in…",
+      "noAccount": "Don't have an account?",
+      "toSignUp": "Create one",
+      "expired": "Your session expired. Please sign in again."
+    },
+    "signUp": {
+      "title": "Create an account",
+      "submit": "Create account",
+      "pending": "Creating account…",
+      "hasAccount": "Already have an account?",
+      "toSignIn": "Sign in"
+    },
+    "fields": {
+      "email": "Email",
+      "password": "Password",
+      "passwordHint": "8 to 24 characters",
+      "name": "First name",
+      "surname": "Last name"
+    },
+    "errors": {
+      "invalidCredentials": "Incorrect email or password.",
+      "userExists": "An account with this email already exists. Sign in or use a different email.",
+      "validation": "Fix the highlighted fields and try again.",
+      "unreachable": "Couldn't reach the server. Check that the backend is running and try again.",
+      "unknown": "Something went wrong. Try again in a moment."
+    }
+  },
+  "errors": {
+    "title": "This page couldn't load",
+    "description": "An unexpected error occurred. Try again, and if it keeps happening, reload the page.",
+    "notFoundTitle": "Page not found",
+    "notFoundDescription": "The address may have changed, or the page doesn't exist."
+  },
+  "pages": {
+    "dashboard": {
+      "title": "Dashboard",
+      "greeting": "Hi, {name}",
+      "description": "Today's workouts from the planner, your training streak, and a quick summary.",
+      "summary": "Streak: {streak, plural, one {# day} other {# days}} in a row · Workouts logged: {total}",
+      "summaryUnavailable": "Couldn't load your stats."
+    },
+    "log": {
+      "title": "Log workout",
+      "description": "Check off your planned sets, adjust weight and reps, and see records the moment you hit them.",
+      "picker": {
+        "planned": "Planned for today",
+        "started": "Started today",
+        "exercises": "{count, plural, one {# exercise} other {# exercises}}",
+        "sets": "{count, plural, one {# set} other {# sets}}",
+        "start": "Start",
+        "starting": "Starting…",
+        "continue": "Continue",
+        "startedAt": "Started at {time}",
+        "empty": "Empty workout",
+        "emptyHint": "Add exercises as you go.",
+        "creating": "Creating…",
+        "nothingTitle": "Nothing planned for today",
+        "nothingBody": "Start an empty workout, or plan your week in the planner.",
+        "toPlanner": "Open planner",
+        "noTemplate": "No template",
+        "error": "Couldn't start the workout. Try again."
+      },
+      "header": {
+        "setsDone": "{done}/{total} sets",
+        "finish": "Finish",
+        "elapsed": "Workout time",
+        "fullBody": "Workout"
+      },
+      "table": {
+        "set": "Set",
+        "previous": "Previous",
+        "kg": "kg",
+        "reps": "Reps",
+        "done": "Done",
+        "markDone": "Mark set {n} as done",
+        "markUndone": "Undo set {n}",
+        "copyPrevious": "Use previous result: {value}",
+        "weightLabel": "Weight for set {n}",
+        "repsLabel": "Reps for set {n}",
+        "decrease": "Decrease",
+        "increase": "Increase",
+        "setMenu": "Set {n} options",
+        "removeSet": "Remove set",
+        "unsaved": "Not saved yet, retrying…",
+        "failed": "Not saved. Tap to retry."
+      },
+      "exercise": {
+        "lastTime": "Last time {date}: {sets}",
+        "firstTime": "First time, no previous results",
+        "best": "Previous best: {weight} kg",
+        "addSet": "Add set",
+        "menu": "Exercise options",
+        "remove": "Remove exercise",
+        "fromAi": "Added from description"
+      },
+      "pr": {
+        "badge": "PR",
+        "weight": "New weight PR: {value} kg",
+        "e1rm": "New estimated 1RM PR: {value} kg",
+        "label": "Personal record"
+      },
+      "add": {
+        "exercise": "Add exercise",
+        "fromText": "Add from description",
+        "search": "Search exercises",
+        "noResults": "No exercises match “{query}”.",
+        "loading": "Loading catalog…",
+        "adding": "Adding…",
+        "loadError": "Couldn't load the exercise catalog."
+      },
+      "ai": {
+        "title": "Add from description",
+        "hint": "Describe what you did. AI matches exercises from the catalog and adds the sets as done.",
+        "placeholder": "e.g. bench press 3x8 80 kg, then flyes 3x12 14 kg",
+        "submit": "Recognize and add",
+        "pending": "Recognizing…",
+        "added": "{count, plural, one {Added # exercise} other {Added # exercises}} from the description",
+        "nothing": "AI didn't recognize any exercises. Try describing them in more detail.",
+        "error": "AI is unavailable right now. Add sets manually or try again shortly."
+      },
+      "finish": {
+        "title": "Finish workout?",
+        "summary": "Summary",
+        "sets": "Sets",
+        "volume": "Volume",
+        "duration": "Time",
+        "records": "Records",
+        "volumeValue": "{value} kg",
+        "unchecked": "{count, plural, one {# set isn't checked off} other {# sets aren't checked off}}.",
+        "removeUnchecked": "Remove unchecked sets",
+        "keepUnchecked": "Keep them in the workout",
+        "confirm": "Finish workout",
+        "saving": "Saving…",
+        "cancel": "Back to workout",
+        "pendingWarning": "Some changes aren't saved yet. Wait for the connection.",
+        "exerciseLine": "{done}/{total} sets · best {best}",
+        "exerciseNone": "{done}/{total} sets"
+      },
+      "toast": {
+        "undo": "Undo",
+        "setRemoved": "Set removed",
+        "exerciseRemoved": "Exercise removed",
+        "offline": "You're offline. Changes will save automatically."
+      },
+      "emptyWorkout": {
+        "title": "Empty workout",
+        "body": "Add your first exercise from the catalog, or describe the workout and AI will recognize it."
+      },
+      "notFound": "This workout wasn't found."
+    },
+    "workouts": {
+      "title": "Workout history",
+      "description": "Your logged workouts, with date filtering and duplication."
+    },
+    "workoutDetail": {
+      "title": "Workout #{id}",
+      "description": "Workout details: exercises, sets, and notes."
+    },
+    "planner": {
+      "title": "Planner",
+      "description": "A calendar of scheduled workouts: generate a schedule from a plan, change status, and start a workout."
+    },
+    "plans": {
+      "title": "Workout plans",
+      "description": "Plans that group templates, including AI-generated plans based on your goal and training days."
+    },
+    "planDetail": {
+      "title": "Plan #{id}",
+      "description": "The templates in this plan."
+    },
+    "templates": {
+      "title": "Templates",
+      "description": "Reusable workout templates with target sets, reps, weight, and rest time."
+    },
+    "templateDetail": {
+      "title": "Template #{id}",
+      "description": "The template's exercises and their targets."
+    },
+    "stats": {
+      "title": "Stats",
+      "description": "Exercise progress, personal records, muscle group distribution, and training frequency."
+    },
+    "exercises": {
+      "title": "Exercise catalog",
+      "description": "All exercises, grouped by muscle group."
+    },
+    "exerciseDetail": {
+      "title": "Exercise #{id}",
+      "description": "Exercise details, your records, and similar exercises."
+    },
+    "account": {
+      "title": "Account",
+      "description": "Change your email and password."
+    },
+    "admin": {
+      "title": "Admin panel",
+      "description": "Manage the global exercise catalog and user accounts."
+    },
+    "adminExercises": {
+      "title": "Manage exercises",
+      "description": "Add, edit, and delete exercises, and backfill embeddings for similar-exercise search."
+    }
+  },
+  "enums": {
+    "muscleGroup": {
+      "CHEST": "Chest",
+      "BACK": "Back",
+      "SHOULDERS": "Shoulders",
+      "BICEPS": "Biceps",
+      "TRICEPS": "Triceps",
+      "LEGS": "Legs",
+      "GLUTES": "Glutes",
+      "ABS": "Abs",
+      "FULL_BODY": "Full body",
+      "CARDIO": "Cardio"
+    },
+    "trainingGoal": {
+      "STRENGTH": "Strength",
+      "HYPERTROPHY": "Muscle growth",
+      "ENDURANCE": "Endurance",
+      "GENERAL": "General fitness"
+    },
+    "scheduledWorkoutStatus": {
+      "PLANNED": "Planned",
+      "COMPLETED": "Completed",
+      "SKIPPED": "Skipped"
+    }
+  }
+}

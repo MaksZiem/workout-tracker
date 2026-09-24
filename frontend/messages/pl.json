@@ -1,0 +1,277 @@
+{
+  "meta": {
+    "title": "Workout Tracker",
+    "description": "Zapisuj treningi, planuj tydzień i śledź postępy."
+  },
+  "common": {
+    "appName": "Workout Tracker",
+    "loading": "Ładowanie…",
+    "retry": "Spróbuj ponownie",
+    "backToDashboard": "Wróć do pulpitu",
+    "language": "Język",
+    "languages": {
+      "pl": "Polski",
+      "en": "English"
+    },
+    "signOut": "Wyloguj się",
+    "role": {
+      "USER": "Użytkownik",
+      "ADMIN": "Administrator"
+    },
+    "comingSoon": "Ten ekran jest w przygotowaniu",
+    "endpoints": "Dane z API"
+  },
+  "nav": {
+    "label": "Nawigacja główna",
+    "groups": {
+      "training": "Trening",
+      "planning": "Planowanie",
+      "progress": "Postępy",
+      "admin": "Administracja"
+    },
+    "dashboard": "Pulpit",
+    "log": "Zapisz trening",
+    "workouts": "Historia",
+    "planner": "Planer",
+    "plans": "Plany",
+    "templates": "Szablony",
+    "stats": "Statystyki",
+    "exercises": "Ćwiczenia",
+    "account": "Konto",
+    "admin": "Panel admina",
+    "more": "Więcej",
+    "close": "Zamknij menu"
+  },
+  "auth": {
+    "signIn": {
+      "title": "Zaloguj się",
+      "submit": "Zaloguj się",
+      "pending": "Logowanie…",
+      "noAccount": "Nie masz konta?",
+      "toSignUp": "Załóż konto",
+      "expired": "Sesja wygasła. Zaloguj się ponownie."
+    },
+    "signUp": {
+      "title": "Załóż konto",
+      "submit": "Załóż konto",
+      "pending": "Tworzenie konta…",
+      "hasAccount": "Masz już konto?",
+      "toSignIn": "Zaloguj się"
+    },
+    "fields": {
+      "email": "E-mail",
+      "password": "Hasło",
+      "passwordHint": "Od 8 do 24 znaków",
+      "name": "Imię",
+      "surname": "Nazwisko"
+    },
+    "errors": {
+      "invalidCredentials": "Nieprawidłowy e-mail lub hasło.",
+      "userExists": "Konto z tym adresem e-mail już istnieje. Zaloguj się albo użyj innego adresu.",
+      "validation": "Popraw zaznaczone dane i spróbuj ponownie.",
+      "unreachable": "Nie udało się połączyć z serwerem. Sprawdź, czy backend działa, i spróbuj ponownie.",
+      "unknown": "Coś poszło nie tak. Spróbuj ponownie za chwilę."
+    }
+  },
+  "errors": {
+    "title": "Nie udało się wczytać tej strony",
+    "description": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie, a jeśli problem wróci, odśwież stronę.",
+    "notFoundTitle": "Nie ma takiej strony",
+    "notFoundDescription": "Adres mógł się zmienić albo strona nie istnieje."
+  },
+  "pages": {
+    "dashboard": {
+      "title": "Pulpit",
+      "greeting": "Cześć, {name}",
+      "description": "Dzisiejsze treningi z planera, seria dni treningowych i krótkie podsumowanie.",
+      "summary": "Seria: {streak, plural, one {# dzień} other {# dni}} z rzędu · Zapisane treningi: {total}",
+      "summaryUnavailable": "Nie udało się pobrać statystyk."
+    },
+    "log": {
+      "title": "Zapisz trening",
+      "description": "Odhaczaj serie z planu, poprawiaj ciężar i powtórzenia, a rekordy zobaczysz od razu.",
+      "picker": {
+        "planned": "Na dziś w planie",
+        "started": "Rozpoczęte dziś",
+        "exercises": "{count, plural, one {# ćwiczenie} few {# ćwiczenia} other {# ćwiczeń}}",
+        "sets": "{count, plural, one {# seria} few {# serie} other {# serii}}",
+        "start": "Rozpocznij",
+        "starting": "Uruchamianie…",
+        "continue": "Kontynuuj",
+        "startedAt": "Rozpoczęty o {time}",
+        "empty": "Pusty trening",
+        "emptyHint": "Dodasz ćwiczenia w trakcie.",
+        "creating": "Tworzenie…",
+        "nothingTitle": "Nic nie masz zaplanowanego na dziś",
+        "nothingBody": "Zacznij pusty trening albo zaplanuj tydzień w planerze.",
+        "toPlanner": "Otwórz planer",
+        "noTemplate": "Bez szablonu",
+        "error": "Nie udało się rozpocząć treningu. Spróbuj ponownie."
+      },
+      "header": {
+        "setsDone": "{done}/{total} serii",
+        "finish": "Zakończ",
+        "elapsed": "Czas treningu",
+        "fullBody": "Trening"
+      },
+      "table": {
+        "set": "Seria",
+        "previous": "Poprzednio",
+        "kg": "kg",
+        "reps": "Powt.",
+        "done": "Zrobione",
+        "markDone": "Oznacz serię {n} jako zrobioną",
+        "markUndone": "Cofnij serię {n}",
+        "copyPrevious": "Wpisz poprzedni wynik: {value}",
+        "weightLabel": "Ciężar w serii {n}",
+        "repsLabel": "Powtórzenia w serii {n}",
+        "decrease": "Zmniejsz",
+        "increase": "Zwiększ",
+        "setMenu": "Opcje serii {n}",
+        "removeSet": "Usuń serię",
+        "unsaved": "Niezapisane, ponawiam…",
+        "failed": "Nie zapisano. Dotknij, aby ponowić."
+      },
+      "exercise": {
+        "lastTime": "Ostatnio {date}: {sets}",
+        "firstTime": "Pierwszy raz, bez poprzednich wyników",
+        "best": "Poprzedni rekord: {weight} kg",
+        "addSet": "Dodaj serię",
+        "menu": "Opcje ćwiczenia",
+        "remove": "Usuń ćwiczenie",
+        "fromAi": "Dodane z opisu"
+      },
+      "pr": {
+        "badge": "Rekord",
+        "weight": "Nowy rekord ciężaru: {value} kg",
+        "e1rm": "Nowy rekord szacowanego 1RM: {value} kg",
+        "label": "Rekord osobisty"
+      },
+      "add": {
+        "exercise": "Dodaj ćwiczenie",
+        "fromText": "Dodaj z opisu",
+        "search": "Szukaj ćwiczenia",
+        "noResults": "Brak ćwiczeń pasujących do „{query}”.",
+        "loading": "Wczytywanie katalogu…",
+        "adding": "Dodawanie…",
+        "loadError": "Nie udało się wczytać katalogu ćwiczeń."
+      },
+      "ai": {
+        "title": "Dodaj z opisu",
+        "hint": "Opisz, co zrobiłeś. AI rozpozna ćwiczenia z katalogu i dopisze serie jako zrobione.",
+        "placeholder": "np. wyciskanie leżąc 3x8 80 kg, potem rozpiętki 3x12 14 kg",
+        "submit": "Rozpoznaj i dodaj",
+        "pending": "Rozpoznawanie…",
+        "added": "{count, plural, one {Dodano # ćwiczenie} few {Dodano # ćwiczenia} other {Dodano # ćwiczeń}} z opisu",
+        "nothing": "AI nie rozpoznało żadnych ćwiczeń. Spróbuj opisać je dokładniej.",
+        "error": "AI jest chwilowo niedostępne. Dodaj serie ręcznie albo spróbuj za chwilę."
+      },
+      "finish": {
+        "title": "Zakończyć trening?",
+        "summary": "Podsumowanie",
+        "sets": "Serie",
+        "volume": "Objętość",
+        "duration": "Czas",
+        "records": "Rekordy",
+        "volumeValue": "{value} kg",
+        "unchecked": "{count, plural, one {# seria nie jest odhaczona} few {# serie nie są odhaczone} other {# serii nie jest odhaczonych}}.",
+        "removeUnchecked": "Usuń nieodhaczone serie",
+        "keepUnchecked": "Zostaw je w treningu",
+        "confirm": "Zakończ trening",
+        "saving": "Zapisywanie…",
+        "cancel": "Wróć do treningu",
+        "pendingWarning": "Część zmian nie jest jeszcze zapisana. Zaczekaj na połączenie.",
+        "exerciseLine": "{done}/{total} serii · najlepsza {best}",
+        "exerciseNone": "{done}/{total} serii"
+      },
+      "toast": {
+        "undo": "Cofnij",
+        "setRemoved": "Usunięto serię",
+        "exerciseRemoved": "Usunięto ćwiczenie",
+        "offline": "Brak połączenia. Zmiany zapiszą się automatycznie."
+      },
+      "emptyWorkout": {
+        "title": "Pusty trening",
+        "body": "Dodaj pierwsze ćwiczenie z katalogu albo opisz trening, a AI go rozpozna."
+      },
+      "notFound": "Nie znaleziono tego treningu."
+    },
+    "workouts": {
+      "title": "Historia treningów",
+      "description": "Lista zapisanych treningów z filtrowaniem po dacie i możliwością duplikowania."
+    },
+    "workoutDetail": {
+      "title": "Trening #{id}",
+      "description": "Szczegóły treningu: ćwiczenia, serie i notatki."
+    },
+    "planner": {
+      "title": "Planer",
+      "description": "Kalendarz zaplanowanych treningów: generowanie harmonogramu z planu, zmiana statusu i rozpoczynanie treningu."
+    },
+    "plans": {
+      "title": "Plany treningowe",
+      "description": "Plany grupujące szablony, w tym plany generowane przez AI na podstawie celu i liczby dni."
+    },
+    "planDetail": {
+      "title": "Plan #{id}",
+      "description": "Szablony należące do planu."
+    },
+    "templates": {
+      "title": "Szablony",
+      "description": "Szablony treningów wielokrotnego użytku z docelowymi seriami, powtórzeniami, ciężarem i przerwą."
+    },
+    "templateDetail": {
+      "title": "Szablon #{id}",
+      "description": "Ćwiczenia szablonu i ich parametry."
+    },
+    "stats": {
+      "title": "Statystyki",
+      "description": "Postępy w ćwiczeniach, rekordy, rozkład grup mięśniowych i częstotliwość treningów."
+    },
+    "exercises": {
+      "title": "Katalog ćwiczeń",
+      "description": "Wszystkie ćwiczenia pogrupowane według partii mięśniowych."
+    },
+    "exerciseDetail": {
+      "title": "Ćwiczenie #{id}",
+      "description": "Szczegóły ćwiczenia, twoje rekordy i podobne ćwiczenia."
+    },
+    "account": {
+      "title": "Konto",
+      "description": "Zmiana adresu e-mail i hasła."
+    },
+    "admin": {
+      "title": "Panel admina",
+      "description": "Zarządzanie globalnym katalogiem ćwiczeń i kontami użytkowników."
+    },
+    "adminExercises": {
+      "title": "Zarządzanie ćwiczeniami",
+      "description": "Dodawanie, edycja i usuwanie ćwiczeń oraz uzupełnianie embeddingów dla wyszukiwania podobnych."
+    }
+  },
+  "enums": {
+    "muscleGroup": {
+      "CHEST": "Klatka piersiowa",
+      "BACK": "Plecy",
+      "SHOULDERS": "Barki",
+      "BICEPS": "Biceps",
+      "TRICEPS": "Triceps",
+      "LEGS": "Nogi",
+      "GLUTES": "Pośladki",
+      "ABS": "Brzuch",
+      "FULL_BODY": "Całe ciało",
+      "CARDIO": "Cardio"
+    },
+    "trainingGoal": {
+      "STRENGTH": "Siła",
+      "HYPERTROPHY": "Masa mięśniowa",
+      "ENDURANCE": "Wytrzymałość",
+      "GENERAL": "Ogólna sprawność"
+    },
+    "scheduledWorkoutStatus": {
+      "PLANNED": "Zaplanowany",
+      "COMPLETED": "Wykonany",
+      "SKIPPED": "Pominięty"
+    }
+  }
+}
