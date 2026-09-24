@@ -370,11 +370,62 @@
     },
     "plans": {
       "title": "Plany treningowe",
-      "description": "Plany grupujące szablony, w tym plany generowane przez AI na podstawie celu i liczby dni."
+      "new": "Nowy plan",
+      "ai": "Wygeneruj z AI",
+      "days": "{count, plural, one {# dzień treningowy} few {# dni treningowe} many {# dni treningowych} other {# dni treningowych}}",
+      "exercises": "{count, plural, one {# ćwiczenie} few {# ćwiczenia} many {# ćwiczeń} other {# ćwiczeń}}",
+      "noTemplates": "Bez dni treningowych",
+      "empty": {
+        "title": "Nie masz jeszcze planu",
+        "body": "Plan to zestaw dni treningowych, np. Push, Pull, Nogi. Ułóż go sam albo poproś AI o punkt wyjścia."
+      },
+      "newSheet": {
+        "title": "Nowy plan",
+        "name": "Nazwa planu",
+        "placeholder": "np. Push / Pull / Nogi",
+        "submit": "Utwórz plan",
+        "pending": "Tworzenie…",
+        "error": "Nie udało się utworzyć planu. Spróbuj ponownie."
+      },
+      "aiSheet": {
+        "title": "Wygeneruj plan z AI",
+        "hint": "AI ułoży plan z ćwiczeń z katalogu. Potem przejrzysz go i poprawisz jak każdy inny plan.",
+        "goal": "Cel",
+        "days": "Dni treningowe w tygodniu",
+        "daysValue": "{count, plural, one {# dzień} other {# dni}}",
+        "constraints": "Ograniczenia i preferencje (opcjonalnie)",
+        "constraintsPlaceholder": "np. kontuzja barku, bez sztangi, trening do 60 minut",
+        "submit": "Wygeneruj plan",
+        "pending": "Układanie planu… to może potrwać do minuty.",
+        "error": "AI jest chwilowo niedostępne albo nie ułożyło planu. Spróbuj ponownie za chwilę.",
+        "decrease": "Mniej dni",
+        "increase": "Więcej dni",
+        "pendingShort": "Układanie planu…"
+      }
     },
     "planDetail": {
-      "title": "Plan #{id}",
-      "description": "Szablony należące do planu."
+      "back": "Plany",
+      "name": "Nazwa planu",
+      "notes": "Notatka do planu",
+      "notesPlaceholder": "Dodaj notatkę, np. cel albo zasady progresji",
+      "schedule": "Zaplanuj w planerze",
+      "scheduleEmpty": "Dodaj dzień treningowy, aby zaplanować plan",
+      "menu": "Opcje planu",
+      "delete": "Usuń plan",
+      "deleteTitle": "Usunąć plan „{name}”?",
+      "deleteBody": "Usuniesz też {count, plural, one {# dzień treningowy} few {# dni treningowe} other {# dni treningowych}} tego planu. Zaplanowane treningi zostaną w planerze, ale bez szablonu. Tego nie da się cofnąć.",
+      "deleteConfirm": "Usuń plan",
+      "cancel": "Anuluj",
+      "aiBanner": "Wygenerowane przez AI. Przejrzyj ćwiczenia i cele, zanim zaczniesz.",
+      "aiDismiss": "Zamknij",
+      "addDay": "Dodaj dzień treningowy",
+      "newDayName": "Dzień {n}",
+      "emptyTitle": "Plan nie ma jeszcze dni treningowych",
+      "emptyBody": "Dodaj pierwszy dzień, np. Push, i wybierz ćwiczenia z katalogu.",
+      "saved": "Zapisano",
+      "saving": "Zapisywanie…",
+      "error": "Nie udało się zapisać zmian. Spróbuj ponownie.",
+      "deleteError": "Nie udało się usunąć planu."
     },
     "templates": {
       "title": "Szablony",
@@ -548,5 +599,33 @@
       "COMPLETED": "Wykonany",
       "SKIPPED": "Pominięty"
     }
+  },
+  "templateEditor": {
+    "name": "Nazwa dnia treningowego",
+    "menu": "Opcje: {name}",
+    "exercises": "{count, plural, one {# ćwiczenie} few {# ćwiczenia} many {# ćwiczeń} other {# ćwiczeń}}",
+    "col": {
+      "exercise": "Ćwiczenie",
+      "sets": "Serie",
+      "reps": "Powt.",
+      "weight": "kg",
+      "rest": "Przerwa"
+    },
+    "field": "{field}: {name}",
+    "restUnit": "s",
+    "empty": "Brak ćwiczeń. Dodaj pierwsze z katalogu.",
+    "add": "Dodaj ćwiczenie",
+    "moveUp": "Przesuń wyżej: {name}",
+    "moveDown": "Przesuń niżej: {name}",
+    "exerciseMenu": "Opcje: {name}",
+    "remove": "Usuń z dnia",
+    "removed": "Usunięto „{name}”",
+    "delete": "Usuń dzień treningowy",
+    "deleteTitle": "Usunąć „{name}”?",
+    "deleteBody": "Zaplanowane treningi z tym dniem zostaną w planerze, ale bez szablonu. Tego nie da się cofnąć.",
+    "deleteConfirm": "Usuń",
+    "invalid": "Nieprawidłowa wartość: {field}",
+    "saved": "Zapisano",
+    "saving": "Zapisywanie…"
   }
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-24T20:00:00Z",
+  "generatedAt": "2026-09-24T22:00:00Z",
   "title": "Design System: Workout Tracker",
   "extensions": {
     "colorMeta": {
@@ -309,12 +309,20 @@
           "oklch(0.82 0.06 25)",
           "oklch(0.95 0.06 25)"
         ]
+      },
+      "danger-red-foreground": {
+        "role": "error",
+        "displayName": "Danger Red Foreground",
+        "canonical": "oklch(0.99 0 0)",
+        "cssVar": "--danger-foreground",
+        "lightVariant": "oklch(0.99 0 0)",
+        "description": "Text on a Danger Red fill: the Confirm Sheet's delete button and the error toast."
       }
     },
     "typographyMeta": {
       "headline": {
         "displayName": "Headline",
-        "purpose": "Page titles (picker, auth, error); 24px rising to 30px at sm."
+        "purpose": "Page titles (picker, auth, error, plans list); the plan name on plan detail, editable in place; 24px rising to 30px at sm."
       },
       "title-lg": {
         "displayName": "Title Large",
@@ -346,11 +354,11 @@
       },
       "label-column": {
         "displayName": "Column Label",
-        "purpose": "Uppercase; set-table column headers, stats records/session table headers, and list-group headers only (list headers use 12px)."
+        "purpose": "Uppercase; set-table column headers, stats records/session table headers, the Template Editor column header row, and list-group headers only (list headers use 12px)."
       },
       "label-axis": {
         "displayName": "Axis Label",
-        "purpose": "Chart axis ticks and dates, activity-map weekday/month labels and legend, phone-table metric captions; 11px/400 muted tabular, sentence case."
+        "purpose": "Chart axis ticks and dates, activity-map weekday/month labels and legend, phone-table metric captions; 11px/400 muted tabular, sentence case. Also the sentence-case captions above the Template Editor's phone field grid."
       }
     },
     "shadows": [
@@ -406,7 +414,7 @@
       {
         "name": "sm",
         "value": "640px",
-        "purpose": "Sheets become centred panels; page padding 24px; action row goes horizontal. Dashboard: Dziś actions move beside the row body and stop being full width."
+        "purpose": "Sheets become centred panels; page padding 24px; action row goes horizontal. Dashboard: Dziś actions move beside the row body and stop being full width. Plans: Template Editor switches from stacked rows with a 4-up field grid to the seven-column target grid; target fields drop from 44px to 40px."
       },
       {
         "name": "md",
@@ -512,7 +520,7 @@
       "name": "Sheet",
       "kind": "custom",
       "refersTo": "sheet",
-      "description": "Native-dialog bottom sheet on phones, centred 512px panel from sm.",
+      "description": "Native-dialog bottom sheet on phones, centred 512px panel from sm. A locked sheet (during AI generation) ignores Escape, backdrop clicks, and the close button.",
       "html": "<div class=\"ds-sheet\" role=\"dialog\" aria-label=\"Finish workout\"><div class=\"ds-sheet-head\"><h2>Finish workout</h2><button class=\"ds-sheet-close\" aria-label=\"Close\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/></svg></button></div><div class=\"ds-sheet-body\"><dl class=\"ds-stats\"><div><dt>Sets</dt><dd>18</dd></div><div><dt>Personal records</dt><dd class=\"ds-pr\">2</dd></div></dl></div><div class=\"ds-sheet-foot\"><button class=\"ds-btn-primary-full\">Finish workout</button></div></div>",
       "css": ".ds-sheet { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); display: flex; flex-direction: column; max-width: 512px; border-radius: 16px 16px 0 0; background: var(--surface); color: var(--foreground); } .ds-sheet-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 8px; } .ds-sheet-head h2 { margin: 0; font-size: 16px; font-weight: 600; } .ds-sheet-close { display: grid; place-items: center; width: 40px; height: 40px; margin-right: -8px; border: 0; border-radius: 9999px; background: transparent; color: var(--muted); cursor: pointer; } .ds-sheet-close:hover { background: var(--surface-muted); color: var(--foreground); } .ds-sheet-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; } .ds-sheet-body { padding: 0 20px 16px; } .ds-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 0; padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); } .ds-stats dt { font-size: 12px; color: var(--muted); } .ds-stats dd { margin: 2px 0 0; font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; } .ds-pr { color: var(--pr); } .ds-sheet-foot { padding: 12px 20px 16px; border-top: 1px solid var(--border); } .ds-btn-primary-full { width: 100%; height: 48px; border: 0; border-radius: 8px; background: var(--accent); color: var(--accent-foreground); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; } .ds-btn-primary-full:hover { opacity: 0.9; } .ds-btn-primary-full:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }"
     },
@@ -544,7 +552,7 @@
       "name": "Segmented Control",
       "kind": "nav",
       "refersTo": "segmented-control",
-      "description": "Shared either/or switch: planner Tydzień/Miesiąc, stats range and metric. Links with state in the URL; current option is a Surface fill.",
+      "description": "Shared either/or switch: planner Tydzień/Miesiąc, stats range and metric. Links with state in the URL; current option is a Surface fill. In a form (AI plan goal) the options are radios wrapped into a 2×2 grid of 40px options on the same track.",
       "html": "<nav class=\"ds-seg\" aria-label=\"Zakres\"><a href=\"#\" class=\"ds-seg-item\">30 dni</a><a href=\"#\" class=\"ds-seg-item\" aria-current=\"page\">3 mies.</a><a href=\"#\" class=\"ds-seg-item\">Rok</a><a href=\"#\" class=\"ds-seg-item\">Cały czas</a></nav>",
       "css": ".ds-seg { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); display: inline-flex; max-width: 100%; overflow-x: auto; padding: 4px; border-radius: 8px; background: var(--surface-muted); } .ds-seg-item { display: flex; align-items: center; flex-shrink: 0; height: 36px; padding: 0 12px; border-radius: 6px; color: var(--muted); font-size: 14px; font-weight: 500; white-space: nowrap; text-decoration: none; } .ds-seg-item:hover { color: var(--foreground); } .ds-seg-item[aria-current=page] { background: var(--surface); color: var(--foreground); } .ds-seg-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }"
     },
@@ -576,7 +584,7 @@
       "name": "Outline Button",
       "kind": "button",
       "refersTo": "button-outline",
-      "description": "Hairline-outlined secondary action used on the dashboard wherever a blue primary already leads: later Dziś rows, rest-day empty workout, AI submit, next onboarding step.",
+      "description": "Hairline-outlined secondary action used on the dashboard wherever a blue primary already leads: later Dziś rows, rest-day empty workout, AI submit, next onboarding step; on plans, Wygeneruj z AI beside the blue Nowy plan, and the Confirm Sheet cancel.",
       "html": "<button class=\"ds-btn-outline\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z\"/></svg>Zamień na trening</button>",
       "css": ".ds-btn-outline { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 16px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--foreground); font-size: 14px; font-weight: 600; cursor: pointer; } .ds-btn-outline:hover { background: var(--surface-muted); } .ds-btn-outline:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; } .ds-btn-outline:disabled { opacity: .6; }"
     },
@@ -603,6 +611,38 @@
       "description": "Dashboard record rows led by the 32px Record Gold medal, the same medal that replaces the set number in the logger when a PR lands.",
       "html": "<ul class=\"ds-fr\"><li><a href=\"#\"><span class=\"ds-medal\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/><path d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22\"/><path d=\"M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22\"/><path d=\"M18 2H6v7a6 6 0 0 0 12 0V2Z\"/></svg></span><span class=\"ds-fr-t\"><b>Wyciskanie sztangi leżąc</b><span>Szac. 1RM · 22 wrz</span></span><span class=\"ds-fr-v\">96,3 kg</span></a></li><li><a href=\"#\"><span class=\"ds-medal\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 9H4.5a2.5 2.5 0 0 1 0-5H6\"/><path d=\"M18 9h1.5a2.5 2.5 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22\"/><path d=\"M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22\"/><path d=\"M18 2H6v7a6 6 0 0 0 12 0V2Z\"/></svg></span><span class=\"ds-fr-t\"><b>Przysiad ze sztangą</b><span>Maks. ciężar · 18 wrz</span></span><span class=\"ds-fr-v\">120 kg</span></a></li></ul>",
       "css": ".ds-fr { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); list-style: none; margin: 0; padding: 0; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--foreground); overflow: hidden; } .ds-fr li + li { border-top: 1px solid var(--border); } .ds-fr a { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 10px 16px; color: inherit; text-decoration: none; } .ds-fr a:hover { background: var(--surface-muted); } .ds-fr a:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; } .ds-medal { display: grid; place-items: center; flex-shrink: 0; width: 32px; height: 32px; border-radius: 9999px; background: var(--pr); color: var(--pr-foreground); } .ds-fr-t { flex: 1; min-width: 0; } .ds-fr-t b { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 14px; font-weight: 500; } .ds-fr-t span { display: block; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; } .ds-fr-v { flex-shrink: 0; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Template Editor",
+      "kind": "custom",
+      "refersTo": "template-editor",
+      "description": "Signature (plans): one training day as a compact target table edited in place. Seven-column grid from sm (ćwiczenie | serie | powt. | kg | przerwa | ↑↓ | ⋯) under a Column Label header; Graphite Muted 40px (44px phone) tabular fields with — placeholders and an s suffix for rest; per-day Zapisywanie…/Zapisano live status; quiet blue + Dodaj ćwiczenie. Phones stack the name with ↑↓ ⋯ over a 4-up captioned field grid.",
+      "html": "<section class=\"ds-te\" aria-label=\"Góra A\"><header class=\"ds-te-head\"><div><h2><input class=\"ds-inline\" value=\"Góra A\" aria-label=\"Nazwa dnia\"></h2><p class=\"ds-te-meta\">2 ćwiczenia <span aria-live=\"polite\">· Zapisano</span></p></div><button class=\"ds-te-more\" aria-label=\"More\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"1\"/><circle cx=\"19\" cy=\"12\" r=\"1\"/><circle cx=\"5\" cy=\"12\" r=\"1\"/></svg></button></header><div class=\"ds-te-cols\"><span>Ćwiczenie</span><span>Serie</span><span>Powt.</span><span>kg</span><span>Przerwa</span><span></span><span></span></div><ol class=\"ds-te-list\"><li class=\"ds-te-row\"><div><p class=\"ds-te-name\">Wyciskanie sztangi na ławce płaskiej</p><p class=\"ds-te-group\">Klatka piersiowa</p></div><input class=\"ds-te-field\" value=\"4\" placeholder=\"—\" aria-label=\"Wyciskanie sztangi na ławce płaskiej\"><input class=\"ds-te-field\" value=\"5\" placeholder=\"—\" aria-label=\"Wyciskanie sztangi na ławce płaskiej\"><input class=\"ds-te-field\" value=\"62,5\" placeholder=\"—\" aria-label=\"Wyciskanie sztangi na ławce płaskiej\"><input class=\"ds-te-field\" value=\"\" placeholder=\"—\" aria-label=\"Wyciskanie sztangi na ławce płaskiej\"><span class=\"ds-te-move\"><button class=\"ds-te-icon\" aria-label=\"Up\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m5 12 7-7 7 7\"/><path d=\"M12 19V5\"/></svg></button><button class=\"ds-te-icon\" aria-label=\"Down\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v14\"/><path d=\"m19 12-7 7-7-7\"/></svg></button></span><button class=\"ds-te-more\" aria-label=\"More\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"1\"/><circle cx=\"19\" cy=\"12\" r=\"1\"/><circle cx=\"5\" cy=\"12\" r=\"1\"/></svg></button></li><li class=\"ds-te-row\"><div><p class=\"ds-te-name\">Wiosłowanie sztangą</p><p class=\"ds-te-group\">Plecy</p></div><input class=\"ds-te-field\" value=\"3\" placeholder=\"—\" aria-label=\"Wiosłowanie sztangą\"><input class=\"ds-te-field\" value=\"10\" placeholder=\"—\" aria-label=\"Wiosłowanie sztangą\"><input class=\"ds-te-field\" value=\"\" placeholder=\"—\" aria-label=\"Wiosłowanie sztangą\"><input class=\"ds-te-field\" value=\"\" placeholder=\"—\" aria-label=\"Wiosłowanie sztangą\"><span class=\"ds-te-move\"><button class=\"ds-te-icon\" aria-label=\"Up\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m5 12 7-7 7 7\"/><path d=\"M12 19V5\"/></svg></button><button class=\"ds-te-icon\" aria-label=\"Down\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v14\"/><path d=\"m19 12-7 7-7-7\"/></svg></button></span><button class=\"ds-te-more\" aria-label=\"More\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"1\"/><circle cx=\"19\" cy=\"12\" r=\"1\"/><circle cx=\"5\" cy=\"12\" r=\"1\"/></svg></button></li></ol><div class=\"ds-te-foot\"><button class=\"ds-te-add\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"M12 5v14\"/></svg>Dodaj ćwiczenie</button></div></section>",
+      "css": ".ds-te { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); max-width: 880px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--foreground); } .ds-te-head { display: flex; align-items: flex-start; gap: 12px; padding: 16px 20px 12px; } .ds-te-head > div { flex: 1; min-width: 0; } .ds-te-head h2 { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.375; } .ds-te-meta { margin: 0; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; } .ds-te-meta span { margin-left: 8px; } .ds-te-cols, .ds-te-row { display: grid; grid-template-columns: minmax(0,1fr) 72px 72px 88px 88px 80px 44px; align-items: center; gap: 8px; padding: 8px 20px; } .ds-te-cols { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 600; letter-spacing: 0.025em; text-transform: uppercase; color: var(--muted); } .ds-te-cols span:not(:first-child) { text-align: center; } .ds-te-list { list-style: none; margin: 0; padding: 0; } .ds-te-row + .ds-te-row { border-top: 1px solid var(--border); } .ds-te-name { margin: 0; font-size: 15px; font-weight: 500; line-height: 1.375; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ds-te-group { margin: 0; font-size: 12px; color: var(--muted); } .ds-te-field { width: 100%; height: 40px; border: 0; border-radius: 8px; background: var(--surface-muted); color: var(--foreground); text-align: center; font: inherit; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; outline: none; } .ds-te-field::placeholder { color: var(--muted); font-weight: 400; } .ds-te-field:focus-visible { background: var(--surface); box-shadow: 0 0 0 2px var(--accent); } .ds-te-move { display: flex; justify-content: center; } .ds-te-icon { display: grid; place-items: center; width: 36px; height: 36px; border: 0; border-radius: 8px; background: transparent; color: var(--muted); cursor: pointer; } .ds-te-icon:hover { background: var(--surface-muted); color: var(--foreground); } .ds-te-more { display: grid; place-items: center; width: 40px; height: 40px; border: 0; border-radius: 9999px; background: transparent; color: var(--muted); cursor: pointer; justify-self: end; } .ds-te-more:hover { background: var(--surface-muted); color: var(--foreground); } .ds-te-foot { border-top: 1px solid var(--border); padding: 8px 12px; } .ds-te-add { display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; color: var(--accent); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; } .ds-te-add:hover { background: var(--accent-surface); } .ds-inline { width: 100%; height: 36px; margin: 0 -8px; padding: 0 8px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: inherit; font: inherit; outline: none; transition: border-color 150ms, background-color 150ms; } .ds-inline:hover { border-color: var(--border); } .ds-inline:focus-visible { border-color: var(--accent); background: var(--surface); }"
+    },
+    {
+      "name": "Inline Text",
+      "kind": "input",
+      "refersTo": "template-editor",
+      "description": "Plan name, plan notes, and day name as text that edits itself: transparent border at rest, hairline on hover, Signal Blue border over Surface on focus; Enter/blur saves, Escape reverts.",
+      "html": "<h1 class=\"ds-inline-h1\"><input class=\"ds-inline\" value=\"Góra / Dół\" aria-label=\"Nazwa planu\"></h1><textarea class=\"ds-inline ds-inline-notes\" rows=\"1\" aria-label=\"Notatka\" placeholder=\"Dodaj notatkę, np. cel albo zasady progresji\"></textarea>",
+      "css": ".ds-inline-h1 { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); margin: 0; font-size: 30px; font-weight: 600; letter-spacing: -0.025em; color: var(--foreground); } .ds-inline { display: block; width: 100%; height: 48px; margin: 0 -8px; padding: 0 8px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: inherit; font: inherit; outline: none; transition: border-color 150ms, background-color 150ms, color 150ms; } .ds-inline::placeholder { color: var(--muted); } .ds-inline:hover { border-color: var(--border); } .ds-inline:focus-visible { border-color: var(--accent); background: var(--surface); } .ds-inline-notes { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); height: auto; min-height: 36px; margin-top: 4px; padding: 6px 8px; resize: none; font-size: 14px; color: var(--muted); field-sizing: content; } .ds-inline-notes:focus-visible { color: var(--foreground); }"
+    },
+    {
+      "name": "Confirm Sheet",
+      "kind": "custom",
+      "refersTo": "button-danger",
+      "description": "Sheet confirming an irreversible delete: a title naming the thing, honest consequence copy, Outline cancel and a 48px Danger Red confirm.",
+      "html": "<div class=\"ds-confirm\" role=\"dialog\" aria-label=\"Usunąć plan?\"><div class=\"ds-confirm-head\"><h2>Usunąć plan „Góra / Dół”?</h2></div><p class=\"ds-confirm-body\">Usuniesz plan i jego 3 dni treningowe. Zaplanowane treningi zostaną w planerze, ale bez szablonu.</p><div class=\"ds-confirm-foot\"><button class=\"ds-confirm-cancel\">Anuluj</button><button class=\"ds-confirm-danger\">Usuń plan</button></div></div>",
+      "css": ".ds-confirm { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); max-width: 512px; border-radius: 16px; background: var(--surface); color: var(--foreground); } .ds-confirm-head { padding: 16px 20px 8px; } .ds-confirm-head h2 { margin: 0; font-size: 16px; font-weight: 600; } .ds-confirm-body { margin: 0; padding: 0 20px 16px; font-size: 14px; color: var(--muted); } .ds-confirm-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 20px 16px; border-top: 1px solid var(--border); } .ds-confirm-cancel, .ds-confirm-danger { height: 48px; padding: 0 20px; border-radius: 8px; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; } .ds-confirm-cancel { border: 1px solid var(--border); background: transparent; color: var(--foreground); } .ds-confirm-cancel:hover { background: var(--surface-muted); } .ds-confirm-danger { border: 0; background: var(--danger); color: #fff; } .ds-confirm-danger:hover { opacity: .9; } .ds-confirm-danger:disabled { opacity: .6; } .ds-confirm-cancel:focus-visible, .ds-confirm-danger:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }"
+    },
+    {
+      "name": "AI Review Banner",
+      "kind": "card",
+      "refersTo": "review-banner",
+      "description": "Graphite Muted status panel on a freshly generated plan: muted Sparkles, review copy, Danger Red text action Usuń plan, dismiss X. No blue, no gold.",
+      "html": "<div class=\"ds-banner\" role=\"status\"><svg class=\"ds-banner-icon\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z\"/></svg><p>Wygenerowane przez AI — przejrzyj ćwiczenia i cele, zanim zaplanujesz.</p><button class=\"ds-banner-delete\">Usuń plan</button><button class=\"ds-banner-x\" aria-label=\"Zamknij\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/></svg></button></div>",
+      "css": ".ds-banner { font-family: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif); display: flex; align-items: flex-start; gap: 12px; max-width: 880px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-muted); color: var(--foreground); font-size: 14px; } .ds-banner-icon { flex-shrink: 0; margin-top: 2px; color: var(--muted); } .ds-banner p { flex: 1; margin: 0; } .ds-banner-delete { flex-shrink: 0; margin: -4px 0; padding: 4px 8px; border: 0; border-radius: 6px; background: transparent; color: var(--danger); font: inherit; font-weight: 500; cursor: pointer; } .ds-banner-delete:hover { background: var(--danger-surface); } .ds-banner-x { display: grid; place-items: center; flex-shrink: 0; width: 32px; height: 32px; margin: -6px -6px -6px 0; border: 0; border-radius: 6px; background: transparent; color: var(--muted); cursor: pointer; } .ds-banner-x:hover { background: var(--surface); color: var(--foreground); } .ds-banner button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }"
     }
   ],
   "narrative": {
@@ -680,7 +720,10 @@
       "Do draw charts by hand, with an SVG line in Chalk using a non-scaling stroke, HTML dots with a 2px Surface ring, 1px Hairline gridlines, and 11px muted tabular axis labels.",
       "Do put a chart's readout above the plot, and make scrubbing work by pointer and by arrow keys through a `role=\"slider\"` with a spoken `aria-valuetext`.",
       "Do keep stats state (range, metric) in the URL and switch it with the shared segmented control.",
-      "Do show summary figures as a hairline-split row of label and value pairs, not as a grid of metric tiles."
+      "Do show summary figures as a hairline-split row of label and value pairs, not as a grid of metric tiles.",
+      "Do keep one Signal Blue button per plans page: \"Nowy plan\" on the list, and \"Zaplanuj w planerze\" on a plan (or \"Dodaj dzień treningowy\" in an empty plan's card). The other actions are Outline buttons, quiet blue text, or muted icon buttons.",
+      "Do edit plan targets in place: fields save on blur or Enter, show \"Zapisywanie…/Zapisano\" per day, revert with a toast on failure, and offer \"Cofnij\" on removal.",
+      "Do confirm every irreversible delete in a Confirm Sheet that says what goes and what stays."
     ],
     "donts": [
       "Don't use Record Gold for anything except a personal record.",

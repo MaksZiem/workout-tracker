@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Trophy } from "lucide-react";
 export type Toast = { id: number; message: string; tone: "default" | "pr" | "error"; undo?: () => void };
 
@@ -27,7 +27,7 @@ export function ToastView({ toast, onDismiss, undoLabel }: { toast: Toast | null
             toast.tone === "pr"
               ? "bg-pr text-pr-foreground"
               : toast.tone === "error"
-                ? "bg-danger text-white"
+                ? "bg-danger text-danger-foreground"
                 : "bg-foreground text-background"
           }`}
         >
@@ -49,4 +49,13 @@ export function ToastView({ toast, onDismiss, undoLabel }: { toast: Toast | null
       ) : null}
     </div>
   );
+}
+
+/** Stan jednego komunikatu dla ekranu (ten sam wzorzec co w planerze). */
+export function useToast() {
+  const [toast, setToast] = useState<Toast | null>(null);
+  const seq = useRef(0);
+  const show = useCallback((t: Omit<Toast, "id">) => setToast({ ...t, id: ++seq.current }), []);
+  const dismiss = useCallback(() => setToast(null), []);
+  return { toast, show, dismiss };
 }

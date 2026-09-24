@@ -28,6 +28,7 @@
   --pr-surface: oklch(0.96 0.05 88);
   --danger: oklch(0.53 0.19 27);
   --danger-surface: oklch(0.96 0.03 27);
+  --danger-foreground: oklch(0.99 0 0);
   color-scheme: light;
 }
 
@@ -51,6 +52,7 @@
     --pr-surface: oklch(0.31 0.06 80);
     --danger: oklch(0.7 0.17 25);
     --danger-surface: oklch(0.29 0.06 25);
+    --danger-foreground: oklch(0.99 0 0);
     color-scheme: dark;
   }
 }
@@ -74,6 +76,7 @@
   --color-pr-surface: var(--pr-surface);
   --color-danger: var(--danger);
   --color-danger-surface: var(--danger-surface);
+  --color-danger-foreground: var(--danger-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

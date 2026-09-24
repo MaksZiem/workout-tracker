@@ -20,6 +20,7 @@ colors:
   record-gold-tint: "oklch(0.31 0.06 80)"
   danger-red: "oklch(0.7 0.17 25)"
   danger-red-tint: "oklch(0.29 0.06 25)"
+  danger-red-foreground: "oklch(0.99 0 0)"
 typography:
   headline:
     fontFamily: "Geist, ui-sans-serif, system-ui, sans-serif"
@@ -237,6 +238,41 @@ components:
     backgroundColor: "{colors.done-green-tint}"
     rounded: "{rounded.md}"
     height: "72px"
+  target-field:
+    backgroundColor: "{colors.graphite-muted}"
+    textColor: "{colors.chalk-foreground}"
+    rounded: "{rounded.md}"
+    height: "40px"
+  target-field-phone:
+    backgroundColor: "{colors.graphite-muted}"
+    textColor: "{colors.chalk-foreground}"
+    rounded: "{rounded.md}"
+    height: "44px"
+  template-editor:
+    backgroundColor: "{colors.graphite-surface}"
+    textColor: "{colors.chalk-foreground}"
+    rounded: "{rounded.lg}"
+    padding: "16px 20px"
+  button-danger:
+    backgroundColor: "{colors.danger-red}"
+    typography: "{typography.body-control}"
+    rounded: "{rounded.md}"
+    padding: "0 20px"
+    height: "48px"
+  button-add-dashed:
+    backgroundColor: "transparent"
+    textColor: "{colors.slate-muted}"
+    rounded: "{rounded.lg}"
+    height: "48px"
+  review-banner:
+    backgroundColor: "{colors.graphite-muted}"
+    textColor: "{colors.chalk-foreground}"
+    rounded: "{rounded.lg}"
+    padding: "12px 16px"
+  plan-row:
+    backgroundColor: "{colors.graphite-surface}"
+    textColor: "{colors.chalk-foreground}"
+    padding: "16px 20px"
 ---
 
 # Design System: Workout Tracker
@@ -264,7 +300,7 @@ The system turns away from invented worlds, novelty chrome, and ironic or quirky
 The palette is neutral graphite in cool 260-hue greys, with four semantic hues, each kept to a single meaning. The frontmatter values are the dark (primary) scheme. The light-scheme counterparts are defined in `frontend/app/globals.css` and recorded in the sidecar.
 
 ### Primary
-- **Signal Blue** (`signal-blue`): the only action colour. Used for primary buttons (Start, Finish, Finish workout), the focus outline and caret, the elapsed-time readout, the progress-bar fill, exercise titles, the active nav "log" button, and text links. On the planner it fills the single primary "Generuj z planu" button and the entry card's Rozpocznij/Kontynuuj action, marks today (a filled 28–32px circle behind the date number, blue weekday text), rings the selected month day over a Signal Blue Tint fill, and colours the "Dziś" and "Dodaj trening" quiet links. On the dashboard it fills only the first actionable Dziś row's Rozpocznij/Kontynuuj button, marks today in the week strip the same way the planner does (a filled circle behind the date, blue weekday), and colours the section-header links ("Otwórz planer", "Cała historia", "Wszystkie"). **Signal Blue Tint** (`signal-blue-tint`) is the fill for the secondary-but-affirmative "Add exercise" button and for link hover.
+- **Signal Blue** (`signal-blue`): the only action colour. Used for primary buttons (Start, Finish, Finish workout), the focus outline and caret, the elapsed-time readout, the progress-bar fill, exercise titles, the active nav "log" button, and text links. On the planner it fills the single primary "Generuj z planu" button and the entry card's Rozpocznij/Kontynuuj action, marks today (a filled 28–32px circle behind the date number, blue weekday text), rings the selected month day over a Signal Blue Tint fill, and colours the "Dziś" and "Dodaj trening" quiet links. On the dashboard it fills only the first actionable Dziś row's Rozpocznij/Kontynuuj button, marks today in the week strip the same way the planner does (a filled circle behind the date, blue weekday), and colours the section-header links ("Otwórz planer", "Cała historia", "Wszystkie"). On plans it fills one button per page: "Nowy plan" on the list, "Zaplanuj w planerze" on a plan (or, on an empty plan, "Dodaj dzień treningowy" inside the empty card). Each day's "+ Dodaj ćwiczenie" is a quiet blue text button, and the inline-editable text takes a Signal Blue border on focus. **Signal Blue Tint** (`signal-blue-tint`) is the fill for the secondary-but-affirmative "Add exercise" button and for link hover.
 
 ### Secondary
 - **Done Green** (`done-green`): completion only. It fills the checked set's check button solid, and **Done Green Tint** (`done-green-tint`) washes the whole completed set row. On the planner a completed scheduled workout gets the same pairing: the entry card is filled Done Green Tint with its border dropped, and its status row reads "Wykonany" in Done Green behind a check icon. In the month grid a completed entry is a Done Green dot. On stats it is the only colour of the activity map, where a day with a finished workout is a Done Green square: Graphite Muted for no workout, Done Green at 55% for one, solid Done Green for two or more. On the dashboard it marks the same fact at a glance: a Dziś row for a workout finished today is washed Done Green Tint behind a 32px solid Done Green check circle and a "Wykonany" label in Done Green, and a week-strip day on which a workout was finished is a Done Green Tint cell.
@@ -275,12 +311,12 @@ The palette is neutral graphite in cool 260-hue greys, with four semantic hues, 
 ### Neutral
 - **Graphite Ground** (`graphite-ground`): the page background, and the sticky header at 85–95% opacity with a backdrop blur.
 - **Graphite Surface** (`graphite-surface`): raised planes, meaning sheets, the sidebar, the mobile tab bar, list cards, and menus.
-- **Graphite Muted** (`graphite-muted`): the quiet fills. The active set row, secondary buttons, the search field, and hover states on rows and icon buttons.
+- **Graphite Muted** (`graphite-muted`): the quiet fills. The active set row, secondary buttons, the search field, and hover states on rows and icon buttons. On plans it fills the Template Editor's target fields (not Graphite Strong: these are targets, not logged numbers), the text fields in the plan sheets, and the AI review banner.
 - **Graphite Strong** (`graphite-strong`): the editable fills. Number cells, the unchecked check button, the progress track, hover on secondary buttons, and the scrollbar thumb.
 - **Chalk Foreground** (`chalk-foreground`): primary text, plus the fill of the neutral toast (inverted). On stats it is the ink of data: chart lines, chart dots, and the distribution bars (at 75%). On the dashboard it fills the Dziś card's in-progress bar (on a Graphite Muted track) and draws the 2px ring around the next "Na start" step number.
 - **Slate Muted** (`slate-muted`): metadata, previous-set numbers, column headers, and inactive nav. On stats it is the axis labels and the scrubbing crosshair (at 60%).
 - **Hairline Border** (`hairline-border`): 1px dividers, the sticky-header rule, the stepper outline, and card and menu strokes. On stats it also draws chart gridlines and the rules that split the summary line and the record strip.
-- **Danger Red** (`danger-red`) with **Danger Red Tint** (`danger-red-tint`): destructive menu items, save-failure retry links, invalid number input, form errors, and the planner's overdue status (a red "Zaległy" status row with a warning-triangle icon, and a red dot in the month grid).
+- **Danger Red** (`danger-red`) with **Danger Red Tint** (`danger-red-tint`): destructive menu items, save-failure retry links, invalid number input, form errors, and the planner's overdue status (a red "Zaległy" status row with a warning-triangle icon, and a red dot in the month grid). On plans it is only for deletion: the "Usuń" menu items, the solid confirm button in the Confirm Sheet, and the "Usuń plan" text action in the AI review banner.
 
 ### Named Rules
 **The One Blue Rule.** Blue is the only colour that means "you can do something here." It never appears as decoration, and no second action colour exists.
@@ -312,10 +348,11 @@ On the dashboard the rule reaches two glances at the same completed work: today'
 - **Meta** (400, 13px, tabular): the previous-set line, muscle-group lines, and header counters.
 - **Data Cell** (600, 16px, tabular, centred): weight and rep inputs. 16px also stops iOS from zooming on focus.
 - **Stat** (600, 24px, tabular): the finish-summary figures.
-- **Column Label** (600, 11–12px, uppercase, tracking 0.025em, Slate Muted): only for set-table column headers, the column headers of the stats records and session tables, and muscle-group section headers in lists.
-- **Axis Label** (400, 11px, tabular, Slate Muted): chart axis ticks and dates, activity-map weekday and month labels and its legend, and the metric caption under a value in a phone table row. Sentence case, never uppercase.
+- **Column Label** (600, 11–12px, uppercase, tracking 0.025em, Slate Muted): only for set-table column headers, the column headers of the stats records and session tables, the Template Editor's column header row, and muscle-group section headers in lists.
+- **Axis Label** (400, 11px, tabular, Slate Muted): chart axis ticks and dates, activity-map weekday and month labels and its legend, the metric caption under a value in a phone table row, and the field captions above the Template Editor's phone field grid. Sentence case, never uppercase.
 - On stats, **Stat** (24px/600, tabular, tracking −0.025em, with a 14px muted "kg") is the value on a main-lift card and in the record strip. The line chart's readout value steps up to 30px/600. Summary-line values are 17px/600 under a 12px muted label. Section titles on stats are Title (17px/600) with an optional 13px muted hint below, never above.
 - On the dashboard, the greeting is Headline (24px rising to 30px at `sm`) over a 14px muted date line, with nothing above it. A Dziś row's title is the template name at 20px/600 (24px from `sm`, tight leading, tracking −0.025em). Dashboard section titles are Title (17px/600), with a 13px muted hint or count on the same baseline to the right, never above.
+- On plans, the plan name is Headline (24px rising to 30px at `sm`) and editable in place. A day name is Title (17px/600), and a plan-list row's name is 17px/600 over a 13px muted tabular meta line. Target values are 600 tabular, centred, at 15px (see Template Editor for the iOS note).
 
 ### Named Rules
 **The Tabular Numbers Rule.** Every number that changes or lines up with another number uses tabular figures: weights, reps, timers, counts, and stats.
@@ -351,6 +388,11 @@ Stats uses the full content area, stacked in sections 32px apart. Each section o
 ### Dashboard
 The dashboard (`/`, Pulpit) uses the full content area. From the top: a header with the greeting and date, then a full-width stack 12px apart (16px from `sm`) holding the Dziś card, the "Na start" checklist (new accounts only), and the week strip. Below that stack, 24px down (32px from `sm`), it is one column on phones, and from `lg` a two-column grid, 3fr | 2fr, top-aligned with a 32px gap: recent workouts on the left, and the AI shortcut above fresh records on the right. Each section fails on its own: a failed load swaps in the stats Section Error for that section only. Section headers put the Title on the left and a 36px quiet Signal Blue link with a trailing chevron on the right (the link's padding is pulled out to the edge with a negative margin, so the text lines up with the content below).
 
+### Plans
+Both plans pages sit in a 1024px column (`max-w-5xl`), centred in the content area. The list header puts the Headline on the left and the actions on the right (Outline "Wygeneruj z AI", then the blue "Nowy plan", both 44px), and the actions go full width, split in two, on phones. Plan rows follow 24px below in one Surface list panel. The plan detail opens with a 40px muted back link, then a header with the editable name and notes on the left and the actions on the right ("Zaplanuj w planerze", 44px blue, then a 44px outlined ⋯ square). On phones the header stacks and the blue action stretches beside the ⋯. Days follow 24px down, as Template Editor sections 16px apart, closed by a dashed full-width "Dodaj dzień treningowy".
+
+**The Template Grid.** From `sm` the Template Editor is one seven-column grid shared by its header row and every exercise row: exercise (flexible) | serie (72px) | powt. (72px) | kg (88px) | przerwa (88px) | ↑↓ (80px) | ⋯ (44px), with an 8px gap. On phones each row stacks: the name (wrapping, never truncated) with ↑↓ and ⋯ beside it, then a 4-up field grid (8px gap) with an Axis Label caption above each field.
+
 **The Thumb Column Rule.** The completion check always sits in the far-right column and is at least 44px square, so the right thumb can reach it while the phone is held one-handed.
 
 **The 44 Floor Rule.** No interactive element on the logging surface is shorter than 44px, except compact header actions (40px) and icon buttons (40px round).
@@ -380,6 +422,9 @@ Buttons are solid, full-width on phones, and confident without being loud.
 - **Secondary:** a Graphite Muted fill with foreground text that steps to Graphite Strong on hover. Used for Add set, Add from description, and Empty workout.
 - **Quiet:** transparent with muted or blue text, taking a Muted or Tint fill on hover (Cancel, To planner).
 - **Outline:** transparent with a 1px Hairline Border, foreground 14px/600 text, 44px tall with 16px padding, full width on phones and hugging its label from `sm`, taking a Graphite Muted fill on hover. It is the dashboard's secondary action wherever a blue button already leads the page: later Dziś rows, "Zacznij pusty trening" on a rest day, the AI submit, and the next "Na start" step (40px with 12px padding beside the text from `sm`).
+- **Danger:** a solid Danger Red fill with light text, 15px/600, 48px tall with 20px padding. It appears only as the confirm button of a Confirm Sheet.
+- **Dashed Add:** a full-width 48px button with a 1px dashed Hairline Border, 12px corners, and muted 14px/600 text behind a plus icon, hovering to foreground text. Used for "Dodaj dzień treningowy" after the last day of a plan.
+- On plans, the Outline button is the list's "Wygeneruj z AI" (never blue, because "Nowy plan" owns the page's blue), and the plan's overflow is an Outline 44px ⋯ square beside the blue action.
 - **Focus:** the global 2px Signal Blue outline with a 2px offset.
 
 ### Set Row (signature)
@@ -438,7 +483,7 @@ Rows in one Surface list panel (12px corners, hairline border, hairline dividers
 Records from the last 30 days, at most four, as rows in one Surface list panel (12px corners, hairline border, hairline dividers). Each row is a link at least 56px tall to the exercise's stats, hovering to Graphite Muted. It leads with the 32px round Record Gold medal holding a trophy: the same medal that replaces the set number in the logger when the record lands, shown here as the row's glyph. Next come the exercise name (14px/500, truncated) over a 13px muted tabular kind-and-date line, and the value at 15px/600 tabular with "kg" on the right. This is a sanctioned use of the medal next to the logger's. The Gold Is Earned Rule holds, because every row reports a record. An empty list is a muted line in a plain Surface panel.
 
 ### Segmented Control
-One look for every either/or switch: the planner's Tydzień/Miesiąc control and the stats range (30 dni / 3 mies. / rok / cały czas) and metric (1RM / top set / volume) switches. A Graphite Muted track with 8px corners and 4px padding holds 36px options with 6px corners and 14px/500 text. The current option is a Surface fill with foreground text. The others are muted and hover to foreground. On stats, each option is a link, the state lives in the URL (`?range=`, `?metric=`), and the current one carries `aria-current`. The track scrolls sideways rather than wrapping when space runs out.
+One look for every either/or switch: the planner's Tydzień/Miesiąc control and the stats range (30 dni / 3 mies. / rok / cały czas) and metric (1RM / top set / volume) switches. A Graphite Muted track with 8px corners and 4px padding holds 36px options with 6px corners and 14px/500 text. The current option is a Surface fill with foreground text. The others are muted and hover to foreground. On stats, each option is a link, the state lives in the URL (`?range=`, `?metric=`), and the current one carries `aria-current`. The track scrolls sideways rather than wrapping when space runs out. The one exception is a choice inside a form (the AI plan goal), where the options are radio inputs laid out as a 2×2 grid of 40px options on the same track.
 
 ### Main-Lift Card (stats)
 One of the three or four most-trained lifts in the range, as a link to its detail page. It has 12px corners, a hairline border, and a Surface fill that steps to Graphite Muted on hover, with 12px padding (16px from `sm`). Top to bottom: the name (15px/600, clamped to two lines with the height reserved), the muscle group (12px muted), the estimated 1RM in Stat with "kg", a 12px muted "e1RM" caption, and a 13px change line behind a 14px trend icon (trending up, down, or a dash). A gain reads in foreground weight 500, while flat, down, or single-session changes stay muted, never green. At the bottom is the mini trend, then a 12px muted tabular session count, with the gold "Rekord" chip (trophy and label) on the right only under the Gold Is Earned range gate.
@@ -471,13 +516,36 @@ Horizontal bars in a 12px Surface panel, sorted largest first. Each row is a 120
 ### Section Error
 When one stats section fails, a Danger Red Tint panel (12px corners, 12px/16px padding) replaces only that section, with 14px Danger Red text and an underlined "retry" link. The rest of the page still renders.
 
+### Template Editor (plans, signature)
+One training day as a compact target table, edited where it is read. It is shared: plan detail uses it now and the template page will reuse it.
+- **Section:** a Surface section with 12px corners and a hairline border. The header (16px padding, 20px from `sm`) holds the day name as Inline Text at Title size over a 13px muted tabular exercise count, with a 40px round muted ⋯ on the right (delete day, through a Confirm Sheet).
+- **Save status:** a polite live region after the exercise count reads "· Zapisywanie…" while any save is pending and "· Zapisano" for 2s afterwards, then clears. There is no save button and no edit mode.
+- **Table:** from `sm`, a Column Label header row between hairlines, then hairline-divided exercise rows on the Template Grid (see Layout). The exercise cell is the name at 15px/500 (truncating only from `sm`) over a 12px muted muscle group. The ↑↓ are 36px muted square icon buttons (8px corners, 30% opacity when disabled at the ends), and the ⋯ is a 40px round muted button whose menu holds "Usuń" in Danger Red.
+- **Target field:** a Graphite Muted fill with 8px corners and no border, 40px tall (44px on phones), holding a centred 600 tabular value. An empty optional value (kg, rest) shows a muted "—" placeholder at weight 400, and a rest value carries a muted 12px "s" suffix inside the right edge. Focus lifts the fill to Surface with a 2px Signal Blue ring, and the whole value is selected. Enter or blur saves, Escape restores. An invalid value snaps back and raises an error toast naming the field. A failed save reverts the value and raises an error toast. Values are 16px on phones (so iOS does not zoom on focus, as with the Data Cell) and 15px from `sm`.
+- **Adding and removing:** a footer row above a hairline holds "+ Dodaj ćwiczenie", a 44px quiet blue text button (14px/500, hovering to Signal Blue Tint) that opens the logger's catalog sheet and adds the pick at 3 × 10. Removing an exercise raises the neutral toast with "Cofnij", which re-adds it with the same targets and position. An empty day shows a 14px muted line between hairlines.
+
+### Inline Text (plans)
+Text that is its own editor: the plan name, the plan notes, and a day name. At rest it looks like plain text inside a transparent 1px border with 8px corners and 8px side padding, pulled out by the same amount so the text stays aligned. Hover shows the Hairline Border. Focus turns the border Signal Blue over a Surface fill. Enter or blur saves (a required name that is left empty snaps back), and Escape restores the previous value. Notes are a one-row textarea that grows with its content, muted at rest and foreground while focused, with a muted placeholder that invites a note.
+
+### Confirm Sheet
+The confirmation for an irreversible action, built on the Sheet. The title names the thing ("Usunąć plan „…”?"), and the body is 14px muted copy that states the consequence honestly (what is deleted and what stays, such as scheduled entries keeping their dates). The footer holds an Outline cancel and the Danger confirm, both 48px: stacked with the confirm on top on phones, and right-aligned side by side from `sm`. While the action runs, the confirm is disabled at 60%.
+
+### AI Review Banner (plans)
+Shown on a plan that the AI just generated, until it is dismissed. It is a Graphite Muted panel with 12px corners, a hairline border, and 12px/16px padding, set 20px under the header. A 16px muted Sparkles icon leads 14px copy that asks the user to review the plan. Then comes "Usuń plan" as a Danger Red text button (hovering to Danger Red Tint), which opens the plan's Confirm Sheet, and a 32px muted dismiss X. It has `role="status"`. It carries no blue and no gold.
+
+### Plan List Row
+Rows in one Surface list panel (12px corners, hairline border, hairline dividers). Each row links to its plan with 16px padding (20px sides from `sm`), hovering to Graphite Muted, and ends with a muted chevron. From top to bottom: the plan name at 17px/600, a 13px muted tabular line ("N dni treningowych · M ćwiczeń", or a no-days line), the day names at 14px joined by middle dots on one truncated line, and the notes as a 13px muted truncated line when they exist. The empty list is a single Surface panel (20px padding, max 576px) with a Title, a muted line, and both header actions.
+
+### AI Plan Sheet (plans)
+A Sheet with a 14px muted hint, then three fields 24px apart. The goal is a four-option radio group in the Segmented Control look, wrapped into a 2×2 grid with 4px gaps and 40px options. The days per week (1–7) use the planner's outlined stepper: two 44px buttons around a 15px/600 tabular value, split by hairlines. Last comes an optional constraints textarea (Graphite Muted, hairline border, three rows, blue border on focus). The footer submit is blue with a Sparkles icon. While it runs, a muted "Układanie planu…" status sits above it, the label shortens, the icon pulses, and the sheet is locked. A failure shows a Danger Red Tint alert and keeps the form filled. The "Nowy plan" sheet is the same shape: one labelled name field and a full-width blue submit.
+
 ### Inputs / Fields
-- **Style:** the search field is a Graphite Muted fill, 44px, 8px corners, and a leading muted search icon. Auth fields are a Surface fill with a hairline border and 6px corners.
-- **Focus:** the Signal Blue caret plus the global blue outline. Auth fields shift their border to blue.
+- **Style:** the search field is a Graphite Muted fill, 44px, 8px corners, and a leading muted search icon. Auth fields are a Surface fill with a hairline border and 6px corners. Text fields in sheets (the plan name, the AI constraints) are a Graphite Muted fill with a hairline border and 8px corners, 44px tall for a single line, with 15px text.
+- **Focus:** the Signal Blue caret plus the global blue outline. Auth fields and sheet text fields shift their border to blue.
 - **Error:** Danger Red text, with a Danger Red Tint panel for form-level errors.
 
 ### Sheets
-A native modal dialog. On phones it is a bottom sheet (16px top corners, max 88dvh), and from `sm` it is a centred 512px panel. The title row pairs a 16px/600 title with a 40px round close button. The body scrolls. An optional footer sits above a hairline and respects the safe-area inset. It enters with a 220ms rise and fade.
+A native modal dialog. On phones it is a bottom sheet (16px top corners, max 88dvh), and from `sm` it is a centred 512px panel. The title row pairs a 16px/600 title with a 40px round close button. The body scrolls. An optional footer sits above a hairline and respects the safe-area inset. It enters with a 220ms rise and fade. While non-interruptible work runs (AI generation), the sheet is locked: Escape, a backdrop click, and the close button (shown at 30%) do nothing until the work ends or fails.
 
 ### Action Menu
 A 176px-minimum popover on Surface with a hairline border, 8px corners, 4px inner padding, and the Popover shadow. Items are 14px text in 6px-cornered rows. Destructive items are Danger Red and hover to Danger Red Tint.
@@ -486,7 +554,7 @@ A 176px-minimum popover on Surface with a hairline border, 8px corners, 4px inne
 On desktop, a 256px Surface sidebar with grouped links (14px, 6px rows). The active link gets a Graphite Muted fill and weight 500. Inactive links are muted and hover to foreground. On phones, a five-slot bottom tab bar with 11px labels, where the centre "log" slot is a 36px round Signal Blue button. A "More" slot opens a bottom sheet.
 
 ### Toast
-A bottom-centred bar, max width 384px, with 12px corners and the Toast shadow. The neutral version is inverted (foreground fill, ground text) and has an underlined Undo. The error version uses Danger Red. The PR version uses Record Gold with a trophy icon.
+A bottom-centred bar, max width 384px, with 12px corners and the Toast shadow. The neutral version is inverted (foreground fill, ground text) and has an underlined Undo. The error version uses Danger Red. The PR version uses Record Gold with a trophy icon. Each screen holds one toast at a time through a shared `useToast` state, and a new toast replaces the current one.
 
 ## Do's and Don'ts
 
@@ -503,6 +571,9 @@ A bottom-centred bar, max width 384px, with 12px corners and the Toast shadow. T
 - **Do** put a chart's readout above the plot, and make scrubbing work by pointer and by arrow keys through a `role="slider"` with a spoken `aria-valuetext`.
 - **Do** keep stats state (range, metric) in the URL and switch it with the shared segmented control.
 - **Do** show summary figures as a hairline-split row of label and value pairs, not as a grid of metric tiles.
+- **Do** keep one Signal Blue button per plans page: "Nowy plan" on the list, and "Zaplanuj w planerze" on a plan (or "Dodaj dzień treningowy" in an empty plan's card). The other actions are Outline buttons, quiet blue text, or muted icon buttons.
+- **Do** edit plan targets in place: fields save on blur or Enter, show "Zapisywanie…/Zapisano" per day, revert with a toast on failure, and offer "Cofnij" on removal.
+- **Do** confirm every irreversible delete in a Confirm Sheet that says what goes and what stays.
 
 ### Don't:
 - **Don't** use Record Gold for anything except a personal record.

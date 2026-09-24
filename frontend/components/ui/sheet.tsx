@@ -14,6 +14,7 @@ export function Sheet({
   closeLabel,
   children,
   footer,
+  locked = false,
 }: {
   open: boolean;
   onClose: () => void;
@@ -21,6 +22,8 @@ export function Sheet({
   closeLabel: string;
   children: ReactNode;
   footer?: ReactNode;
+  /** W trakcie nieprzerywalnej operacji: Escape, tło i X nie zamykają arkusza. */
+  locked?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
 
@@ -35,7 +38,8 @@ export function Sheet({
     <dialog
       ref={ref}
       onClose={onClose}
-      onClick={(event) => event.target === ref.current && onClose()}
+      onCancel={(event) => locked && event.preventDefault()}
+      onClick={(event) => !locked && event.target === ref.current && onClose()}
       aria-label={title}
       className="animate-sheet-in mt-auto mb-0 flex max-h-[88dvh] w-full max-w-none flex-col rounded-t-2xl bg-surface p-0 text-foreground not-open:hidden sm:m-auto sm:max-w-lg sm:rounded-2xl"
     >
@@ -44,8 +48,9 @@ export function Sheet({
         <button
           type="button"
           onClick={onClose}
+          disabled={locked}
           aria-label={closeLabel}
-          className="-mr-2 grid size-10 place-items-center rounded-full text-muted hover:bg-surface-muted hover:text-foreground"
+          className="-mr-2 grid size-10 place-items-center rounded-full text-muted hover:bg-surface-muted hover:text-foreground disabled:opacity-30 disabled:hover:bg-transparent"
         >
           <X className="size-5" strokeWidth={1.75} aria-hidden />
         </button>

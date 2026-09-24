@@ -26,12 +26,14 @@ export function GenerateSheet({
   open,
   onClose,
   plans,
+  initialPlanId = null,
   today,
   onGenerated,
 }: {
   open: boolean;
   onClose: () => void;
   plans: PlanOption[];
+  initialPlanId?: number | null;
   today: string;
   onGenerated: (count: number) => void;
 }) {
@@ -39,7 +41,7 @@ export function GenerateSheet({
   const tNav = useTranslations("nav");
   const format = useFormatter();
 
-  const [planId, setPlanId] = useState<number | null>(plans[0]?.id ?? null);
+  const [planId, setPlanId] = useState<number | null>(initialPlanId ?? plans[0]?.id ?? null);
   const [templates, setTemplates] = useState<PlanTemplate[] | null>(null);
   const [days, setDays] = useState<number[]>([]);
   const [weeks, setWeeks] = useState(4);

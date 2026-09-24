@@ -18,6 +18,9 @@ export default async function PlannerPage(props: PageProps<"/planner">) {
   const { from, to } = visibleRange(view, anchor);
 
   const { entries, templates, plans } = await loadPlanner(from, to);
+  // ?generate={planId}: przyjście z planu („Zaplanuj w planerze”) otwiera generowanie z tym planem.
+  const generate = Number(searchParams.generate);
+  const generatePlanId = plans.some((p) => p.id === generate) ? generate : null;
 
   return (
     <PlannerView
@@ -31,6 +34,7 @@ export default async function PlannerPage(props: PageProps<"/planner">) {
       entries={entries}
       templates={templates}
       plans={plans}
+      generatePlanId={generatePlanId}
     />
   );
 }

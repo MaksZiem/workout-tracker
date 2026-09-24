@@ -22,17 +22,18 @@ type Props = {
   entries: PlannerEntry[];
   templates: TemplateOption[];
   plans: PlanOption[];
+  generatePlanId?: number | null;
 };
 
 const href = (view: View, date: string) => `/planner?view=${view}&date=${date}`;
 
-export function PlannerView({ view, anchor, from, to, today, entries: serverEntries, templates, plans }: Props) {
+export function PlannerView({ view, anchor, from, to, today, entries: serverEntries, templates, plans, generatePlanId = null }: Props) {
   const t = useTranslations("pages.planner");
   const tUndo = useTranslations("pages.log.toast");
   const format = useFormatter();
   const planner = usePlanner(serverEntries, { error: t("toast.error"), removed: t("toast.removed") });
 
-  const [generateOpen, setGenerateOpen] = useState(false);
+  const [generateOpen, setGenerateOpen] = useState(generatePlanId !== null);
   const [addDate, setAddDate] = useState<string | null>(null);
   const [moving, setMoving] = useState<PlannerEntry | null>(null);
 
@@ -158,6 +159,7 @@ export function PlannerView({ view, anchor, from, to, today, entries: serverEntr
         open={generateOpen}
         onClose={() => setGenerateOpen(false)}
         plans={plans}
+        initialPlanId={generatePlanId}
         today={today}
         onGenerated={(count) => {
           setGenerateOpen(false);
