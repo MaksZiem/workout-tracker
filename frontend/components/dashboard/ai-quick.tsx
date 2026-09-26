@@ -21,7 +21,6 @@ export function AiQuick() {
       </p>
       <form action={action} className="mt-3">
         <textarea
-          // Po błędzie tekst wraca do pola, żeby nie trzeba było pisać od nowa.
           key={state.text ?? ""}
           name="text"
           defaultValue={state.text ?? ""}
