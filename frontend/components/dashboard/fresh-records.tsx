@@ -7,10 +7,6 @@ import { roundKg } from "@/lib/stats/model";
 
 const SHOWN = 4;
 
-/**
- * Rekordy z ostatnich 30 dni: jedyne złoto na pulpicie. Wiersz nosi ten sam 32px medal,
- * który w zapisie treningu zastępuje numer serii przy rekordzie: to ta sama chwila, widziana później.
- */
 export async function FreshRecords({ records, hasHistory }: { records: FreshRecord[]; hasHistory: boolean }) {
   const t = await getTranslations("pages.dashboard.records");
   const format = await getFormatter();
