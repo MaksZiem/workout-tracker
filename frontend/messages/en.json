@@ -217,7 +217,8 @@
         "addSet": "Add set",
         "menu": "Exercise options",
         "remove": "Remove exercise",
-        "fromAi": "Added from description"
+        "fromAi": "Added from description",
+        "records": "Records"
       },
       "pr": {
         "badge": "PR",
@@ -366,7 +367,9 @@
         "pending": "Saving…",
         "error": "Couldn’t change the date. Try again.",
         "saved": "Moved to {date}"
-      }
+      },
+      "exerciseMenu": "Exercise options",
+      "records": "Records"
     },
     "planner": {
       "title": "Planner",
@@ -623,9 +626,16 @@
       },
       "muscles": {
         "title": "Muscle groups",
-        "hint": "Completed sets in range",
+        "hint": "Average completed sets per week",
         "sets": "{count, plural, one {# set} other {# sets}}",
-        "empty": "No completed sets in this range."
+        "empty": "No completed sets in this range.",
+        "perWeek": "{value}/wk",
+        "target": "Recommended {min}–{max} sets per muscle group per week",
+        "status": {
+          "low": "too few",
+          "ok": "on target",
+          "high": "a lot"
+        }
       },
       "records": {
         "title": "Records",
@@ -643,6 +653,51 @@
         "weeks": "{count, plural, =0 {No streak} one {Streak: # week with training} other {Streak: # weeks with training}}",
         "days": "days in a row: {count}",
         "scope": "current, all time"
+      },
+      "adherence": {
+        "done": "Plan completed: {completed} of {due}",
+        "skipped": "{count} skipped",
+        "missed": "{count} missed",
+        "onlyUpcoming": "{count, plural, one {# planned workout ahead} other {# planned workouts ahead}}",
+        "planner": "Planner"
+      },
+      "weekly": {
+        "title": "Weekly volume",
+        "hint": "Weight × reps from completed sets",
+        "label": "Volume by week",
+        "tons": "{value} t",
+        "workouts": "{count, plural, =0 {no workouts} one {# workout} other {# workouts}}",
+        "partial": "week in progress",
+        "thisWeek": "This week",
+        "changeScope": "last week vs {weeks}-week average",
+        "empty": "No completed sets in this range."
+      },
+      "repRanges": {
+        "title": "Rep ranges",
+        "hint": "Completed sets in range",
+        "sets": "{count, plural, one {# set} other {# sets}}",
+        "empty": "No completed sets in this range.",
+        "STRENGTH": {
+          "label": "Strength",
+          "reps": "1–5"
+        },
+        "HYPERTROPHY": {
+          "label": "Hypertrophy",
+          "reps": "6–12"
+        },
+        "ENDURANCE": {
+          "label": "Endurance",
+          "reps": "13+"
+        },
+        "reps": "{range} reps"
+      },
+      "stagnation": {
+        "title": "Stalled",
+        "hint": "No new estimated 1RM in over 6 weeks despite regular sessions",
+        "since": "{weeks, plural, one {no record for # week} other {no record for # weeks}}",
+        "sessions": "{count, plural, one {# session since} other {# sessions since}}",
+        "best": "best on {date}",
+        "empty": "Every exercise is moving forward."
       }
     },
     "exercises": {
@@ -729,7 +784,19 @@
         "title": "No history for this exercise yet",
         "body": "Do it in a workout and its progress chart and records will appear here."
       },
-      "emptyRange": "No sessions of this exercise in the selected range."
+      "emptyRange": "No sessions of this exercise in the selected range.",
+      "repRecords": {
+        "title": "Rep records",
+        "hint": "Heaviest weight for at least this many reps",
+        "rm": "{reps}RM",
+        "actual": "× {reps}",
+        "none": "None"
+      },
+      "sheet": {
+        "title": "Records: {name}",
+        "open": "Full exercise stats",
+        "error": "Couldn't load records."
+      }
     }
   },
   "enums": {

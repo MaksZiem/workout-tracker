@@ -217,7 +217,8 @@
         "addSet": "Dodaj serię",
         "menu": "Opcje ćwiczenia",
         "remove": "Usuń ćwiczenie",
-        "fromAi": "Dodane z opisu"
+        "fromAi": "Dodane z opisu",
+        "records": "Rekordy"
       },
       "pr": {
         "badge": "Rekord",
@@ -366,7 +367,9 @@
         "pending": "Zapisywanie…",
         "error": "Nie udało się zmienić daty. Spróbuj ponownie.",
         "saved": "Przeniesiono na {date}"
-      }
+      },
+      "exerciseMenu": "Opcje ćwiczenia",
+      "records": "Rekordy"
     },
     "planner": {
       "title": "Planer",
@@ -623,9 +626,16 @@
       },
       "muscles": {
         "title": "Partie mięśniowe",
-        "hint": "Ukończone serie w okresie",
+        "hint": "Średnio ukończonych serii w tygodniu",
         "sets": "{count, plural, one {# seria} few {# serie} many {# serii} other {# serii}}",
-        "empty": "Brak ukończonych serii w tym okresie."
+        "empty": "Brak ukończonych serii w tym okresie.",
+        "perWeek": "{value}/tydz.",
+        "target": "Zalecane {min}–{max} serii na partię w tygodniu",
+        "status": {
+          "low": "za mało",
+          "ok": "w normie",
+          "high": "dużo"
+        }
       },
       "records": {
         "title": "Rekordy",
@@ -643,6 +653,51 @@
         "weeks": "{count, plural, =0 {Brak passy} one {Passa: # tydzień z treningiem} few {Passa: # tygodnie z treningiem} many {Passa: # tygodni z treningiem} other {Passa: # tygodni z treningiem}}",
         "days": "dni z rzędu: {count}",
         "scope": "obecna, z całej historii"
+      },
+      "adherence": {
+        "done": "Plan zrealizowany: {completed} z {due}",
+        "skipped": "{count, plural, one {# pominięty} few {# pominięte} many {# pominiętych} other {# pominiętych}}",
+        "missed": "{count, plural, one {# przegapiony} few {# przegapione} many {# przegapionych} other {# przegapionych}}",
+        "onlyUpcoming": "{count, plural, one {# zaplanowany trening przed Tobą} few {# zaplanowane treningi przed Tobą} many {# zaplanowanych treningów przed Tobą} other {# zaplanowanych treningów przed Tobą}}",
+        "planner": "Planer"
+      },
+      "weekly": {
+        "title": "Objętość tygodniowo",
+        "hint": "Ciężar × powtórzenia z ukończonych serii",
+        "label": "Objętość w kolejnych tygodniach",
+        "tons": "{value} t",
+        "workouts": "{count, plural, =0 {bez treningu} one {# trening} few {# treningi} many {# treningów} other {# treningów}}",
+        "partial": "tydzień w trakcie",
+        "thisWeek": "Ten tydzień",
+        "changeScope": "ostatni tydzień vs średnia z {weeks} poprzednich",
+        "empty": "Brak ukończonych serii w tym okresie."
+      },
+      "repRanges": {
+        "title": "Zakresy powtórzeń",
+        "hint": "Ukończone serie w okresie",
+        "sets": "{count, plural, one {# seria} few {# serie} many {# serii} other {# serii}}",
+        "empty": "Brak ukończonych serii w tym okresie.",
+        "STRENGTH": {
+          "label": "Siła",
+          "reps": "1–5"
+        },
+        "HYPERTROPHY": {
+          "label": "Hipertrofia",
+          "reps": "6–12"
+        },
+        "ENDURANCE": {
+          "label": "Wytrzymałość",
+          "reps": "13+"
+        },
+        "reps": "{range} powt."
+      },
+      "stagnation": {
+        "title": "Bez postępu",
+        "hint": "Brak nowego szacowanego 1RM od ponad 6 tygodni mimo regularnych sesji",
+        "since": "{weeks, plural, one {bez rekordu od # tygodnia} other {bez rekordu od # tygodni}}",
+        "sessions": "{count, plural, one {# sesja od rekordu} few {# sesje od rekordu} many {# sesji od rekordu} other {# sesji od rekordu}}",
+        "best": "rekord z {date}",
+        "empty": "Wszystkie ćwiczenia idą do przodu."
       }
     },
     "exercises": {
@@ -729,7 +784,19 @@
         "title": "To ćwiczenie nie ma jeszcze historii",
         "body": "Wykonaj je w treningu, a tu pojawi się wykres postępu i rekordy."
       },
-      "emptyRange": "Brak sesji tego ćwiczenia w wybranym okresie."
+      "emptyRange": "Brak sesji tego ćwiczenia w wybranym okresie.",
+      "repRecords": {
+        "title": "Rekordy powtórzeń",
+        "hint": "Największy ciężar na co najmniej tyle powtórzeń",
+        "rm": "{reps}RM",
+        "actual": "× {reps}",
+        "none": "Brak"
+      },
+      "sheet": {
+        "title": "Rekordy: {name}",
+        "open": "Pełne statystyki ćwiczenia",
+        "error": "Nie udało się wczytać rekordów."
+      }
     }
   },
   "enums": {

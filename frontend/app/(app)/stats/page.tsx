@@ -12,6 +12,11 @@ import { SummaryLine } from "@/components/stats/summary-line";
 import { ActivityMap } from "@/components/stats/activity-map";
 import { MuscleBars } from "@/components/stats/muscle-bars";
 import { RecordsTable } from "@/components/stats/records-table";
+import { AdherenceLine } from "@/components/stats/adherence-line";
+import { WeeklyChangeNote, WeeklyVolume, weeklyChange } from "@/components/stats/weekly-volume";
+import { RepRanges } from "@/components/stats/rep-ranges";
+import { StagnationList } from "@/components/stats/stagnation-list";
+import { daysBetween } from "@/lib/planner/dates";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pages.stats");
@@ -22,8 +27,12 @@ export default async function StatsPage(props: PageProps<"/stats">) {
   const searchParams = await props.searchParams;
   const range = parseRange(searchParams.range);
   const t = await getTranslations("pages.stats");
-  const data = await loadOverview(range, localDate());
+  const today = localDate();
+  const data = await loadOverview(range, today);
   const self = statsHref("/stats", { range });
+  // Długość okresu w tygodniach do średniej serii na partię; „cały czas” liczony od pierwszego treningu.
+  const periodStart = data.bounds.from ?? (data.weekly.ok ? data.weekly.data[0]?.weekStart : undefined) ?? today;
+  const periodWeeks = Math.max(1, daysBetween(periodStart, today).length / 7);
 
   const activity = (
     <StatsSection id="activity" title={t("activity.title")} aside={<StreakNote weeks={data.streak.weeks} days={data.streak.days} />}>
@@ -32,7 +41,11 @@ export default async function StatsPage(props: PageProps<"/stats">) {
   );
   const muscles = (columns: 1 | 2) => (
     <StatsSection id="muscles" title={t("muscles.title")} hint={t("muscles.hint")}>
-      {data.muscleGroups.ok ? <MuscleBars groups={data.muscleGroups.data} columns={columns} /> : <SectionError retryHref={self} />}
+      {data.muscleGroups.ok ? (
+        <MuscleBars groups={data.muscleGroups.data} weeks={periodWeeks} columns={columns} />
+      ) : (
+        <SectionError retryHref={self} />
+      )}
     </StatsSection>
   );
 
@@ -62,9 +75,19 @@ export default async function StatsPage(props: PageProps<"/stats">) {
                 ) : null}
               </p>
             )}
-            <div className="mt-4">
+            <div className="mt-4 flex flex-col gap-3">
               {data.summary.ok ? <SummaryLine summary={data.summary.data} /> : <SectionError retryHref={self} />}
+              {data.adherence.ok ? <AdherenceLine adherence={data.adherence.data} /> : <SectionError retryHref={self} />}
             </div>
+          </StatsSection>
+
+          <StatsSection
+            id="weekly"
+            title={t("weekly.title")}
+            hint={t("weekly.hint")}
+            aside={data.weekly.ok ? <WeeklyChangeNote change={weeklyChange(data.weekly.data, today)} /> : null}
+          >
+            {data.weekly.ok ? <WeeklyVolume weeks={data.weekly.data} today={today} /> : <SectionError retryHref={self} />}
           </StatsSection>
 
           {range === "30d" || range === "90d" ? (
@@ -79,6 +102,15 @@ export default async function StatsPage(props: PageProps<"/stats">) {
               {muscles(2)}
             </>
           )}
+
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
+            <StatsSection id="rep-ranges" title={t("repRanges.title")} hint={t("repRanges.hint")}>
+              {data.repRanges.ok ? <RepRanges ranges={data.repRanges.data} /> : <SectionError retryHref={self} />}
+            </StatsSection>
+            <StatsSection id="stagnation" title={t("stagnation.title")} hint={t("stagnation.hint")}>
+              {data.stagnation.ok ? <StagnationList exercises={data.stagnation.data} range={range} /> : <SectionError retryHref={self} />}
+            </StatsSection>
+          </div>
 
           <StatsSection id="records" title={t("records.title")} hint={range === "all" ? t("records.hintAll") : t("records.hint")}>
             {data.records.ok ? (

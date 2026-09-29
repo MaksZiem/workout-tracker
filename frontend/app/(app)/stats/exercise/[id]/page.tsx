@@ -10,6 +10,7 @@ import { metricValue, roundKg, type Session } from "@/lib/stats/model";
 import { parseMetric, parseRange, STATS_METRICS, STATS_RANGES, statsHref, type StatsMetric } from "@/lib/stats/range";
 import { LineChart } from "@/components/stats/line-chart";
 import { RecordStrip } from "@/components/stats/record-strip";
+import { RepRecords } from "@/components/stats/rep-records";
 import { SegmentedLinks } from "@/components/stats/segmented-links";
 import { SectionError, StatsSection } from "@/components/stats/section";
 
@@ -148,6 +149,26 @@ export default async function ExerciseStatsPage(props: Props) {
               <p className="rounded-xl border border-border bg-surface p-4 text-sm text-muted">{t("records.none")}</p>
             )}
           </StatsSection>
+
+          {/* Bez serii z ciężarem rekordy powtórzeń byłyby samymi kreskami. */}
+          {!data.repRecords.ok ? (
+            <StatsSection id="rep-records" title={t("repRecords.title")} hint={t("repRecords.hint")}>
+              <SectionError retryHref={self} />
+            </StatsSection>
+          ) : data.repRecords.data.some((r) => r.weight !== null) ? (
+            <StatsSection id="rep-records" title={t("repRecords.title")} hint={t("repRecords.hint")}>
+              <RepRecords
+                records={data.repRecords.data}
+                kg={kg}
+                date={date}
+                labels={{
+                  rm: (reps) => t("repRecords.rm", { reps }),
+                  actual: (reps) => t("repRecords.actual", { reps }),
+                  none: t("repRecords.none"),
+                }}
+              />
+            </StatsSection>
+          ) : null}
 
           {data.sessions.ok && data.sessions.data.length ? (
             <StatsSection id="sessions" title={t("sessions.title")}>

@@ -11,8 +11,19 @@ import {
   MoreThanOrEqual,
   Repository,
 } from 'typeorm';
-import { addDays, computePersonalRecords, toProgressPoint } from './helpers';
+import {
+  addDays,
+  computeAdherence,
+  computePersonalRecords,
+  computeRepRanges,
+  computeRepRecords,
+  computeStagnation,
+  computeWeeklyStats,
+  SetRow,
+  toProgressPoint,
+} from './helpers';
 import { MuscleGroup } from 'src/enums/muscle-group.enum';
+import { ScheduledWorkout } from 'src/planner/scheduled-workout.entity';
 
 @Injectable()
 export class StatsService {
@@ -22,6 +33,8 @@ export class StatsService {
     private workoutExerciseRepo: Repository<WorkoutExercise>,
     @InjectRepository(ExerciseSet)
     private exerciseSetRepo: Repository<ExerciseSet>,
+    @InjectRepository(ScheduledWorkout)
+    private scheduledRepo: Repository<ScheduledWorkout>,
     // private workoutService: WorkoutService
   ) {}
 
@@ -31,15 +44,7 @@ export class StatsService {
     from?: string,
     to?: string,
   ) {
-    const workoutWhere: FindOptionsWhere<Workout> = { user: { id: userId } };
-
-    if (from && to) {
-      workoutWhere.date = Between(from, to);
-    } else if (from) {
-      workoutWhere.date = MoreThanOrEqual(from);
-    } else if (to) {
-      workoutWhere.date = LessThanOrEqual(to);
-    }
+    const workoutWhere = this.workoutWhere(userId, from, to);
 
     const where: FindOptionsWhere<WorkoutExercise> = {
       exercise: { id: exerciseId },
@@ -108,14 +113,7 @@ export class StatsService {
   }
 
   async getMuscleGroupDistribution(userId: number, from?: string, to?: string) {
-    const workoutWhere: FindOptionsWhere<Workout> = { user: { id: userId } };
-    if (from && to) {
-      workoutWhere.date = Between(from, to);
-    } else if (from) {
-      workoutWhere.date = MoreThanOrEqual(from);
-    } else if (to) {
-      workoutWhere.date = LessThanOrEqual(to);
-    }
+    const workoutWhere = this.workoutWhere(userId, from, to);
 
     const sets = await this.exerciseSetRepo.find({
       where: {
@@ -200,14 +198,7 @@ export class StatsService {
   }
 
   async getSummary(userId: number, from?: string, to?: string) {
-    const workoutWhere: FindOptionsWhere<Workout> = { user: { id: userId } };
-    if (from && to) {
-      workoutWhere.date = Between(from, to);
-    } else if (from) {
-      workoutWhere.date = MoreThanOrEqual(from);
-    } else if (to) {
-      workoutWhere.date = LessThanOrEqual(to);
-    }
+    const workoutWhere = this.workoutWhere(userId, from, to);
 
     const [totalWorkouts, muscleGroups, currentStreak] = await Promise.all([
       this.workoutRepo.count({ where: workoutWhere }),
@@ -232,4 +223,96 @@ export class StatsService {
       currentStreak,
     };
   }
+
+  async getAdherence(userId: number, from?: string, to?: string) {
+    const scheduled = await this.scheduledRepo.find({
+      where: { user: { id: userId }, date: this.dateRange(from, to) },
+      select: ['date', 'status'],
+    });
+    return computeAdherence(scheduled, today());
+  }
+
+  async getWeeklyStats(userId: number, from?: string, to?: string) {
+    const rangeTo = to ?? today();
+    const [workouts, sets] = await Promise.all([
+      this.workoutRepo.find({
+        where: this.workoutWhere(userId, from, rangeTo),
+        select: ['date'],
+      }),
+      this.completedSets(userId, from, rangeTo),
+    ]);
+    return computeWeeklyStats(
+      workouts.map((w) => w.date),
+      sets,
+      rangeTo,
+      from,
+    );
+  }
+
+  async getRepRanges(userId: number, from?: string, to?: string) {
+    return computeRepRanges(await this.completedSets(userId, from, to));
+  }
+
+  async getStagnation(userId: number) {
+    return computeStagnation(await this.completedSets(userId), today());
+  }
+
+  async getRepRecords(userId: number, exerciseId: number) {
+    return computeRepRecords(
+      await this.completedSets(userId, undefined, undefined, exerciseId),
+    );
+  }
+
+  /** Ukończone serie użytkownika spłaszczone do `SetRow`. */
+  private async completedSets(
+    userId: number,
+    from?: string,
+    to?: string,
+    exerciseId?: number,
+  ): Promise<SetRow[]> {
+    const sets = await this.exerciseSetRepo.find({
+      where: {
+        completed: true,
+        workoutExercise: {
+          workout: this.workoutWhere(userId, from, to),
+          ...(exerciseId ? { exercise: { id: exerciseId } } : {}),
+        },
+      },
+      relations: [
+        'workoutExercise',
+        'workoutExercise.workout',
+        'workoutExercise.exercise',
+      ],
+    });
+    return sets.map((set) => ({
+      workoutId: set.workoutExercise.workout.id,
+      date: set.workoutExercise.workout.date,
+      exerciseId: set.workoutExercise.exercise.id,
+      exerciseName: set.workoutExercise.exercise.name,
+      weight: set.weight,
+      reps: set.reps,
+    }));
+  }
+
+  private workoutWhere(
+    userId: number,
+    from?: string,
+    to?: string,
+  ): FindOptionsWhere<Workout> {
+    const where: FindOptionsWhere<Workout> = { user: { id: userId } };
+    const date = this.dateRange(from, to);
+    if (date) where.date = date;
+    return where;
+  }
+
+  private dateRange(from?: string, to?: string) {
+    if (from && to) return Between(from, to);
+    if (from) return MoreThanOrEqual(from);
+    if (to) return LessThanOrEqual(to);
+    return undefined;
+  }
+}
+
+function today() {
+  return new Date().toISOString().slice(0, 10);
 }

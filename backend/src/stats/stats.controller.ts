@@ -190,4 +190,121 @@ export class StatsController {
   ) {
     return this.statsService.getSummary(user.id, filters.from, filters.to)
   }
+
+  @Get('/exercise/:exerciseId/rep-records')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: 'Rekordy powtórzeń dla danego ćwiczenia',
+    description: 'Dla 1, 3, 5, 8, 10 i 12 powtórzeń zwraca największy ciężar z ukończonej serii o co najmniej tylu powtórzeniach (seria 100 kg × 8 jest też rekordem 5RM). Brak serii - pola null.',
+  })
+  @ApiParam({ name: 'exerciseId', type: Number, example: 1 })
+  @ApiResponse({
+    status: 200,
+    description: 'Rekordy dla kolejnych liczb powtórzeń',
+    schema: {
+      example: [
+        { reps: 1, weight: 110, actualReps: 3, date: '2026-09-08' },
+        { reps: 5, weight: 100, actualReps: 8, date: '2026-09-01' },
+        { reps: 12, weight: null, actualReps: null, date: null },
+      ],
+    },
+  })
+  getRepRecords(
+    @CurrentUser() user: User,
+    @Param('exerciseId', ParseIntPipe) exerciseId: number,
+  ) {
+    return this.statsService.getRepRecords(user.id, exerciseId)
+  }
+
+  @Get('/adherence')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: 'Realizacja planu treningowego',
+    description: 'Zlicza zaplanowane treningi w zakresie: zrealizowane, pominięte, przegapione (zaplanowane w przeszłości i nierozpoczęte) oraz nadchodzące. `rate` to udział zrealizowanych wśród tych, które już powinny się odbyć (null, gdy takich nie ma).',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Podsumowanie realizacji planu',
+    schema: { example: { completed: 11, skipped: 1, missed: 1, upcoming: 3, rate: 0.846 } },
+  })
+  getAdherence(
+    @CurrentUser() user: User,
+    @Query() filters: ExerciseProgressFilterDto,
+  ) {
+    return this.statsService.getAdherence(user.id, filters.from, filters.to)
+  }
+
+  @Get('/weekly')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: 'Treningi, serie i objętość tydzień po tygodniu',
+    description: 'Zwraca gęstą listę tygodni (pon–niedz.) z liczbą treningów, ukończonych serii i objętością. Bez `from` - od tygodnia pierwszego treningu.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista tygodni',
+    schema: {
+      example: [
+        { weekStart: '2026-09-14', workouts: 3, sets: 42, volume: 18450 },
+        { weekStart: '2026-09-21', workouts: 0, sets: 0, volume: 0 },
+      ],
+    },
+  })
+  getWeeklyStats(
+    @CurrentUser() user: User,
+    @Query() filters: ExerciseProgressFilterDto,
+  ) {
+    return this.statsService.getWeeklyStats(user.id, filters.from, filters.to)
+  }
+
+  @Get('/rep-ranges')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: 'Rozkład serii wg zakresu powtórzeń',
+    description: 'Liczba ukończonych serii w zakresach: STRENGTH (1–5), HYPERTROPHY (6–12), ENDURANCE (13+).',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Serie w trzech zakresach powtórzeń',
+    schema: {
+      example: [
+        { range: 'STRENGTH', sets: 24 },
+        { range: 'HYPERTROPHY', sets: 96 },
+        { range: 'ENDURANCE', sets: 12 },
+      ],
+    },
+  })
+  getRepRanges(
+    @CurrentUser() user: User,
+    @Query() filters: ExerciseProgressFilterDto,
+  ) {
+    return this.statsService.getRepRanges(user.id, filters.from, filters.to)
+  }
+
+  @Get('/stagnation')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: 'Ćwiczenia bez postępu',
+    description: 'Ćwiczenia trenowane w ostatnich 21 dniach, w których najlepszy szacowany 1RM pochodzi sprzed ponad 42 dni, a od tamtej pory były co najmniej 3 sesje. Najdłuższy zastój pierwszy.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista ćwiczeń w zastoju',
+    schema: {
+      example: [
+        {
+          exerciseId: 1,
+          exerciseName: 'Wyciskanie sztangi leżąc',
+          bestEstimatedOneRepMax: 112.5,
+          bestDate: '2026-07-14',
+          weeksSinceBest: 11,
+          sessionsSince: 9,
+          lastSessionDate: '2026-09-26',
+        },
+      ],
+    },
+  })
+  getStagnation(@CurrentUser() user: User) {
+    return this.statsService.getStagnation(user.id)
+  }
 }

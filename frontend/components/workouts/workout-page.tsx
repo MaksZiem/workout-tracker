@@ -14,6 +14,7 @@ import { ConfirmSheet } from "@/components/ui/confirm-sheet";
 import { Sheet } from "@/components/ui/sheet";
 import { ToastView, useToast } from "@/components/ui/toast";
 import { InlineText } from "@/components/plans/inline-text";
+import { ExerciseRecordsSheet } from "@/components/stats/exercise-records-sheet";
 
 // Wspólna siatka nagłówka i serii: # | kg | powt. | status. Telefon: status przy prawej krawędzi;
 // od `sm` status stoi tuż za powtórzeniami, żeby czytał się razem z serią.
@@ -221,10 +222,11 @@ function ExerciseSection({ exercise }: { exercise: DetailExercise }) {
   const tGroup = useTranslations("enums.muscleGroup");
   const format = useFormatter();
   const recordLabel = (kinds: RecordKind[]) => kinds.map((k) => t(`record.${k}`)).join(", ");
+  const [showRecords, setShowRecords] = useState(false);
 
   return (
     <section aria-labelledby={`ex-${exercise.id}`} className="rounded-xl border border-border bg-surface">
-      <header className="flex items-baseline justify-between gap-3 px-4 pt-4 pb-3 sm:px-5">
+      <header className="flex items-center justify-between gap-3 px-4 pt-4 pb-3 sm:px-5">
         <div className="min-w-0">
           <h2 id={`ex-${exercise.id}`} className="text-[17px] leading-snug font-semibold">
             <Link href={`/exercises/${exercise.exerciseId}`} className="underline-offset-2 hover:underline">
@@ -233,10 +235,22 @@ function ExerciseSection({ exercise }: { exercise: DetailExercise }) {
           </h2>
           <p className="text-xs text-muted">{tGroup(exercise.muscleGroup)}</p>
         </div>
-        <p className="shrink-0 text-[13px] text-muted tabular-nums">
-          {t("sets", { count: exercise.doneSets })} · {format.number(Math.round(exercise.volume))} kg
-        </p>
+        <div className="flex shrink-0 items-center gap-1">
+          <p className="text-[13px] text-muted tabular-nums">
+            {t("sets", { count: exercise.doneSets })} · {format.number(Math.round(exercise.volume))} kg
+          </p>
+          <ActionMenu
+            label={t("exerciseMenu")}
+            align="right"
+            trigger={<Ellipsis className="size-5" strokeWidth={2} aria-hidden />}
+            triggerClassName="-my-2 -mr-2 grid size-10 place-items-center rounded-full text-muted hover:bg-surface-muted hover:text-foreground"
+            actions={[{ label: t("records"), onSelect: () => setShowRecords(true) }]}
+          />
+        </div>
       </header>
+      {showRecords ? (
+        <ExerciseRecordsSheet exercise={{ id: exercise.exerciseId, name: exercise.name }} onClose={() => setShowRecords(false)} />
+      ) : null}
 
       {exercise.sets.length === 0 ? (
         <p className="border-t border-border px-4 py-4 text-sm text-muted sm:px-5">{t("noSets")}</p>

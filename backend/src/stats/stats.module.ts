@@ -5,13 +5,19 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Workout } from 'src/workout/workout.entity';
 import { WorkoutExercise } from 'src/workout/workout-exercise.entity';
 import { ExerciseSet } from 'src/workout/exercise-set.entity';
+import { ScheduledWorkout } from 'src/planner/scheduled-workout.entity';
 import { ExerciseModule } from 'src/exercise/exercise.module';
 import { WorkoutModule } from 'src/workout/workout.module';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workout, WorkoutExercise, ExerciseSet]),
+    TypeOrmModule.forFeature([
+      Workout,
+      WorkoutExercise,
+      ExerciseSet,
+      ScheduledWorkout,
+    ]),
     ExerciseModule,
     WorkoutModule,
     UsersModule,

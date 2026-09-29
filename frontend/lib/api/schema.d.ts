@@ -494,6 +494,106 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/stats/exercise/{exerciseId}/rep-records": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Rekordy powtórzeń dla danego ćwiczenia
+         * @description Dla 1, 3, 5, 8, 10 i 12 powtórzeń zwraca największy ciężar z ukończonej serii o co najmniej tylu powtórzeniach (seria 100 kg × 8 jest też rekordem 5RM). Brak serii - pola null.
+         */
+        get: operations["StatsController_getRepRecords"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stats/adherence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Realizacja planu treningowego
+         * @description Zlicza zaplanowane treningi w zakresie: zrealizowane, pominięte, przegapione (zaplanowane w przeszłości i nierozpoczęte) oraz nadchodzące. `rate` to udział zrealizowanych wśród tych, które już powinny się odbyć (null, gdy takich nie ma).
+         */
+        get: operations["StatsController_getAdherence"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stats/weekly": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Treningi, serie i objętość tydzień po tygodniu
+         * @description Zwraca gęstą listę tygodni (pon–niedz.) z liczbą treningów, ukończonych serii i objętością. Bez `from` - od tygodnia pierwszego treningu.
+         */
+        get: operations["StatsController_getWeeklyStats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stats/rep-ranges": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Rozkład serii wg zakresu powtórzeń
+         * @description Liczba ukończonych serii w zakresach: STRENGTH (1–5), HYPERTROPHY (6–12), ENDURANCE (13+).
+         */
+        get: operations["StatsController_getRepRanges"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stats/stagnation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Ćwiczenia bez postępu
+         * @description Ćwiczenia trenowane w ostatnich 21 dniach, w których najlepszy szacowany 1RM pochodzi sprzed ponad 42 dni, a od tamtej pory były co najmniej 3 sesje. Najdłuższy zastój pierwszy.
+         */
+        get: operations["StatsController_getStagnation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/template": {
         parameters: {
             query?: never;
@@ -2795,6 +2895,168 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description Podsumowanie statystyk */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Brak tokenu lub token nieprawidłowy */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthorizedErrorDto"];
+                };
+            };
+        };
+    };
+    StatsController_getRepRecords: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                exerciseId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Rekordy dla kolejnych liczb powtórzeń */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Brak tokenu lub token nieprawidłowy */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthorizedErrorDto"];
+                };
+            };
+        };
+    };
+    StatsController_getAdherence: {
+        parameters: {
+            query?: {
+                /** @description Data początkowa zakresu (włącznie, YYYY-MM-DD) */
+                from?: string;
+                /** @description Data końcowa zakresu (włącznie, YYYY-MM-DD) */
+                to?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Podsumowanie realizacji planu */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Brak tokenu lub token nieprawidłowy */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthorizedErrorDto"];
+                };
+            };
+        };
+    };
+    StatsController_getWeeklyStats: {
+        parameters: {
+            query?: {
+                /** @description Data początkowa zakresu (włącznie, YYYY-MM-DD) */
+                from?: string;
+                /** @description Data końcowa zakresu (włącznie, YYYY-MM-DD) */
+                to?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista tygodni */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Brak tokenu lub token nieprawidłowy */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthorizedErrorDto"];
+                };
+            };
+        };
+    };
+    StatsController_getRepRanges: {
+        parameters: {
+            query?: {
+                /** @description Data początkowa zakresu (włącznie, YYYY-MM-DD) */
+                from?: string;
+                /** @description Data końcowa zakresu (włącznie, YYYY-MM-DD) */
+                to?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Serie w trzech zakresach powtórzeń */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Brak tokenu lub token nieprawidłowy */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthorizedErrorDto"];
+                };
+            };
+        };
+    };
+    StatsController_getStagnation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lista ćwiczeń w zastoju */
             200: {
                 headers: {
                     [name: string]: unknown;

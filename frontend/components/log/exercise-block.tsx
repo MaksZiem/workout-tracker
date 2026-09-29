@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import { Ellipsis, Plus, Sparkles } from "lucide-react";
 import { personalRecords, type LogExercise } from "@/lib/log/model";
 import type { WorkoutLogApi } from "@/lib/log/use-workout-log";
 import { ActionMenu } from "@/components/ui/action-menu";
+import { ExerciseRecordsSheet } from "@/components/stats/exercise-records-sheet";
 import { SET_GRID, SetRow } from "./set-row";
 
 type Props = {
@@ -20,6 +22,7 @@ export function ExerciseBlock({ exercise, log, activeSetKey, onFocusSet }: Props
   const format = useFormatter();
   const records = personalRecords(exercise);
   const kg = (value: number) => format.number(value, { maximumFractionDigits: 2 });
+  const [showRecords, setShowRecords] = useState(false);
 
   const previousLine = exercise.previous
     ? t("exercise.lastTime", {
@@ -51,9 +54,15 @@ export function ExerciseBlock({ exercise, log, activeSetKey, onFocusSet }: Props
           align="right"
           trigger={<Ellipsis className="size-5" strokeWidth={2} aria-hidden />}
           triggerClassName="-mr-2 grid size-10 place-items-center rounded-full text-muted hover:bg-surface-muted hover:text-foreground"
-          actions={[{ label: t("exercise.remove"), tone: "danger", onSelect: () => log.removeExercise(exercise.key) }]}
+          actions={[
+            { label: t("exercise.records"), onSelect: () => setShowRecords(true) },
+            { label: t("exercise.remove"), tone: "danger", onSelect: () => log.removeExercise(exercise.key) },
+          ]}
         />
       </div>
+
+      {/* Montowany dopiero po otwarciu: rekordy pobierają się na żądanie, nie dla każdego ćwiczenia. */}
+      {showRecords ? <ExerciseRecordsSheet exercise={exercise.exercise} onClose={() => setShowRecords(false)} /> : null}
 
       <p className="mt-1.5 text-[13px] text-muted tabular-nums">{previousLine}</p>
 

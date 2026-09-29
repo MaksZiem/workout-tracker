@@ -19,7 +19,7 @@ export async function loadOverview(range: StatsRange, today: string) {
   // Mapa aktywności przy „całym czasie” pokazuje ostatni rok.
   const activityFrom = bounds.from ?? addDays(today, -364);
 
-  const [summary, muscleGroups, frequency, records, catalog, lastYear] = await Promise.all([
+  const [summary, muscleGroups, frequency, records, catalog, lastYear, adherence, weekly, repRanges, stagnation] = await Promise.all([
     settle(unwrap(api.GET("/stats/summary", { params: { query } }))),
     settle(unwrap(api.GET("/stats/muscle-groups", { params: { query } }))),
     settle(unwrap(api.GET("/stats/frequency", { params: { query: { from: activityFrom, to: bounds.to } } }))),
@@ -27,6 +27,12 @@ export async function loadOverview(range: StatsRange, today: string) {
     settle(unwrap(api.GET("/exercise"))),
     // Passa liczona zawsze z ostatniego roku, niezależnie od wybranego zakresu.
     settle(unwrap(api.GET("/stats/frequency", { params: { query: { from: addDays(today, -364), to: today } } }))),
+    settle(unwrap(api.GET("/stats/adherence", { params: { query } }))),
+    // Bez dolnej granicy backend liczy od tygodnia pierwszego treningu.
+    settle(unwrap(api.GET("/stats/weekly", { params: { query } }))),
+    settle(unwrap(api.GET("/stats/rep-ranges", { params: { query } }))),
+    // Zastój to stan „na dziś”, niezależny od zakresu.
+    settle(unwrap(api.GET("/stats/stagnation"))),
   ]);
 
   const groupOf = new Map<number, MuscleGroup>(
@@ -45,6 +51,10 @@ export async function loadOverview(range: StatsRange, today: string) {
     records,
     main,
     groupOf,
+    adherence,
+    weekly,
+    repRanges,
+    stagnation,
     streak: {
       weeks: lastYear.ok ? weeklyStreak(lastYear.data, today) : null,
       days: summary.ok ? summary.data.currentStreak : null,
@@ -95,7 +105,7 @@ export async function loadExercise(exerciseId: number, range: StatsRange, today:
     throw ApiError.from(exercise.error, exercise.response);
   }
 
-  const [progress, allTime, records] = await Promise.all([
+  const [progress, allTime, records, repRecords] = await Promise.all([
     settle(
       unwrap(
         api.GET("/stats/exercise/{exerciseId}/progress", {
@@ -106,6 +116,7 @@ export async function loadExercise(exerciseId: number, range: StatsRange, today:
     // Czy ćwiczenie ma jakąkolwiek historię (odróżnia „nigdy” od „nie w tym okresie”).
     settle(unwrap(api.GET("/stats/exercise/{exerciseId}/progress", { params: { path: { exerciseId } } }))),
     loadRecords(api, exerciseId),
+    settle(unwrap(api.GET("/stats/exercise/{exerciseId}/rep-records", { params: { path: { exerciseId } } }))),
   ]);
 
   return {
@@ -114,6 +125,7 @@ export async function loadExercise(exerciseId: number, range: StatsRange, today:
     sessions: progress.ok ? { ok: true as const, data: sessionsOf(progress.data) } : progress,
     hasHistory: allTime.ok ? sessionsOf(allTime.data).length > 0 : true,
     records,
+    repRecords,
   };
 }
 

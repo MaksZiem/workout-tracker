@@ -82,6 +82,41 @@ export type StatsSummary = {
   currentStreak: number;
 };
 
+/**
+ * GET /stats/exercise/:exerciseId/rep-records (tablica, po jednym wpisie na N powtórzeń).
+ * Bez serii o co najmniej N powtórzeniach `weight`, `actualReps` i `date` są null.
+ */
+export type RepRecord = { reps: number; weight: number | null; actualReps: number | null; date: string | null };
+
+/** GET /stats/adherence */
+export type Adherence = {
+  completed: number;
+  skipped: number;
+  missed: number;
+  upcoming: number;
+  rate: number | null;
+};
+
+/** GET /stats/weekly (tablica, gęsta lista tygodni pon–niedz.) */
+export type WeeklyStats = { weekStart: string; workouts: number; sets: number; volume: number };
+
+export const REP_RANGES = ["STRENGTH", "HYPERTROPHY", "ENDURANCE"] as const;
+export type RepRange = (typeof REP_RANGES)[number];
+
+/** GET /stats/rep-ranges (tablica) */
+export type RepRangeStats = { range: RepRange; sets: number };
+
+/** GET /stats/stagnation (tablica) */
+export type StagnantExercise = {
+  exerciseId: number;
+  exerciseName: string;
+  bestEstimatedOneRepMax: number;
+  bestDate: string;
+  weeksSinceBest: number;
+  sessionsSince: number;
+  lastSessionDate: string;
+};
+
 /** GET /exercise/:id/similar (tablica) */
 export type SimilarExercise = { exercise: Exercise; similarity: number };
 
@@ -105,6 +140,11 @@ export type ResponseOverrides = {
   "/stats/muscle-groups": MuscleGroupStats[];
   "/stats/frequency": WorkoutFrequencyDay[];
   "/stats/summary": StatsSummary;
+  "/stats/exercise/{exerciseId}/rep-records": RepRecord[];
+  "/stats/adherence": Adherence;
+  "/stats/weekly": WeeklyStats[];
+  "/stats/rep-ranges": RepRangeStats[];
+  "/stats/stagnation": StagnantExercise[];
   "/exercise/{id}/similar": SimilarExercise[];
   "/exercise/backfill-embeddings": BackfillEmbeddingsResult;
   "/ai/generate-plan": GeneratedPlan;
