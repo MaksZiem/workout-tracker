@@ -1,5 +1,6 @@
 import { Trophy } from "lucide-react";
 import type { PersonalRecords } from "@/lib/api/extra-types";
+import { E1rmTip } from "@/components/ui/e1rm-tip";
 import { StatsTip, type TipKey } from "./stats-tip";
 
 /** Trzy rekordy ćwiczenia (e1RM, maks. ciężar, najlepsza seria) w jednym panelu. Statystyki i katalog ćwiczeń. */
@@ -26,7 +27,12 @@ export function RecordStrip({
           <dt className="flex items-center gap-1.5 text-[13px] text-muted">
             <Trophy className="size-3.5 text-pr" strokeWidth={2.25} aria-hidden />
             <span>
-              {item.label} <StatsTip tip={item.tip} />
+              {item.label}{" "}
+              {item.tip === "e1rm" ? (
+                <E1rmTip set={{ weight: records.bestEstimatedOneRepMaxWeight, reps: records.bestEstimatedOneRepMaxReps }} />
+              ) : (
+                <StatsTip tip={item.tip} />
+              )}
             </span>
           </dt>
           <dd className="mt-1 flex items-baseline gap-1.5">

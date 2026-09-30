@@ -54,6 +54,9 @@ export type PersonalRecords = {
   bestVolumeDate: string;
   bestEstimatedOneRepMax: number;
   bestEstimatedOneRepMaxDate: string;
+  /** Seria, z której policzono e1RM. */
+  bestEstimatedOneRepMaxWeight: number;
+  bestEstimatedOneRepMaxReps: number;
 };
 
 /** GET /stats/records (tablica) */
@@ -111,6 +114,8 @@ export type StagnantExercise = {
   exerciseId: number;
   exerciseName: string;
   bestEstimatedOneRepMax: number;
+  bestWeight: number;
+  bestReps: number;
   bestDate: string;
   weeksSinceBest: number;
   sessionsSince: number;

@@ -243,7 +243,7 @@
       "pr": {
         "badge": "PR",
         "weight": "New weight PR: {value} kg",
-        "e1rm": "New estimated 1RM PR: {value} kg",
+        "e1rm": "New estimated 1RM PR: {value} kg (from {weight} kg × {reps})",
         "label": "Personal record"
       },
       "add": {
@@ -917,7 +917,10 @@
   "tips": {
     "e1rm": {
       "label": "What is estimated 1RM?",
-      "body": "<p><b>1RM</b> (one-rep max) is the heaviest weight you could lift <b>once</b>.</p><p>You don't have to test it: it's estimated from your regular sets with the Epley formula: weight × (1 + reps ÷ 30). E.g. 80 kg × 8 ≈ 101 kg.</p><p>This lets you compare sets with different rep counts: if it goes up, you're getting stronger.</p>"
+      "body": "<p><b>1RM</b> (one-rep max) is the heaviest weight you could lift <b>once</b>.</p><p>You don't have to test it: it's estimated from your regular sets with the Epley formula: weight × (1 + reps ÷ 30). E.g. 80 kg × 8 ≈ 101 kg.</p><p>This lets you compare sets with different rep counts: if it goes up, you're getting stronger.</p>",
+      "yours": "<p><b>This value</b> comes from the set <b>{weight} kg × {reps}</b>: {weight} × (1 + {reps} ÷ 30) = <b>{value} kg</b>.</p>",
+      "rounded": "<p>Shown rounded to 0.5 kg: {shown} kg.</p>",
+      "calcLabel": "Estimated 1RM: how it's calculated"
     },
     "maxWeight": {
       "label": "Max weight",

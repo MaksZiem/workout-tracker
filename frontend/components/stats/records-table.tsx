@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { Trophy } from "lucide-react";
+import { E1rmTip } from "@/components/ui/e1rm-tip";
 import type { ExercisePersonalRecords } from "@/lib/api/extra-types";
 import { displayDate } from "@/lib/planner/dates";
 import { roundKg } from "@/lib/stats/model";
@@ -10,6 +11,8 @@ import { inRange, statsHref, type StatsRange } from "@/lib/stats/range";
  * Rekordy wszystkich ćwiczeń z całej historii, najświeższe na górze.
  * Złoty znacznik tylko przy rekordzie pobitym w wybranym okresie.
  */
+
+const setOf = (r: ExercisePersonalRecords) => ({ weight: r.bestEstimatedOneRepMaxWeight, reps: r.bestEstimatedOneRepMaxReps });
 export async function RecordsTable({
   records,
   range,
@@ -54,7 +57,11 @@ export async function RecordsTable({
         <thead>
           <tr className="border-b border-border text-left text-[11px] font-semibold tracking-wide whitespace-nowrap text-muted uppercase">
             <th scope="col" className="px-4 py-2.5 font-semibold">{t("exercise")}</th>
-            <th scope="col" className="px-3 py-2.5 text-right font-semibold">{t("e1rm")}</th>
+            <th scope="col" className="px-3 py-2.5 text-right font-semibold">
+              <span className="inline-flex items-center gap-1">
+                {t("e1rm")} <E1rmTip />
+              </span>
+            </th>
             <th scope="col" className="px-3 py-2.5 text-right font-semibold">{t("maxWeight")}</th>
             <th scope="col" className="px-3 py-2.5 text-right font-semibold">{t("bestSet")}</th>
             <th scope="col" className="px-4 py-2.5 text-right font-semibold">{t("date")}</th>
@@ -69,7 +76,9 @@ export async function RecordsTable({
                   {marker(r)}
                 </Link>
               </th>
-              <td className="px-3 py-2.5 text-right font-semibold whitespace-nowrap tabular-nums">{kg(r.bestEstimatedOneRepMax)}</td>
+              <td className="px-3 py-2.5 text-right font-semibold whitespace-nowrap tabular-nums">
+                <E1rmTip set={setOf(r)} trigger={kg(r.bestEstimatedOneRepMax)} />
+              </td>
               <td className="px-3 py-2.5 text-right whitespace-nowrap tabular-nums">{kg(r.maxWeight)}</td>
               <td className="px-3 py-2.5 text-right whitespace-nowrap tabular-nums">{kg(r.bestVolumeInSingleSet)}</td>
               <td className="px-4 py-2.5 text-right text-muted tabular-nums whitespace-nowrap">{date(r.bestEstimatedOneRepMaxDate)}</td>
@@ -98,7 +107,7 @@ export async function RecordsTable({
               <span className="shrink-0 text-right">
                 <span className="block font-semibold tabular-nums">{kg(r.bestEstimatedOneRepMax)}</span>
                 <span className="block text-[11px] text-muted tabular-nums">
-                  {t("e1rm")} · {date(r.bestEstimatedOneRepMaxDate)}
+                  <E1rmTip set={setOf(r)} trigger={t("e1rm")} /> · {date(r.bestEstimatedOneRepMaxDate)}
                 </span>
               </span>
             </Link>

@@ -4,6 +4,7 @@ import { ChevronRight, Trophy } from "lucide-react";
 import type { FreshRecord } from "@/lib/dashboard/load";
 import { displayDate } from "@/lib/planner/dates";
 import { roundKg } from "@/lib/stats/model";
+import { E1rmTip } from "@/components/ui/e1rm-tip";
 
 const SHOWN = 4;
 
@@ -38,7 +39,7 @@ export async function FreshRecords({ records, hasHistory }: { records: FreshReco
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-medium">{r.exerciseName}</span>
                   <span className="block text-[13px] text-muted tabular-nums">
-                    {t(r.kind)} · {format.dateTime(displayDate(r.date), { day: "numeric", month: "short", timeZone: "UTC" })}
+                    {r.kind === "e1rm" ? <E1rmTip set={r.set} trigger={t(r.kind)} /> : t(r.kind)} · {format.dateTime(displayDate(r.date), { day: "numeric", month: "short", timeZone: "UTC" })}
                   </span>
                 </span>
                 <span className="shrink-0 text-[15px] font-semibold tabular-nums">

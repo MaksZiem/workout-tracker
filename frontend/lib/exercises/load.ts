@@ -6,7 +6,7 @@ import { MUSCLE_GROUPS, type ExercisePersonalRecords, type MuscleGroup } from "@
 import { settle, type Section } from "@/lib/stats/model";
 
 /** Twój wynik w ćwiczeniu na liście: najlepszy szacowany 1RM i dzień, w którym padł. */
-export type ExerciseMark = { e1rm: number; date: string };
+export type ExerciseMark = { e1rm: number; date: string; set: { weight: number; reps: number } };
 
 export type CatalogExercise = { id: number; name: string; muscleGroup: MuscleGroup; mark: ExerciseMark | null };
 
@@ -14,7 +14,11 @@ export type SimilarItem = { id: number; name: string; similarity: number; mark: 
 
 function marksOf(records: ExercisePersonalRecords[]) {
   return new Map(
-    records.map((r) => [r.exerciseId, { e1rm: Number(r.bestEstimatedOneRepMax), date: r.bestEstimatedOneRepMaxDate }]),
+    records.map((r) => [r.exerciseId, {
+        e1rm: Number(r.bestEstimatedOneRepMax),
+        date: r.bestEstimatedOneRepMaxDate,
+        set: { weight: r.bestEstimatedOneRepMaxWeight, reps: r.bestEstimatedOneRepMaxReps },
+      }]),
   );
 }
 

@@ -78,6 +78,8 @@ export type FreshRecord = {
   kind: "e1rm" | "maxWeight";
   value: number;
   date: string;
+  /** Seria rekordu e1RM (do rachunku w dymku). */
+  set: { weight: number; reps: number } | null;
 };
 
 type WorkoutDetail = Workout;
@@ -313,9 +315,9 @@ function freshRecords(records: ExercisePersonalRecords[], today: string): FreshR
   return records
     .flatMap((r): FreshRecord[] => {
       if (r.bestEstimatedOneRepMax > 0 && r.bestEstimatedOneRepMaxDate >= since)
-        return [{ exerciseId: r.exerciseId, exerciseName: r.exerciseName, kind: "e1rm", value: r.bestEstimatedOneRepMax, date: r.bestEstimatedOneRepMaxDate }];
+        return [{ exerciseId: r.exerciseId, exerciseName: r.exerciseName, kind: "e1rm", value: r.bestEstimatedOneRepMax, date: r.bestEstimatedOneRepMaxDate, set: { weight: r.bestEstimatedOneRepMaxWeight, reps: r.bestEstimatedOneRepMaxReps } }];
       if (r.maxWeight > 0 && r.maxWeightDate >= since)
-        return [{ exerciseId: r.exerciseId, exerciseName: r.exerciseName, kind: "maxWeight", value: r.maxWeight, date: r.maxWeightDate }];
+        return [{ exerciseId: r.exerciseId, exerciseName: r.exerciseName, kind: "maxWeight", value: r.maxWeight, date: r.maxWeightDate, set: null }];
       return [];
     })
     .sort((a, b) => b.date.localeCompare(a.date));

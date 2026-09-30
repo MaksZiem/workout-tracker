@@ -15,6 +15,7 @@ import { Sheet } from "@/components/ui/sheet";
 import { ToastView, useToast } from "@/components/ui/toast";
 import { InlineText } from "@/components/plans/inline-text";
 import { ExerciseRecordsSheet } from "@/components/stats/exercise-records-sheet";
+import { E1rmTip } from "@/components/ui/e1rm-tip";
 import { CancelWorkoutSheet } from "@/components/log/cancel-sheet";
 
 // Wspólna siatka nagłówka i serii: # | kg | powt. | status. Telefon: status przy prawej krawędzi;
@@ -279,15 +280,12 @@ function ExerciseSection({ exercise }: { exercise: DetailExercise }) {
               <li key={set.id} className={`${SET_GRID} min-h-12 px-4 py-1.5 sm:px-5 ${set.completed ? "" : "text-muted"}`}>
                 <span className="grid place-items-center">
                   {set.records.length ? (
-                    <span
-                      title={recordLabel(set.records)}
-                      className="grid size-8 place-items-center rounded-full bg-pr text-pr-foreground"
-                    >
-                      <Trophy className="size-4" strokeWidth={2.25} aria-hidden />
-                      <span className="sr-only">
-                        {t("setNumber", { n: set.number })}, {t("recordSr", { kinds: recordLabel(set.records) })}
-                      </span>
-                    </span>
+                    // Rekord e1RM: medal otwiera rachunek wzoru Epleya dla tej serii.
+                    set.records.includes("e1rm") ? (
+                      <E1rmTip set={set} rounded={false} trigger={<Medal label={recordLabel(set.records)} number={set.number} />} />
+                    ) : (
+                      <Medal label={recordLabel(set.records)} number={set.number} />
+                    )
                   ) : (
                     <span className="text-sm font-medium text-muted tabular-nums">{set.number}</span>
                   )}
@@ -388,5 +386,17 @@ function DateSheet({
         ) : null}
       </form>
     </Sheet>
+  );
+}
+
+function Medal({ label, number }: { label: string; number: number }) {
+  const t = useTranslations("pages.workoutDetail");
+  return (
+    <span title={label} className="grid size-8 place-items-center rounded-full bg-pr text-pr-foreground">
+      <Trophy className="size-4" strokeWidth={2.25} aria-hidden />
+      <span className="sr-only">
+        {t("setNumber", { n: number })}, {t("recordSr", { kinds: label })}
+      </span>
+    </span>
   );
 }

@@ -23,10 +23,14 @@ export function WorkoutLogger({ workout }: { workout: LogWorkout }) {
     setRemoved: t("toast.setRemoved"),
     exerciseRemoved: t("toast.exerciseRemoved"),
     offline: t("toast.offline"),
-    pr: (kind, value) =>
+    pr: (kind, value, set) =>
       kind === "weight"
         ? t("pr.weight", { value: format.number(value, { maximumFractionDigits: 2 }) })
-        : t("pr.e1rm", { value: format.number(value, { maximumFractionDigits: 1 }) }),
+        : t("pr.e1rm", {
+            value: format.number(value, { maximumFractionDigits: 1 }),
+            weight: format.number(set.weight, { maximumFractionDigits: 2 }),
+            reps: set.reps,
+          }),
   });
 
   const [sheet, setSheet] = useState<SheetName>(null);

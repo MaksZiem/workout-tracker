@@ -9,6 +9,7 @@ import type { CatalogExercise } from "@/lib/exercises/load";
 import { displayDate } from "@/lib/planner/dates";
 import { roundKg } from "@/lib/stats/model";
 import { SegmentedLinks } from "@/components/stats/segmented-links";
+import { E1rmTip } from "@/components/ui/e1rm-tip";
 
 /** Katalog: wyszukiwarka na miejscu, filtr grupy w URL, twoje wyniki przy każdym ćwiczeniu. */
 export function ExercisesView({
@@ -135,9 +136,12 @@ function ExerciseRow({ exercise, showMark }: { exercise: CatalogExercise; showMa
               <span className="ml-1 text-[13px] font-normal text-muted">kg</span>
             </span>
             <span className="block text-xs text-muted tabular-nums">
-              {t("e1rmOn", {
-                date: format.dateTime(displayDate(mark.date), { day: "numeric", month: "short", timeZone: "UTC" }),
-              })}
+              <E1rmTip
+                set={mark.set}
+                trigger={t("e1rmOn", {
+                  date: format.dateTime(displayDate(mark.date), { day: "numeric", month: "short", timeZone: "UTC" }),
+                })}
+              />
             </span>
           </span>
         ) : mark ? (

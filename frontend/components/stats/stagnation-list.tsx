@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { ChevronRight, TrendingUp } from "lucide-react";
+import { E1rmTip } from "@/components/ui/e1rm-tip";
 import type { StagnantExercise } from "@/lib/api/extra-types";
 import { displayDate } from "@/lib/planner/dates";
 import { roundKg } from "@/lib/stats/model";
@@ -38,7 +39,10 @@ export async function StagnationList({ exercises, range }: { exercises: Stagnant
             </span>
             <span className="shrink-0 text-right tabular-nums">
               <span className="block text-sm font-semibold">
-                {format.number(roundKg(ex.bestEstimatedOneRepMax), { maximumFractionDigits: 1 })} kg
+                <E1rmTip
+                  set={{ weight: ex.bestWeight, reps: ex.bestReps }}
+                  trigger={`${format.number(roundKg(ex.bestEstimatedOneRepMax), { maximumFractionDigits: 1 })} kg`}
+                />
               </span>
               <span className="block text-xs text-muted">{t("best", { date: date(ex.bestDate) })}</span>
             </span>

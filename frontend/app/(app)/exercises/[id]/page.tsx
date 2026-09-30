@@ -8,6 +8,7 @@ import { displayDate } from "@/lib/planner/dates";
 import { roundKg } from "@/lib/stats/model";
 import { RecordStrip } from "@/components/stats/record-strip";
 import { SectionError, StatsSection } from "@/components/stats/section";
+import { E1rmTip } from "@/components/ui/e1rm-tip";
 
 type Props = PageProps<"/exercises/[id]">;
 
@@ -132,7 +133,9 @@ function SimilarList({
                   {kg(item.mark.e1rm)}
                   <span className="ml-1 text-[13px] font-normal text-muted">kg</span>
                 </span>
-                <span className="block text-xs text-muted tabular-nums">{labels.e1rm(item.mark.date)}</span>
+                <span className="block text-xs text-muted tabular-nums">
+                  <E1rmTip set={item.mark.set} trigger={labels.e1rm(item.mark.date)} />
+                </span>
               </span>
             ) : item.mark ? (
               <span className="shrink-0 text-[13px] text-muted">{labels.bodyweight}</span>

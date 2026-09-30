@@ -243,7 +243,7 @@
       "pr": {
         "badge": "Rekord",
         "weight": "Nowy rekord ciężaru: {value} kg",
-        "e1rm": "Nowy rekord szacowanego 1RM: {value} kg",
+        "e1rm": "Nowy rekord szacowanego 1RM: {value} kg (z serii {weight} kg × {reps})",
         "label": "Rekord osobisty"
       },
       "add": {
@@ -917,7 +917,10 @@
   "tips": {
     "e1rm": {
       "label": "Co to jest szacowane 1RM?",
-      "body": "<p><b>1RM</b> (one-rep max) to największy ciężar, który podniósłbyś <b>jeden raz</b>.</p><p>Nie musisz go testować: liczymy go z Twoich zwykłych serii wzorem Epleya: ciężar × (1 + powtórzenia ÷ 30). Np. 80 kg × 8 ≈ 101 kg.</p><p>Dzięki temu da się porównać serie z różną liczbą powtórzeń: jeśli rośnie, jesteś silniejszy.</p>"
+      "body": "<p><b>1RM</b> (one-rep max) to największy ciężar, który podniósłbyś <b>jeden raz</b>.</p><p>Nie musisz go testować: liczymy go z Twoich zwykłych serii wzorem Epleya: ciężar × (1 + powtórzenia ÷ 30). Np. 80 kg × 8 ≈ 101 kg.</p><p>Dzięki temu da się porównać serie z różną liczbą powtórzeń: jeśli rośnie, jesteś silniejszy.</p>",
+      "yours": "<p><b>Ta wartość</b> pochodzi z serii <b>{weight} kg × {reps}</b>: {weight} × (1 + {reps} ÷ 30) = <b>{value} kg</b>.</p>",
+      "rounded": "<p>Na liście w zaokrągleniu do 0,5 kg: {shown} kg.</p>",
+      "calcLabel": "Szacowane 1RM: jak to liczymy?"
     },
     "maxWeight": {
       "label": "Maksymalny ciężar",

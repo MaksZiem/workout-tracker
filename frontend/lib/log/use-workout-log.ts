@@ -6,6 +6,7 @@ import { ApiError, unwrap } from "@/lib/api/errors";
 import type { Exercise, MuscleGroup, Workout } from "@/lib/api/extra-types";
 import {
   baselineFrom,
+  estimatedOneRepMax,
   personalRecords,
   previousFrom,
   roundWeight,
@@ -111,7 +112,7 @@ export type LogMessages = {
   setRemoved: string;
   exerciseRemoved: string;
   offline: string;
-  pr: (kind: PrKind, value: number) => string;
+  pr: (kind: PrKind, value: number, set: { weight: number; reps: number }) => string;
 };
 
 const UNDO_WINDOW = 5000;
@@ -280,8 +281,8 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
         const updated = stateRef.current.find((e) => e.key === exKey)!;
         const kind = personalRecords(updated).get(setKey);
         if (kind) {
-          const value = kind === "weight" ? set.weight : Math.round(set.weight * (1 + set.reps / 30) * 10) / 10;
-          showToast({ message: messages.pr(kind, value), tone: "pr" });
+          const value = kind === "weight" ? set.weight : Math.round(estimatedOneRepMax(set.weight, set.reps) * 10) / 10;
+          showToast({ message: messages.pr(kind, value, set), tone: "pr" });
           navigator.vibrate?.([30, 40, 30]);
         }
       }

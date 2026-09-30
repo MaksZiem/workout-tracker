@@ -6,12 +6,14 @@ import { ChevronLeft, Trophy } from "lucide-react";
 import { localDate } from "@/lib/log/model";
 import { displayDate } from "@/lib/planner/dates";
 import { loadExercise } from "@/lib/stats/load";
+import { estimatedOneRepMax } from "@/lib/log/model";
 import { metricValue, roundKg, type Session } from "@/lib/stats/model";
 import { parseMetric, parseRange, STATS_METRICS, STATS_RANGES, statsHref, type StatsMetric } from "@/lib/stats/range";
 import { LineChart } from "@/components/stats/line-chart";
 import { RecordStrip } from "@/components/stats/record-strip";
 import { RepRecords } from "@/components/stats/rep-records";
 import { StatsTip } from "@/components/stats/stats-tip";
+import { E1rmTip } from "@/components/ui/e1rm-tip";
 import { SegmentedLinks } from "@/components/stats/segmented-links";
 import { SectionError, StatsSection } from "@/components/stats/section";
 
@@ -237,7 +239,13 @@ function SessionList({
             <th scope="col" className="px-3 py-2.5 font-semibold">{labels.sets}</th>
             {cols.map((c) => (
               <th key={c.key} scope="col" className={`px-3 py-2.5 text-right font-semibold last:pr-4 ${c.key === metric ? "text-foreground" : ""}`}>
-                {c.label}
+                {c.key === "e1rm" ? (
+                  <span className="inline-flex items-center gap-1">
+                    {c.label} <E1rmTip />
+                  </span>
+                ) : (
+                  c.label
+                )}
               </th>
             ))}
           </tr>
@@ -257,7 +265,13 @@ function SessionList({
                   key={c.key}
                   className={`px-3 py-2.5 text-right tabular-nums whitespace-nowrap last:pr-4 ${c.key === metric ? "font-semibold" : "text-muted"}`}
                 >
-                  {metricValue(s, c.key) > 0 ? `${kg(metricValue(s, c.key))} kg` : "—"}
+                  {metricValue(s, c.key) <= 0 ? (
+                    "—"
+                  ) : c.key === "e1rm" ? (
+                    <E1rmTip set={bestSet(s)} trigger={`${kg(metricValue(s, c.key))} kg`} />
+                  ) : (
+                    `${kg(metricValue(s, c.key))} kg`
+                  )}
                 </td>
               ))}
             </tr>
@@ -279,11 +293,25 @@ function SessionList({
               <span className="block text-sm font-semibold tabular-nums">
                 {metricValue(s, metric) > 0 ? `${kg(metricValue(s, metric))} kg` : "—"}
               </span>
-              <span className="block text-[11px] text-muted">{cols.find((c) => c.key === metric)!.label}</span>
+              <span className="block text-[11px] text-muted">
+                {metric === "e1rm" && metricValue(s, metric) > 0 ? (
+                  <E1rmTip set={bestSet(s)} trigger={cols.find((c) => c.key === metric)!.label} />
+                ) : (
+                  cols.find((c) => c.key === metric)!.label
+                )}
+              </span>
             </span>
           </li>
         ))}
       </ul>
     </div>
+  );
+}
+
+/** Seria sesji z najwyższym szacowanym 1RM (z niej backend liczy e1RM sesji). */
+function bestSet(s: Session) {
+  return s.sets.reduce<Session["sets"][number] | null>(
+    (best, set) => (!best || estimatedOneRepMax(set.weight, set.reps) > estimatedOneRepMax(best.weight, best.reps) ? set : best),
+    null,
   );
 }

@@ -1,4 +1,5 @@
 import type { ExercisePersonalRecords, MuscleGroup, Workout } from "@/lib/api/extra-types";
+import { estimatedOneRepMax as epley } from "@/lib/log/model";
 import { addDays, weekStart } from "@/lib/planner/dates";
 
 /** Czas ma sens tylko dla treningu zapisywanego na żywo (nie dopisanego po fakcie). */
@@ -121,7 +122,6 @@ export type WorkoutDetail = {
   volume: number;
 };
 
-const epley = (weight: number, reps: number) => weight * (1 + reps / 30);
 
 /** Wartości porównujemy z tolerancją: backend liczy je z liczb zmiennoprzecinkowych. */
 const same = (a: number, b: number) => Math.abs(a - b) < 1e-6;

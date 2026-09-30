@@ -66,6 +66,9 @@ export function computePersonalRecords(sets: ExerciseSet[]) {
     bestVolumeDate: bestVolumeSet.workoutExercise.workout.date,
     bestEstimatedOneRepMax: bestOneRepMax,
     bestEstimatedOneRepMaxDate: bestOneRepMaxSet.workoutExercise.workout.date,
+    // Seria, z której policzono e1RM: UI pokazuje na niej rachunek wzoru Epleya.
+    bestEstimatedOneRepMaxWeight: Number(bestOneRepMaxSet.weight),
+    bestEstimatedOneRepMaxReps: bestOneRepMaxSet.reps,
   };
 }
 
@@ -187,6 +190,9 @@ export type StagnantExercise = {
   exerciseId: number;
   exerciseName: string;
   bestEstimatedOneRepMax: number;
+  /** Seria rekordu (ciężar × powtórzenia), z której policzono e1RM. */
+  bestWeight: number;
+  bestReps: number;
   bestDate: string;
   weeksSinceBest: number;
   sessionsSince: number;
@@ -231,6 +237,8 @@ export function computeStagnation(sets: SetRow[], today: string): StagnantExerci
         exerciseId,
         exerciseName: best.exerciseName,
         bestEstimatedOneRepMax: bestValue,
+        bestWeight: Number(best.weight),
+        bestReps: best.reps,
         bestDate: best.date,
         weeksSinceBest: Math.floor(daysSinceBest / 7),
         sessionsSince,
