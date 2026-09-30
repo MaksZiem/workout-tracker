@@ -57,9 +57,9 @@ async function seed() {
 
   console.log('Tworzę katalog ćwiczeń...');
   // Wstawiamy bezpośrednio przez repozytorium (z pominięciem ExerciseService),
-  // żeby seedowanie nie odpytywało Gemini o embedding dla każdego ćwiczenia.
-  // Embeddingi doliczysz jednym POST /exercise/backfill-embeddings, kiedy
-  // zechcesz przetestować /exercise/:id/similar.
+  // żeby seedowanie nie odpytywało Gemini o zamienniki każdego ćwiczenia.
+  // Zamienniki dobierzesz jednym POST /exercise/substitutes/generate
+  // (w panelu admina: „Dobierz zamienniki”).
   const exerciseSeeds: { name: string; muscleGroup: MuscleGroup }[] = [
     { name: 'Wyciskanie sztangi na ławce płaskiej', muscleGroup: MuscleGroup.CHEST },
     { name: 'Rozpiętki z hantlami', muscleGroup: MuscleGroup.CHEST },

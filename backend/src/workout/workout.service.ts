@@ -73,7 +73,7 @@ export class WorkoutService {
       where.date = LessThanOrEqual(filters.to);
     }
 
-    // Lista z ćwiczeniami i seriami, ale bez embeddingów ćwiczeń (duże tablice liczb).
+    // Lista z ćwiczeniami i seriami; z ćwiczenia tylko pola potrzebne liście.
     return this.repo.find({
       where,
       relations: ['exercises', 'exercises.exercise', 'exercises.sets'],

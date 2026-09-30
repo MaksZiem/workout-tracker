@@ -31,7 +31,7 @@ export function AdminExercisesView({ items, group }: { items: AdminExercise[]; g
   };
 
   const present = MUSCLE_GROUPS.filter((g) => items.some((e) => e.muscleGroup === g));
-  const missing = items.filter((e) => !e.hasEmbedding).length;
+  const missing = items.filter((e) => !e.substitutesPicked).length;
 
   const groups = useMemo(() => {
     const q = query.trim().toLocaleLowerCase();
@@ -122,8 +122,8 @@ export function AdminExercisesView({ items, group }: { items: AdminExercise[]; g
                           className="flex min-h-14 min-w-0 flex-1 items-center gap-4 py-2.5 pr-2 pl-4 text-left group-first/row:rounded-tl-xl group-last/row:rounded-bl-xl hover:bg-surface-muted sm:pl-5"
                         >
                           <span className="min-w-0 flex-1 text-[15px] leading-snug font-medium">{exercise.name}</span>
-                          {exercise.hasEmbedding ? null : (
-                            <span className="shrink-0 text-[13px] text-muted">{t("noEmbedding")}</span>
+                          {exercise.substitutesPicked ? null : (
+                            <span className="shrink-0 text-[13px] text-muted">{t("pending")}</span>
                           )}
                         </button>
                         <div className="pr-2">

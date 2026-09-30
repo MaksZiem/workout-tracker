@@ -15,6 +15,9 @@ Mode: Operate. Desktop-first, fully usable on phone. Inherits DESIGN.md ("The Gy
 - Template Editor ⋯ menu gains "Zamień na podobne": sheet listing similar exercises (fetched on open); pick → PATCH exerciseId (new optional DTO field), row keeps targets/order, toast with "Cofnij" (PATCH back). Candidates already in the day are disabled ("Już w tym dniu"); "Wybierz z całego katalogu" is always offered under the list (it rescues the all-taken case) and is the only action when there are no similar exercises. Catalog swaps are guarded against duplicates.
 - Backend: UpdateTemplateExerciseDto.exerciseId + service handling. /stats/exercise/[id]: Record Strip moved to a shared component, no visual change.
 
+## Update (2026-09-30)
+- "Podobne ćwiczenia" with "N% podobieństwa" (embedding cosine, 76–84% for everything) is replaced by "Zamienniki": picked by Gemini from the catalog (same movement pattern and main muscles), each row shows the AI's one-line reason instead of a percentage. The swap sheet action is "Wybierz zamiennik" and shows the same reasons. Empty states distinguish "AI found none" from "not picked yet".
+
 ## Direction contract
 THESIS: An exercise page answers "where do I stand and what can I do instead"; the catalog is a scannable reference with your own numbers inline. It refuses exercise cards with stock imagery, a duplicate of the stats page, and AI presented as magic (similarity is shown as a plain percentage).
 OWN-WORLD: DESIGN.md unchanged: graphite tonal stack, 12px hairline Surface list panels, section headers at Title 17px/600 with 13px muted counts, segmented control, Record Strip with the gold trophy glyph only, tabular Geist 600/400; Signal Blue only for links/focus here (no primary button on these pages).

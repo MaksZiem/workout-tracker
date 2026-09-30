@@ -10,7 +10,8 @@ export type ExerciseMark = { e1rm: number; date: string; set: { weight: number; 
 
 export type CatalogExercise = { id: number; name: string; muscleGroup: MuscleGroup; mark: ExerciseMark | null };
 
-export type SimilarItem = { id: number; name: string; similarity: number; mark: ExerciseMark | null };
+/** Zamiennik dobrany przez AI, z uzasadnieniem i twoim wynikiem w nim. */
+export type SubstituteItem = { id: number; name: string; reason: string; mark: ExerciseMark | null };
 
 function marksOf(records: ExercisePersonalRecords[]) {
   return new Map(
@@ -40,8 +41,8 @@ export async function loadCatalog() {
   return { items, recordsOk: records.ok };
 }
 
-/** Podobne ćwiczenia: `unavailable`, gdy ćwiczenie nie ma jeszcze embeddingu (404). */
-export type SimilarSection = { ok: true; data: SimilarItem[] } | { ok: false; reason: "unavailable" | "error" };
+/** Zamienniki: `pending`, gdy AI jeszcze ich nie dobierało (pusta lista znaczy wtedy „nie wiadomo”, a nie „brak”). */
+export type SubstitutesSection = { ok: true; data: SubstituteItem[] } | { ok: false; reason: "pending" | "error" };
 
 /** Karta ćwiczenia; `null`, gdy nie istnieje. */
 export async function loadExerciseCard(id: number) {
@@ -50,10 +51,9 @@ export async function loadExerciseCard(id: number) {
   if (exercise.response.status === 404) return null;
   if (!exercise.data) throw ApiError.from(exercise.error, exercise.response);
 
-  const [records, similar] = await Promise.all([
+  const [records, substitutes] = await Promise.all([
     settle(unwrap(api.GET("/stats/records"))),
-    // Sieć może zawieść niezależnie od reszty karty.
-    api.GET("/exercise/{id}/similar", { params: { path: { id } } }).catch(() => null),
+    settle(unwrap(api.GET("/exercise/{id}/substitutes", { params: { path: { id } } }))),
   ]);
   const marks = records.ok ? marksOf(records.data) : new Map<number, ExerciseMark>();
 
@@ -61,21 +61,23 @@ export async function loadExerciseCard(id: number) {
     ? { ok: true, data: records.data.find((r) => r.exerciseId === id) ?? null }
     : { ok: false };
 
-  const similarSection: SimilarSection = similar?.data
-    ? {
-        ok: true,
-        data: similar.data.map((s) => ({
-          id: s.exercise.id,
-          name: s.exercise.name,
-          similarity: s.similarity,
-          mark: marks.get(s.exercise.id) ?? null,
-        })),
-      }
-    : { ok: false, reason: similar?.response.status === 404 ? "unavailable" : "error" };
+  const substitutesSection: SubstitutesSection = !substitutes.ok
+    ? { ok: false, reason: "error" }
+    : !exercise.data.substitutesGeneratedAt && substitutes.data.length === 0
+      ? { ok: false, reason: "pending" }
+      : {
+          ok: true,
+          data: substitutes.data.map((s) => ({
+            id: s.exercise.id,
+            name: s.exercise.name,
+            reason: s.reason,
+            mark: marks.get(s.exercise.id) ?? null,
+          })),
+        };
 
   return {
     exercise: { id: exercise.data.id, name: exercise.data.name, muscleGroup: exercise.data.muscleGroup as MuscleGroup },
     records: own,
-    similar: similarSection,
+    substitutes: substitutesSection,
   };
 }

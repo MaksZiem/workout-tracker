@@ -770,14 +770,13 @@
       "records": "Twoje rekordy",
       "fullStats": "Pełne statystyki",
       "noRecords": "Nie masz jeszcze ukończonych serii w tym ćwiczeniu. Rekordy pojawią się po pierwszym treningu.",
-      "similar": "Podobne ćwiczenia",
-      "similarHint": "Zamienniki z tej samej grupy, np. gdy sprzęt jest zajęty albo coś boli.",
-      "match": "{value}% podobieństwa",
       "notDone": "Jeszcze nie robione",
-      "similarNone": "Brak innych ćwiczeń z tej grupy w katalogu.",
-      "similarUnavailable": "Podobne ćwiczenia nie są jeszcze dostępne dla tego ćwiczenia.",
       "e1rmOn": "e1RM · {date}",
-      "bodyweight": "Masa ciała"
+      "bodyweight": "Masa ciała",
+      "substitutes": "Zamienniki",
+      "substitutesHint": "Dobrane przez AI: ten sam ruch i te same mięśnie, np. gdy sprzęt jest zajęty albo coś boli.",
+      "substitutesNone": "AI nie znalazło w katalogu ćwiczenia, które dobrze zastąpi to ćwiczenie.",
+      "substitutesPending": "Zamienniki dla tego ćwiczenia nie zostały jeszcze dobrane."
     },
     "account": {
       "title": "Konto",
@@ -790,13 +789,15 @@
         "title": "Katalog ćwiczeń",
         "manage": "Zarządzaj katalogiem",
         "count": "{count, plural, one {# ćwiczenie} few {# ćwiczenia} many {# ćwiczeń} other {# ćwiczeń}}",
-        "missing": "{count, plural, one {# bez embeddingu} other {# bez embeddingu}}",
-        "missingHint": "Bez embeddingu ćwiczenie nie pokazuje podobnych ćwiczeń i nie da się go zamienić na podobne w szablonie.",
-        "complete": "Każde ćwiczenie ma embedding, więc wyszukiwanie podobnych działa w całym katalogu.",
-        "backfill": "Uzupełnij embeddingi",
-        "backfilling": "Uzupełnianie…",
-        "backfilled": "{count, plural, =0 {Nic nie trzeba było uzupełniać} one {Uzupełniono embedding dla # ćwiczenia} other {Uzupełniono embeddingi dla # ćwiczeń}}",
-        "backfillError": "Gemini nie odpowiedział, więc część embeddingów może wciąż brakować. Spróbuj ponownie za chwilę."
+        "missing": "{count, plural, one {# bez dobranych zamienników} other {# bez dobranych zamienników}}",
+        "missingHint": "Dla tych ćwiczeń AI jeszcze nie dobrało zamienników, np. bo Gemini nie odpowiedział przy zapisie.",
+        "complete": "AI dobrało zamienniki dla całego katalogu. Po dodaniu nowych ćwiczeń dobierz je od nowa, żeby starsze ćwiczenia też je uwzględniły.",
+        "generate": "Dobierz zamienniki",
+        "regenerateAll": "Dobierz od nowa dla całego katalogu",
+        "generating": "Dobieranie…",
+        "generated": "{count, plural, one {Dobrano zamienniki dla # ćwiczenia} other {Dobrano zamienniki dla # ćwiczeń}}",
+        "generatedPartial": "Dobrano zamienniki dla {updated}, bez odpowiedzi AI zostało {failed}. Spróbuj ponownie za chwilę.",
+        "generateError": "Gemini nie odpowiedział. Spróbuj ponownie za chwilę."
       },
       "users": {
         "title": "Użytkownicy",
@@ -851,7 +852,7 @@
       "description": "Dodawanie, edycja i usuwanie ćwiczeń z globalnego katalogu.",
       "back": "Panel admina",
       "count": "{count, plural, one {# ćwiczenie} few {# ćwiczenia} many {# ćwiczeń} other {# ćwiczeń}}",
-      "missing": "{count, plural, one {# bez embeddingu} other {# bez embeddingu}}",
+      "missing": "{count, plural, one {# bez dobranych zamienników} other {# bez dobranych zamienników}}",
       "add": "Dodaj ćwiczenie",
       "search": "Szukaj ćwiczenia",
       "filter": "Grupa mięśniowa",
@@ -859,7 +860,6 @@
       "noResults": "Brak ćwiczeń pasujących do „{query}”.",
       "clear": "Wyczyść wyszukiwanie",
       "empty": "Katalog jest pusty. Dodaj pierwsze ćwiczenie.",
-      "noEmbedding": "Brak embeddingu",
       "menu": "Akcje: {name}",
       "edit": "Edytuj",
       "delete": "Usuń",
@@ -869,20 +869,30 @@
         "name": "Nazwa",
         "namePlaceholder": "np. Wyciskanie hantli na skosie",
         "group": "Grupa mięśniowa",
-        "addHint": "Embedding do wyszukiwania podobnych ćwiczeń policzy się po zapisaniu.",
-        "editHint": "Zmiana nazwy lub grupy przelicza embedding, żeby podobne ćwiczenia pasowały do nowego opisu. Treningi i szablony zostają przy tym ćwiczeniu.",
+        "addHint": "Po zapisaniu AI dobierze zamienniki z katalogu.",
+        "editHint": "Zmiana nazwy lub grupy sprawia, że AI dobiera zamienniki od nowa. Treningi i szablony zostają przy tym ćwiczeniu.",
         "create": "Dodaj ćwiczenie",
         "save": "Zapisz zmiany",
         "saving": "Zapisywanie…",
         "duplicate": "Ćwiczenie o tej nazwie już jest w katalogu.",
-        "error": "Nie udało się zapisać. Spróbuj ponownie."
+        "error": "Nie udało się zapisać. Spróbuj ponownie.",
+        "substitutes": "Zamienniki od AI",
+        "substitutesHint": "Odrzuć te, z którymi się nie zgadzasz.",
+        "substitutesNone": "AI nie znalazło zamiennika w katalogu.",
+        "substitutesPending": "Zamienniki nie zostały jeszcze dobrane.",
+        "substitutesLoading": "Wczytywanie zamienników…",
+        "substitutesLoadError": "Nie udało się wczytać zamienników.",
+        "regenerate": "Dobierz ponownie",
+        "regenerating": "Dobieranie…",
+        "reject": "Odrzuć zamiennik „{name}”",
+        "substitutesError": "Gemini nie odpowiedział. Spróbuj ponownie za chwilę."
       },
       "toast": {
         "created": "Dodano „{name}”",
         "saved": "Zapisano „{name}”",
-        "noEmbedding": "Zapisano „{name}” bez embeddingu, bo Gemini nie odpowiedział. Uzupełnij go w panelu admina.",
         "deleted": "Usunięto „{name}”",
-        "deleteError": "Nie udało się usunąć ćwiczenia. Spróbuj ponownie."
+        "deleteError": "Nie udało się usunąć ćwiczenia. Spróbuj ponownie.",
+        "noSubstitutes": "Zapisano „{name}”, ale AI nie dobrało zamienników, bo Gemini nie odpowiedział. Dobierz je w panelu admina."
       },
       "deleteSheet": {
         "checking": "Sprawdzanie, gdzie ćwiczenie jest używane…",
@@ -898,7 +908,8 @@
         "close": "Zamknij",
         "error": "Nie udało się sprawdzić, gdzie ćwiczenie jest używane."
       },
-      "cancel": "Anuluj"
+      "cancel": "Anuluj",
+      "pending": "Zamienniki niedobrane"
     },
     "statsExercise": {
       "back": "Statystyki",
@@ -1013,15 +1024,14 @@
     "saving": "Zapisywanie…",
     "emptyTemplate": "Brak ćwiczeń. Dodaj pierwsze z katalogu, a potem ustaw serie, powtórzenia i ciężar.",
     "swap": {
-      "action": "Zamień na podobne",
+      "action": "Wybierz zamiennik",
       "title": "Zamień „{name}”",
       "hint": "Serie, powtórzenia, ciężar i przerwa zostaną bez zmian.",
-      "loading": "Szukanie podobnych ćwiczeń…",
-      "error": "Nie udało się wczytać podobnych ćwiczeń.",
-      "unavailable": "Podobne ćwiczenia nie są jeszcze dostępne dla tego ćwiczenia.",
-      "none": "Brak innych ćwiczeń z tej grupy.",
+      "loading": "Wczytywanie zamienników…",
+      "error": "Nie udało się wczytać zamienników.",
+      "unavailable": "Zamienniki dla tego ćwiczenia nie zostały jeszcze dobrane.",
+      "none": "AI nie znalazło dobrego zamiennika w katalogu.",
       "browse": "Wybierz z całego katalogu",
-      "match": "{value}%",
       "done": "Zamieniono „{from}” na „{to}”",
       "taken": "Już w tym dniu",
       "duplicate": "„{name}” jest już w tym dniu."

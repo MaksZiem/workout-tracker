@@ -123,7 +123,7 @@ export interface paths {
         put?: never;
         /**
          * Dodaj nowe ćwiczenie (tylko administrator)
-         * @description Tworzy nowe ćwiczenie w globalnym katalogu i automatycznie generuje dla niego embedding semantyczny (Gemini).
+         * @description Tworzy nowe ćwiczenie w globalnym katalogu i od razu prosi AI (Gemini) o jego zamienniki.
          */
         post: operations["ExerciseController_createExercise"];
         delete?: never;
@@ -152,12 +152,12 @@ export interface paths {
         head?: never;
         /**
          * Zaktualizuj ćwiczenie (tylko administrator)
-         * @description Aktualizuje nazwę i/lub grupę mięśniową. Jeśli zmieniono nazwę lub grupę, embedding jest regenerowany.
+         * @description Aktualizuje nazwę i/lub grupę mięśniową. Jeśli zmieniono nazwę lub grupę, AI dobiera zamienniki od nowa (przy błędzie Gemini substitutesGeneratedAt zostaje null).
          */
         patch: operations["ExerciseController_updateExercise"];
         trace?: never;
     };
-    "/exercise/{id}/similar": {
+    "/exercise/{id}/substitutes": {
         parameters: {
             query?: never;
             header?: never;
@@ -165,10 +165,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Znajdź podobne ćwiczenia
-         * @description Na podstawie embeddingu semantycznego (wygenerowanego przez Gemini) zwraca do 5 najbardziej podobnych ćwiczeń z tej samej grupy mięśniowej, posortowanych malejąco po podobieństwie kosinusowym. Przydatne np. przy zamianie ćwiczenia z powodu braku sprzętu lub kontuzji.
+         * Zamienniki ćwiczenia
+         * @description Do 5 ćwiczeń z katalogu, które AI (Gemini) uznało za dobre zamienniki: ten sam wzorzec ruchu i te same główne mięśnie. Każdy z krótkim uzasadnieniem, od najlepszego. Pusta lista: AI nie znalazło zamiennika albo jeszcze nie dobierało (patrz `substitutesGeneratedAt`).
          */
-        get: operations["ExerciseController_findSimilar"];
+        get: operations["ExerciseController_findSubstitutes"];
         put?: never;
         post?: never;
         delete?: never;
@@ -177,7 +177,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/exercise/backfill-embeddings": {
+    "/exercise/substitutes/generate": {
         parameters: {
             query?: never;
             header?: never;
@@ -187,11 +187,51 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Dogeneruj brakujące embeddingi (tylko administrator)
-         * @description Operacja administracyjna: przelicza embedding semantyczny dla wszystkich ćwiczeń, które go jeszcze nie mają (np. dodanych przed wdrożeniem tej funkcji).
+         * Dobierz zamienniki dla katalogu (tylko administrator)
+         * @description Po kolei prosi AI o zamienniki dla ćwiczeń, które ich jeszcze nie mają, a z `all=true` dla wszystkich (np. po dodaniu nowych ćwiczeń, które mogą być zamiennikami starych). Błąd jednego ćwiczenia nie przerywa pozostałych.
          */
-        post: operations["ExerciseController_backfillEmbeddings"];
+        post: operations["ExerciseController_generateAllSubstitutes"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/exercise/{id}/substitutes/generate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Dobierz zamienniki ćwiczenia od nowa (tylko administrator)
+         * @description AI wybiera zamienniki z aktualnego katalogu; wynik zastępuje poprzednią listę.
+         */
+        post: operations["ExerciseController_generateSubstitutes"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/exercise/{id}/substitutes/{substituteId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Odrzuć zamiennik (tylko administrator)
+         * @description Usuwa jeden zamiennik wybrany przez AI, gdy administrator się z nim nie zgadza.
+         */
+        delete: operations["ExerciseController_removeSubstitute"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1185,11 +1225,10 @@ export interface components {
              */
             muscleGroup: "CHEST" | "BACK" | "SHOULDERS" | "BICEPS" | "TRICEPS" | "LEGS" | "GLUTES" | "ABS" | "FULL_BODY" | "CARDIO";
             /**
-             * @description Czy ćwiczenie ma już embedding (bez niego nie działa wyszukiwanie podobnych ćwiczeń)
-             * @example true
+             * @description Kiedy AI ostatnio dobrało zamienniki tego ćwiczenia; null, gdy jeszcze nie dobierało (np. Gemini nie odpowiedział przy zapisie)
+             * @example 2026-09-30T12:00:00.000Z
              */
-            hasEmbedding: boolean;
-            embedding: number[] | null;
+            substitutesGeneratedAt: string | null;
             workoutExercises: components["schemas"]["WorkoutExercise"][];
         };
         ExerciseSet: {
@@ -1275,18 +1314,26 @@ export interface components {
             sets: components["schemas"]["ExerciseSet"][];
             workout: components["schemas"]["Workout"];
         };
-        CreateExerciseDto: {
+        ExerciseSubstituteDto: {
+            /** @description Ćwiczenie-zamiennik z katalogu */
+            exercise: components["schemas"]["Exercise"];
             /**
-             * @description Nazwa ćwiczenia (musi być unikalna)
-             * @example Wyciskanie sztangi leżąc
+             * @description Uzasadnienie od AI: co łączy oba ćwiczenia
+             * @example Ten sam ruch pionowego przyciągania, praca najszerszych grzbietu.
              */
-            name: string;
+            reason: string;
+        };
+        GenerateAllSubstitutesResultDto: {
             /**
-             * @description Główna grupa mięśniowa angażowana przez ćwiczenie
-             * @example CHEST
-             * @enum {string}
+             * @description Liczba ćwiczeń, dla których dobrano zamienniki
+             * @example 22
              */
-            muscleGroup: "CHEST" | "BACK" | "SHOULDERS" | "BICEPS" | "TRICEPS" | "LEGS" | "GLUTES" | "ABS" | "FULL_BODY" | "CARDIO";
+            updated: number;
+            /**
+             * @description Nazwy ćwiczeń, dla których AI nie odpowiedziało
+             * @example []
+             */
+            failed: string[];
         };
         ErrorResponseDto: {
             /**
@@ -1316,6 +1363,19 @@ export interface components {
             error: string;
             /** @description Komunikat błędu. Dla błędów walidacji (400) jest to tablica komunikatów - po jednym na każde niepoprawne pole. */
             message: string | string[];
+        };
+        CreateExerciseDto: {
+            /**
+             * @description Nazwa ćwiczenia (musi być unikalna)
+             * @example Wyciskanie sztangi leżąc
+             */
+            name: string;
+            /**
+             * @description Główna grupa mięśniowa angażowana przez ćwiczenie
+             * @example CHEST
+             * @enum {string}
+             */
+            muscleGroup: "CHEST" | "BACK" | "SHOULDERS" | "BICEPS" | "TRICEPS" | "LEGS" | "GLUTES" | "ABS" | "FULL_BODY" | "CARDIO";
         };
         UpdateExerciseDto: {
             /**
@@ -2081,7 +2141,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Ćwiczenie utworzone. Gdy Gemini nie odpowie, ćwiczenie zapisuje się bez embeddingu (hasEmbedding: false) - uzupełnia go backfill. */
+            /** @description Ćwiczenie utworzone. Gdy Gemini nie odpowie, ćwiczenie zapisuje się bez zamienników (substitutesGeneratedAt: null) - można je dobrać później. */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -2286,7 +2346,7 @@ export interface operations {
             };
         };
     };
-    ExerciseController_findSimilar: {
+    ExerciseController_findSubstitutes: {
         parameters: {
             query?: never;
             header?: never;
@@ -2297,13 +2357,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Lista podobnych ćwiczeń wraz ze współczynnikiem podobieństwa (0-1) */
+            /** @description Zamienniki od najlepszego */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ExerciseSubstituteDto"][];
                 };
             };
             /** @description Brak tokenu lub token nieprawidłowy */
@@ -2315,7 +2375,7 @@ export interface operations {
                     "application/json": components["schemas"]["UnauthorizedErrorDto"];
                 };
             };
-            /** @description Ćwiczenie nie istnieje lub nie ma jeszcze wygenerowanego embeddingu */
+            /** @description Ćwiczenie nie istnieje */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -2326,22 +2386,25 @@ export interface operations {
             };
         };
     };
-    ExerciseController_backfillEmbeddings: {
+    ExerciseController_generateAllSubstitutes: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description true: dobierz od nowa dla całego katalogu */
+                all?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Liczba zaktualizowanych ćwiczeń */
+            /** @description Podsumowanie */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["GenerateAllSubstitutesResultDto"];
                 };
             };
             /** @description Brak tokenu lub token nieprawidłowy */
@@ -2360,6 +2423,114 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ForbiddenErrorDto"];
+                };
+            };
+        };
+    };
+    ExerciseController_generateSubstitutes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Nowa lista zamienników */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExerciseSubstituteDto"][];
+                };
+            };
+            /** @description Brak tokenu lub token nieprawidłowy */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthorizedErrorDto"];
+                };
+            };
+            /** @description Zalogowany użytkownik nie jest administratorem */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForbiddenErrorDto"];
+                };
+            };
+            /** @description Ćwiczenie nie istnieje */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundErrorDto"];
+                };
+            };
+            /** @description AI nie odpowiedziało; poprzednia lista zostaje */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+        };
+    };
+    ExerciseController_removeSubstitute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                substituteId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Pozostałe zamienniki */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExerciseSubstituteDto"][];
+                };
+            };
+            /** @description Brak tokenu lub token nieprawidłowy */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthorizedErrorDto"];
+                };
+            };
+            /** @description Zalogowany użytkownik nie jest administratorem */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForbiddenErrorDto"];
+                };
+            };
+            /** @description Nie ma takiego zamiennika */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundErrorDto"];
                 };
             };
         };

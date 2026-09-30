@@ -124,11 +124,11 @@ export type StagnantExercise = {
   lastSessionDate: string;
 };
 
-/** GET /exercise/:id/similar (tablica) */
-export type SimilarExercise = { exercise: Exercise; similarity: number };
+/** GET /exercise/:id/substitutes (tablica, od najlepszego zamiennika) */
+export type ExerciseSubstitute = Schemas["ExerciseSubstituteDto"];
 
-/** POST /exercise/backfill-embeddings */
-export type BackfillEmbeddingsResult = { updated: number };
+/** POST /exercise/substitutes/generate */
+export type GenerateSubstitutesResult = Schemas["GenerateAllSubstitutesResultDto"];
 
 /** GET /exercise/:id/usage */
 export type ExerciseUsage = { workoutCount: number; templateCount: number };
@@ -155,8 +155,6 @@ export type ResponseOverrides = {
   "/stats/weekly": WeeklyStats[];
   "/stats/rep-ranges": RepRangeStats[];
   "/stats/stagnation": StagnantExercise[];
-  "/exercise/{id}/similar": SimilarExercise[];
-  "/exercise/backfill-embeddings": BackfillEmbeddingsResult;
   "/exercise/{id}/usage": ExerciseUsage;
   "/ai/generate-plan": GeneratedPlan;
   "/ai/parse-workout": ParsedWorkout;

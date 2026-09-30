@@ -770,14 +770,13 @@
       "records": "Your records",
       "fullStats": "Full stats",
       "noRecords": "You don’t have any completed sets in this exercise yet. Records show up after your first workout.",
-      "similar": "Similar exercises",
-      "similarHint": "Substitutes from the same group, e.g. when the equipment is taken or something hurts.",
-      "match": "{value}% similar",
       "notDone": "Not done yet",
-      "similarNone": "No other exercises from this group in the catalog.",
-      "similarUnavailable": "Similar exercises aren’t available for this exercise yet.",
       "e1rmOn": "e1RM · {date}",
-      "bodyweight": "Bodyweight"
+      "bodyweight": "Bodyweight",
+      "substitutes": "Substitutes",
+      "substitutesHint": "Picked by AI: same movement and the same muscles, e.g. when the equipment is taken or something hurts.",
+      "substitutesNone": "AI found no exercise in the catalog that substitutes well for this one.",
+      "substitutesPending": "Substitutes for this exercise haven’t been picked yet."
     },
     "account": {
       "title": "Account",
@@ -790,13 +789,15 @@
         "title": "Exercise catalog",
         "manage": "Manage catalog",
         "count": "{count, plural, one {# exercise} other {# exercises}}",
-        "missing": "{count} without an embedding",
-        "missingHint": "Without an embedding an exercise shows no similar exercises and can’t be swapped for a similar one in a template.",
-        "complete": "Every exercise has an embedding, so similar-exercise search works across the whole catalog.",
-        "backfill": "Fill in embeddings",
-        "backfilling": "Filling in…",
-        "backfilled": "{count, plural, =0 {Nothing needed filling in} one {Filled in the embedding for # exercise} other {Filled in embeddings for # exercises}}",
-        "backfillError": "Gemini didn’t respond, so some embeddings may still be missing. Try again in a moment."
+        "missing": "{count} without substitutes picked",
+        "missingHint": "AI hasn’t picked substitutes for these exercises yet, e.g. because Gemini didn’t respond when they were saved.",
+        "complete": "AI has picked substitutes for the whole catalog. After adding exercises, pick again so older exercises consider them too.",
+        "generate": "Pick substitutes",
+        "regenerateAll": "Pick again for the whole catalog",
+        "generating": "Picking…",
+        "generated": "{count, plural, one {Picked substitutes for # exercise} other {Picked substitutes for # exercises}}",
+        "generatedPartial": "Picked substitutes for {updated}; {failed} got no AI response. Try again in a moment.",
+        "generateError": "Gemini didn’t respond. Try again in a moment."
       },
       "users": {
         "title": "Users",
@@ -851,7 +852,7 @@
       "description": "Add, edit, and delete exercises in the global catalog.",
       "back": "Admin panel",
       "count": "{count, plural, one {# exercise} other {# exercises}}",
-      "missing": "{count} without an embedding",
+      "missing": "{count} without substitutes picked",
       "add": "Add exercise",
       "search": "Search exercises",
       "filter": "Muscle group",
@@ -859,7 +860,6 @@
       "noResults": "No exercises match “{query}”.",
       "clear": "Clear search",
       "empty": "The catalog is empty. Add the first exercise.",
-      "noEmbedding": "No embedding",
       "menu": "Actions: {name}",
       "edit": "Edit",
       "delete": "Delete",
@@ -869,20 +869,30 @@
         "name": "Name",
         "namePlaceholder": "e.g. Incline dumbbell press",
         "group": "Muscle group",
-        "addHint": "The embedding for similar-exercise search is computed after saving.",
-        "editHint": "Changing the name or group recomputes the embedding so similar exercises match the new description. Workouts and templates stay linked to this exercise.",
+        "addHint": "After saving, AI picks substitutes from the catalog.",
+        "editHint": "Changing the name or group makes AI pick substitutes again. Workouts and templates stay linked to this exercise.",
         "create": "Add exercise",
         "save": "Save changes",
         "saving": "Saving…",
         "duplicate": "An exercise with this name is already in the catalog.",
-        "error": "Couldn’t save. Try again."
+        "error": "Couldn’t save. Try again.",
+        "substitutes": "Substitutes from AI",
+        "substitutesHint": "Reject any you disagree with.",
+        "substitutesNone": "AI found no substitute in the catalog.",
+        "substitutesPending": "Substitutes haven’t been picked yet.",
+        "substitutesLoading": "Loading substitutes…",
+        "substitutesLoadError": "Couldn’t load substitutes.",
+        "regenerate": "Pick again",
+        "regenerating": "Picking…",
+        "reject": "Reject substitute “{name}”",
+        "substitutesError": "Gemini didn’t respond. Try again in a moment."
       },
       "toast": {
         "created": "Added “{name}”",
         "saved": "Saved “{name}”",
-        "noEmbedding": "Saved “{name}” without an embedding because Gemini didn’t respond. Fill it in from the admin panel.",
         "deleted": "Deleted “{name}”",
-        "deleteError": "Couldn’t delete the exercise. Try again."
+        "deleteError": "Couldn’t delete the exercise. Try again.",
+        "noSubstitutes": "Saved “{name}”, but AI picked no substitutes because Gemini didn’t respond. Pick them from the admin panel."
       },
       "deleteSheet": {
         "checking": "Checking where this exercise is used…",
@@ -898,7 +908,8 @@
         "close": "Close",
         "error": "Couldn’t check where this exercise is used."
       },
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "pending": "Substitutes not picked"
     },
     "statsExercise": {
       "back": "Stats",
@@ -1013,15 +1024,14 @@
     "saving": "Saving…",
     "emptyTemplate": "No exercises yet. Add the first one from the catalog, then set sets, reps, and weight.",
     "swap": {
-      "action": "Swap for similar",
+      "action": "Choose a substitute",
       "title": "Swap “{name}”",
       "hint": "Sets, reps, weight, and rest stay the same.",
-      "loading": "Finding similar exercises…",
-      "error": "Couldn’t load similar exercises.",
-      "unavailable": "Similar exercises aren’t available for this exercise yet.",
-      "none": "No other exercises from this group.",
+      "loading": "Loading substitutes…",
+      "error": "Couldn’t load substitutes.",
+      "unavailable": "Substitutes for this exercise haven’t been picked yet.",
+      "none": "AI found no good substitute in the catalog.",
       "browse": "Choose from the full catalog",
-      "match": "{value}%",
       "done": "Swapped “{from}” for “{to}”",
       "taken": "Already in this day",
       "duplicate": "“{name}” is already in this day."

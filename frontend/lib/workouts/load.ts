@@ -54,8 +54,8 @@ export async function loadMonth(month: string) {
     if (last) {
       earlier = monthStart(last.date);
     } else {
-      // Rzadki przypadek: nic w oknie. Jedno pełne zapytanie (lista jest odchudzona, bez
-      // embeddingów), żeby „wcześniej nie ma treningów” było prawdą, a nie skutkiem okna.
+      // Rzadki przypadek: nic w oknie. Jedno pełne zapytanie (lista jest odchudzona),
+      // żeby „wcześniej nie ma treningów” było prawdą, a nie skutkiem okna.
       const older = await settle(unwrap(api.GET("/workout", { params: { query: { to } } })));
       earlier = older.ok && older.data.length ? monthStart(older.data[0].date) : null;
     }

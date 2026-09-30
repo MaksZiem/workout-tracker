@@ -3,15 +3,15 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { clientApi } from "@/lib/api/client";
-import type { MuscleGroup, SimilarExercise } from "@/lib/api/extra-types";
+import type { ExerciseSubstitute, MuscleGroup } from "@/lib/api/extra-types";
 import { Sheet } from "@/components/ui/sheet";
 
 type Picked = { id: number; name: string; muscleGroup: MuscleGroup };
-type State = { kind: "loading" } | { kind: "ready"; items: SimilarExercise[] } | { kind: "unavailable" } | { kind: "error" };
+type State = { kind: "loading" } | { kind: "ready"; items: ExerciseSubstitute[] } | { kind: "unavailable" } | { kind: "error" };
 
 /**
- * Zamiana ćwiczenia na podobne (embedding z Gemini, ta sama grupa mięśniowa).
- * Gdy podobnych brak, prowadzi do pełnego katalogu.
+ * Zamiana ćwiczenia na zamiennik dobrany przez AI (ten sam ruch i mięśnie), z uzasadnieniem.
+ * Gdy zamienników brak albo jeszcze ich nie dobrano, prowadzi do pełnego katalogu.
  */
 export function SwapExerciseSheet({
   exercise,
@@ -41,11 +41,13 @@ export function SwapExerciseSheet({
     if (exerciseId === undefined) return;
     let cancelled = false;
     const done = (next: State) => !cancelled && setResult({ key, state: next });
-    clientApi
-      .GET("/exercise/{id}/similar", { params: { path: { id: exerciseId } } })
-      .then(({ data, response }) => {
-        if (data) done({ kind: "ready", items: data });
-        else done({ kind: response.status === 404 ? "unavailable" : "error" });
+    const path = { params: { path: { id: exerciseId } } };
+    Promise.all([clientApi.GET("/exercise/{id}", path), clientApi.GET("/exercise/{id}/substitutes", path)])
+      .then(([own, substitutes]) => {
+        if (!own.data || !substitutes.data) return done({ kind: "error" });
+        // Pusta lista bez daty dobierania: AI jeszcze nie dobierało, a nie „brak zamienników”.
+        if (!own.data.substitutesGeneratedAt && substitutes.data.length === 0) return done({ kind: "unavailable" });
+        done({ kind: "ready", items: substitutes.data });
       })
       .catch(() => done({ kind: "error" }));
     return () => {
@@ -97,7 +99,7 @@ export function SwapExerciseSheet({
         ) : (
           <>
             <ul className="-mx-2">
-              {state.items.map(({ exercise: candidate, similarity }) => (
+              {state.items.map(({ exercise: candidate, reason }) => (
                 <li key={candidate.id}>
                   <button
                     type="button"
@@ -105,14 +107,15 @@ export function SwapExerciseSheet({
                     onClick={() =>
                       onPick({ id: candidate.id, name: candidate.name, muscleGroup: candidate.muscleGroup as MuscleGroup })
                     }
-                    className="flex min-h-12 w-full items-center gap-3 rounded-lg px-2 py-1.5 text-left hover:bg-surface-muted disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                    className="flex min-h-12 w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-muted disabled:cursor-not-allowed disabled:hover:bg-transparent"
                   >
-                    <span className={`min-w-0 flex-1 text-[15px] leading-snug ${taken.has(candidate.id) ? "text-muted" : ""}`}>
-                      {candidate.name}
+                    <span className="min-w-0 flex-1">
+                      <span className={`block text-[15px] leading-snug ${taken.has(candidate.id) ? "text-muted" : ""}`}>
+                        {candidate.name}
+                      </span>
+                      <span className="mt-0.5 block text-[13px] leading-snug text-muted">{reason}</span>
                     </span>
-                    <span className="shrink-0 text-[13px] text-muted tabular-nums">
-                      {taken.has(candidate.id) ? t("taken") : t("match", { value: Math.round(similarity * 100) })}
-                    </span>
+                    {taken.has(candidate.id) ? <span className="shrink-0 text-[13px] text-muted">{t("taken")}</span> : null}
                   </button>
                 </li>
               ))}

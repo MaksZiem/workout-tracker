@@ -37,7 +37,7 @@ Authorization: Bearer {{authToken}}
 
 @exerciseId = {{createExercise.response.body.id}}
 
-### Create a second exercise in the same muscle group (useful for /similar below)
+### Create a second exercise in the same muscle group (a likely substitute of the first)
 POST {{baseUrl}}/exercise
 content-type: application/json
 Authorization: Bearer {{authToken}}
@@ -47,7 +47,7 @@ Authorization: Bearer {{authToken}}
   "muscleGroup": "CHEST"
 }
 
-### Create a third, unrelated exercise (different muscle group - should NOT show up as similar)
+### Create a third, unrelated exercise (different movement - should NOT be picked as a substitute)
 POST {{baseUrl}}/exercise
 content-type: application/json
 Authorization: Bearer {{authToken}}
@@ -61,11 +61,19 @@ Authorization: Bearer {{authToken}}
 GET {{baseUrl}}/exercise/{{exerciseId}}
 Authorization: Bearer {{authToken}}
 
-### Find exercises similar to it (embedding is computed automatically on create)
-GET {{baseUrl}}/exercise/{{exerciseId}}/similar
+### Its substitutes, picked by AI on create (each with a short reason)
+GET {{baseUrl}}/exercise/{{exerciseId}}/substitutes
 Authorization: Bearer {{authToken}}
 
-### Update an exercise (name change recomputes its embedding)
+### Ask AI to pick its substitutes again (admin)
+POST {{baseUrl}}/exercise/{{exerciseId}}/substitutes/generate
+Authorization: Bearer {{authToken}}
+
+### Reject one substitute picked by AI (admin)
+DELETE {{baseUrl}}/exercise/{{exerciseId}}/substitutes/2
+Authorization: Bearer {{authToken}}
+
+### Update an exercise (a new name or group re-picks its substitutes)
 PATCH {{baseUrl}}/exercise/{{exerciseId}}
 content-type: application/json
 Authorization: Bearer {{authToken}}
@@ -74,8 +82,8 @@ Authorization: Bearer {{authToken}}
   "name": "Wyciskanie sztangi na ławce płaskiej (chwyt szeroki)"
 }
 
-### Backfill embeddings for exercises created before this feature existed
-POST {{baseUrl}}/exercise/backfill-embeddings
+### Pick substitutes for exercises that have none yet (add ?all=true to redo the whole catalog)
+POST {{baseUrl}}/exercise/substitutes/generate
 Authorization: Bearer {{authToken}}
 
 ### Where is it used (admin; only unused exercises can be deleted)

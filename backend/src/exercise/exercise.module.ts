@@ -3,11 +3,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ExerciseService } from './exercise.service';
 import { ExerciseController } from './exercise.controller';
 import { Exercise } from './exercise.entity';
+import { ExerciseSubstitute } from './exercise-substitute.entity';
 import { UsersModule } from 'src/users/users.module';
 import { GeminiModule } from 'src/gemini/gemini.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Exercise]), UsersModule, GeminiModule],
+  imports: [TypeOrmModule.forFeature([Exercise, ExerciseSubstitute]), UsersModule, GeminiModule],
   controllers: [ExerciseController],
   providers: [ExerciseService],
   exports: [ExerciseService],

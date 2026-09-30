@@ -18,6 +18,7 @@ import { AdminGuard } from 'src/guards/admin.guard';
 import { CreateExerciseDto } from './dtos/create-exercise.dto';
 import { UpdateExerciseDto } from './dtos/update-exercise.dto';
 import { Exercise } from './exercise.entity';
+import { ExerciseSubstituteDto, GenerateAllSubstitutesResultDto } from './dtos/exercise-substitute.dto';
 import { ErrorResponseDto, ForbiddenErrorDto, NotFoundErrorDto, UnauthorizedErrorDto } from 'src/common/dtos/error-response.dto';
 
 @ApiTags('exercise')
@@ -50,36 +51,74 @@ export class ExerciseController {
     return exercise
   }
 
-  @Get('/:id/similar')
+  @Get('/:id/substitutes')
   @UseGuards(AuthGuard)
   @ApiOperation({
-    summary: 'Znajdź podobne ćwiczenia',
+    summary: 'Zamienniki ćwiczenia',
     description:
-      'Na podstawie embeddingu semantycznego (wygenerowanego przez Gemini) zwraca do 5 najbardziej podobnych ćwiczeń z tej samej grupy mięśniowej, posortowanych malejąco po podobieństwie kosinusowym. Przydatne np. przy zamianie ćwiczenia z powodu braku sprzętu lub kontuzji.',
+      'Do 5 ćwiczeń z katalogu, które AI (Gemini) uznało za dobre zamienniki: ten sam wzorzec ruchu i te same główne mięśnie. Każdy z krótkim uzasadnieniem, od najlepszego. Pusta lista: AI nie znalazło zamiennika albo jeszcze nie dobierało (patrz `substitutesGeneratedAt`).',
   })
   @ApiParam({ name: 'id', type: Number, example: 1 })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista podobnych ćwiczeń wraz ze współczynnikiem podobieństwa (0-1)',
-    schema: {
-      example: [
-        { exercise: { id: 4, name: 'Wyciskanie hantli leżąc', muscleGroup: 'CHEST' }, similarity: 0.93 },
-        { exercise: { id: 7, name: 'Rozpiętki na ławce skośnej', muscleGroup: 'CHEST' }, similarity: 0.81 },
-      ],
-    },
+  @ApiResponse({ status: 200, description: 'Zamienniki od najlepszego', type: ExerciseSubstituteDto, isArray: true })
+  @ApiNotFoundResponse({ description: 'Ćwiczenie nie istnieje', type: NotFoundErrorDto })
+  findSubstitutes(@Param('id', ParseIntPipe) id: number) {
+    return this.exerciseService.findSubstitutes(id)
+  }
+
+  @Post('/substitutes/generate')
+  @UseGuards(AdminGuard)
+  @ApiOperation({
+    summary: 'Dobierz zamienniki dla katalogu (tylko administrator)',
+    description:
+      'Po kolei prosi AI o zamienniki dla ćwiczeń, które ich jeszcze nie mają, a z `all=true` dla wszystkich (np. po dodaniu nowych ćwiczeń, które mogą być zamiennikami starych). Błąd jednego ćwiczenia nie przerywa pozostałych.',
   })
-  @ApiNotFoundResponse({ description: 'Ćwiczenie nie istnieje lub nie ma jeszcze wygenerowanego embeddingu', type: NotFoundErrorDto })
-  findSimilar(@Param('id', ParseIntPipe) id: number) {
-    return this.exerciseService.findSimilar(id)
+  @ApiQuery({ name: 'all', required: false, type: Boolean, description: 'true: dobierz od nowa dla całego katalogu' })
+  @ApiResponse({ status: 201, description: 'Podsumowanie', type: GenerateAllSubstitutesResultDto })
+  @ApiForbiddenResponse({ description: 'Zalogowany użytkownik nie jest administratorem', type: ForbiddenErrorDto })
+  generateAllSubstitutes(@Query('all') all?: string) {
+    return this.exerciseService.generateAllSubstitutes(all !== 'true')
+  }
+
+  @Post('/:id/substitutes/generate')
+  @UseGuards(AdminGuard)
+  @ApiOperation({
+    summary: 'Dobierz zamienniki ćwiczenia od nowa (tylko administrator)',
+    description: 'AI wybiera zamienniki z aktualnego katalogu; wynik zastępuje poprzednią listę.',
+  })
+  @ApiParam({ name: 'id', type: Number, example: 1 })
+  @ApiResponse({ status: 201, description: 'Nowa lista zamienników', type: ExerciseSubstituteDto, isArray: true })
+  @ApiResponse({ status: 502, description: 'AI nie odpowiedziało; poprzednia lista zostaje', type: ErrorResponseDto })
+  @ApiForbiddenResponse({ description: 'Zalogowany użytkownik nie jest administratorem', type: ForbiddenErrorDto })
+  @ApiNotFoundResponse({ description: 'Ćwiczenie nie istnieje', type: NotFoundErrorDto })
+  generateSubstitutes(@Param('id', ParseIntPipe) id: number) {
+    return this.exerciseService.generateSubstitutes(id)
+  }
+
+  @Delete('/:id/substitutes/:substituteId')
+  @UseGuards(AdminGuard)
+  @ApiOperation({
+    summary: 'Odrzuć zamiennik (tylko administrator)',
+    description: 'Usuwa jeden zamiennik wybrany przez AI, gdy administrator się z nim nie zgadza.',
+  })
+  @ApiParam({ name: 'id', type: Number, example: 1 })
+  @ApiParam({ name: 'substituteId', type: Number, example: 6 })
+  @ApiResponse({ status: 200, description: 'Pozostałe zamienniki', type: ExerciseSubstituteDto, isArray: true })
+  @ApiForbiddenResponse({ description: 'Zalogowany użytkownik nie jest administratorem', type: ForbiddenErrorDto })
+  @ApiNotFoundResponse({ description: 'Nie ma takiego zamiennika', type: NotFoundErrorDto })
+  removeSubstitute(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('substituteId', ParseIntPipe) substituteId: number,
+  ) {
+    return this.exerciseService.removeSubstitute(id, substituteId)
   }
 
   @Post()
   @UseGuards(AdminGuard)
   @ApiOperation({
     summary: 'Dodaj nowe ćwiczenie (tylko administrator)',
-    description: 'Tworzy nowe ćwiczenie w globalnym katalogu i automatycznie generuje dla niego embedding semantyczny (Gemini).',
+    description: 'Tworzy nowe ćwiczenie w globalnym katalogu i od razu prosi AI (Gemini) o jego zamienniki.',
   })
-  @ApiResponse({ status: 201, description: 'Ćwiczenie utworzone. Gdy Gemini nie odpowie, ćwiczenie zapisuje się bez embeddingu (hasEmbedding: false) - uzupełnia go backfill.', type: Exercise })
+  @ApiResponse({ status: 201, description: 'Ćwiczenie utworzone. Gdy Gemini nie odpowie, ćwiczenie zapisuje się bez zamienników (substitutesGeneratedAt: null) - można je dobrać później.', type: Exercise })
   @ApiResponse({ status: 400, description: 'Nieprawidłowe dane wejściowe' })
   @ApiConflictResponse({ description: 'Ćwiczenie o tej nazwie już istnieje (bez względu na wielkość liter)', type: ErrorResponseDto })
   @ApiForbiddenResponse({ description: 'Zalogowany użytkownik nie jest administratorem', type: ForbiddenErrorDto })
@@ -87,23 +126,11 @@ export class ExerciseController {
     return this.exerciseService.create(dto)
   }
 
-  @Post('/backfill-embeddings')
-  @UseGuards(AdminGuard)
-  @ApiOperation({
-    summary: 'Dogeneruj brakujące embeddingi (tylko administrator)',
-    description: 'Operacja administracyjna: przelicza embedding semantyczny dla wszystkich ćwiczeń, które go jeszcze nie mają (np. dodanych przed wdrożeniem tej funkcji).',
-  })
-  @ApiResponse({ status: 201, description: 'Liczba zaktualizowanych ćwiczeń', schema: { example: { updated: 3 } } })
-  @ApiForbiddenResponse({ description: 'Zalogowany użytkownik nie jest administratorem', type: ForbiddenErrorDto })
-  backfillEmbeddings() {
-    return this.exerciseService.backfillEmbeddings()
-  }
-
   @Patch('/:id')
   @UseGuards(AdminGuard)
   @ApiOperation({
     summary: 'Zaktualizuj ćwiczenie (tylko administrator)',
-    description: 'Aktualizuje nazwę i/lub grupę mięśniową. Jeśli zmieniono nazwę lub grupę, embedding jest regenerowany.',
+    description: 'Aktualizuje nazwę i/lub grupę mięśniową. Jeśli zmieniono nazwę lub grupę, AI dobiera zamienniki od nowa (przy błędzie Gemini substitutesGeneratedAt zostaje null).',
   })
   @ApiParam({ name: 'id', type: Number, example: 1 })
   @ApiResponse({ status: 200, description: 'Zaktualizowane ćwiczenie', type: Exercise })

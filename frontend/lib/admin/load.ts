@@ -6,7 +6,8 @@ import { MUSCLE_GROUPS, type AdminUsersPage, type MuscleGroup } from "@/lib/api/
 import type { UserListQuery } from "./users-query";
 import { settle, type Section } from "@/lib/stats/model";
 
-export type AdminExercise = { id: number; name: string; muscleGroup: MuscleGroup; hasEmbedding: boolean };
+/** `substitutesPicked`: AI już dobierało zamienniki (nawet jeśli żadnego nie znalazło). */
+export type AdminExercise = { id: number; name: string; muscleGroup: MuscleGroup; substitutesPicked: boolean };
 
 export type CatalogHealth = { total: number; missing: number };
 
@@ -16,7 +17,12 @@ export async function loadAdminCatalog(): Promise<AdminExercise[]> {
   const exercises = await unwrap(api.GET("/exercise"));
   const order = (g: MuscleGroup) => MUSCLE_GROUPS.indexOf(g);
   return exercises
-    .map((e) => ({ id: e.id, name: e.name, muscleGroup: e.muscleGroup as MuscleGroup, hasEmbedding: e.hasEmbedding }))
+    .map((e) => ({
+      id: e.id,
+      name: e.name,
+      muscleGroup: e.muscleGroup as MuscleGroup,
+      substitutesPicked: Boolean(e.substitutesGeneratedAt),
+    }))
     .sort((a, b) => order(a.muscleGroup) - order(b.muscleGroup) || a.name.localeCompare(b.name, "pl"));
 }
 
@@ -45,7 +51,7 @@ export async function loadAdminOverview(
   ]);
   return {
     catalog: catalog.ok
-      ? { ok: true, data: { total: catalog.data.length, missing: catalog.data.filter((e) => !e.hasEmbedding).length } }
+      ? { ok: true, data: { total: catalog.data.length, missing: catalog.data.filter((e) => !e.substitutesPicked).length } }
       : { ok: false },
     users,
   };

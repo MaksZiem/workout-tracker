@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { loadExerciseCard, type SimilarItem } from "@/lib/exercises/load";
+import { loadExerciseCard, type SubstituteItem } from "@/lib/exercises/load";
 import { displayDate } from "@/lib/planner/dates";
 import { roundKg } from "@/lib/stats/model";
 import { RecordStrip } from "@/components/stats/record-strip";
@@ -37,7 +37,7 @@ export default async function ExercisePage(props: Props) {
   const format = await getFormatter();
   const kg = (v: number) => format.number(roundKg(v), { maximumFractionDigits: 1 });
   const date = (iso: string) => format.dateTime(displayDate(iso), { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
-  const { exercise, records, similar } = card;
+  const { exercise, records, substitutes } = card;
   const self = `/exercises/${exercise.id}`;
   const statsLink = (
     <Link
@@ -83,24 +83,23 @@ export default async function ExercisePage(props: Props) {
         )}
       </StatsSection>
 
-      <StatsSection id="similar" title={t("similar")} hint={t("similarHint")} className="mt-10">
-        {similar.ok ? (
-          similar.data.length ? (
-            <SimilarList
-              items={similar.data}
+      <StatsSection id="substitutes" title={t("substitutes")} hint={t("substitutesHint")} className="mt-10">
+        {substitutes.ok ? (
+          substitutes.data.length ? (
+            <SubstituteList
+              items={substitutes.data}
               kg={kg}
               labels={{
-                match: (n) => t("match", { value: n }),
                 notDone: t("notDone"),
                 bodyweight: t("bodyweight"),
                 e1rm: (iso) => t("e1rmOn", { date: format.dateTime(displayDate(iso), { day: "numeric", month: "short", timeZone: "UTC" }) }),
               }}
             />
           ) : (
-            <p className="rounded-xl border border-border bg-surface px-4 py-4 text-sm text-muted sm:px-5">{t("similarNone")}</p>
+            <p className="rounded-xl border border-border bg-surface px-4 py-4 text-sm text-muted sm:px-5">{t("substitutesNone")}</p>
           )
-        ) : similar.reason === "unavailable" ? (
-          <p className="rounded-xl border border-border bg-surface px-4 py-4 text-sm text-muted sm:px-5">{t("similarUnavailable")}</p>
+        ) : substitutes.reason === "pending" ? (
+          <p className="rounded-xl border border-border bg-surface px-4 py-4 text-sm text-muted sm:px-5">{t("substitutesPending")}</p>
         ) : (
           <SectionError retryHref={self} />
         )}
@@ -109,14 +108,15 @@ export default async function ExercisePage(props: Props) {
   );
 }
 
-function SimilarList({
+/** Zamienniki od AI: nazwa z uzasadnieniem, po prawej twój wynik jak w katalogu. */
+function SubstituteList({
   items,
   kg,
   labels,
 }: {
-  items: SimilarItem[];
+  items: SubstituteItem[];
   kg: (v: number) => string;
-  labels: { match: (n: number) => string; notDone: string; bodyweight: string; e1rm: (iso: string) => string };
+  labels: { notDone: string; bodyweight: string; e1rm: (iso: string) => string };
 }) {
   return (
     <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface">
@@ -125,7 +125,7 @@ function SimilarList({
           <Link href={`/exercises/${item.id}`} className="flex min-h-14 items-center gap-4 px-4 py-2.5 hover:bg-surface-muted sm:px-5">
             <span className="min-w-0 flex-1">
               <span className="block text-[15px] leading-snug font-medium">{item.name}</span>
-              <span className="block text-[13px] text-muted tabular-nums">{labels.match(Math.round(item.similarity * 100))}</span>
+              <span className="mt-0.5 block text-[13px] leading-snug text-muted">{item.reason}</span>
             </span>
             {item.mark && item.mark.e1rm > 0 ? (
               <span className="shrink-0 text-right">

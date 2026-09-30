@@ -21,11 +21,11 @@ Open decision. The user hasn't chosen what sets it apart from Strong, Hevy, and 
 - Templates and plans: a plan groups templates, one per training day. Each template exercise has target sets, reps, weight, and rest time.
 - Planner: workouts scheduled on dates with a status (PLANNED / COMPLETED / SKIPPED). Includes a "today" view, schedule generation, and starting a scheduled workout.
 - Stats: per-exercise progress and records, overall records, muscle-group distribution, frequency, streak, and a summary.
-- Exercise catalog grouped by muscle group (CHEST, BACK, SHOULDERS, BICEPS, TRICEPS, LEGS, GLUTES, ABS, FULL_BODY, CARDIO), with "similar exercises" based on embeddings.
+- Exercise catalog grouped by muscle group (CHEST, BACK, SHOULDERS, BICEPS, TRICEPS, LEGS, GLUTES, ABS, FULL_BODY, CARDIO), with substitutes for each exercise picked by Gemini from the catalog (same movement pattern and main muscles, each with a one-line reason), reviewable and rejectable by the admin.
 - Training goals: STRENGTH, HYPERTROPHY, ENDURANCE, GENERAL.
 
 ## Capabilities and Constraints
-- Backend: NestJS REST API with Swagger docs, JWT bearer auth, and USER / ADMIN roles. Admin controls the exercise catalog and backfilling embeddings.
+- Backend: NestJS REST API with Swagger docs, JWT bearer auth, and USER / ADMIN roles. Admin controls the exercise catalog and asks AI to (re)pick substitutes.
 - Frontend: Next.js 16 + React 19 + Tailwind CSS 4. It's still the create-next-app starter, so no UI exists yet. Per frontend/AGENTS.md, this Next.js version has breaking changes, so read `node_modules/next/dist/docs/` before writing frontend code.
 - AI depends on Gemini, which can fail. The API has an error response for that case, and the UI needs to handle it.
 - UI language: Polish and English with a language switcher (i18n). Exercise names come from the catalog and may be Polish-only; how they get translated hasn't been decided.

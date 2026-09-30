@@ -16,7 +16,7 @@ import { UsersSection } from "./users-section";
 
 type ShowToast = (toast: Omit<Toast, "id">) => void;
 
-/** Panel admina: stan katalogu (embeddingi) i konta użytkowników. Bez niebieskiego przycisku. */
+/** Panel admina: stan katalogu (zamienniki od AI) i konta użytkowników. Bez niebieskiego przycisku. */
 export function AdminView({
   catalog,
   users,
@@ -114,23 +114,35 @@ function LoadError() {
   );
 }
 
+/**
+ * Stan zamienników w katalogu. Gdy części brakuje, jeden przycisk dobiera brakujące; gdy są wszystkie,
+ * ten sam przycisk dobiera od nowa cały katalog (nowe ćwiczenia mogą być zamiennikami starszych).
+ */
 function CatalogPanel({ health, onToast }: { health: CatalogHealth; onToast: ShowToast }) {
   const t = useTranslations("pages.admin.catalog");
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [failed, setFailed] = useState(false);
+  const all = health.missing === 0;
 
-  const backfill = async () => {
+  const generate = async () => {
     if (pending) return;
     setPending(true);
     setFailed(false);
     try {
-      const result = await unwrap(clientApi.POST("/exercise/backfill-embeddings"));
-      onToast({ message: t("backfilled", { count: result.updated }), tone: "default" });
+      const result = await unwrap(
+        clientApi.POST("/exercise/substitutes/generate", { params: { query: all ? { all: true } : {} } }),
+      );
+      onToast({
+        message: result.failed.length
+          ? t("generatedPartial", { updated: result.updated, failed: result.failed.length })
+          : t("generated", { count: result.updated }),
+        tone: result.failed.length ? "error" : "default",
+      });
     } catch {
-      // Backfill zapisuje po jednym ćwiczeniu, więc część mogła się udać: liczniki odświeżamy zawsze.
       setFailed(true);
     } finally {
+      // Dobieranie zapisuje paczkami, więc część mogła się udać: liczniki odświeżamy zawsze.
       setPending(false);
       router.refresh();
     }
@@ -151,21 +163,21 @@ function CatalogPanel({ health, onToast }: { health: CatalogHealth; onToast: Sho
           </p>
           <p className="mt-1 max-w-[65ch] text-[13px] text-muted">{health.missing ? t("missingHint") : t("complete")}</p>
         </div>
-        {health.missing ? (
+        {health.total ? (
           <button
             type="button"
-            onClick={backfill}
+            onClick={generate}
             disabled={pending}
             aria-busy={pending}
             className="flex h-11 shrink-0 items-center justify-center rounded-lg border border-border px-4 text-sm font-semibold hover:bg-surface-muted disabled:cursor-wait disabled:opacity-60 sm:w-auto"
           >
-            {pending ? t("backfilling") : t("backfill")}
+            {pending ? t("generating") : all ? t("regenerateAll") : t("generate")}
           </button>
         ) : null}
       </div>
       {failed ? (
         <p role="alert" className="mt-3 rounded-lg bg-danger-surface px-3 py-2.5 text-sm text-danger">
-          {t("backfillError")}
+          {t("generateError")}
         </p>
       ) : null}
     </div>
