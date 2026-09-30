@@ -7,6 +7,7 @@ import { displayStatus, STATUS_DOT, type PlannerEntry } from "@/lib/planner/mode
 
 /**
  * Tydzień pon–niedz. z planera. Zielone tło: tego dnia zakończono trening.
+ * Czerwone tło: plan z minionego dnia wciąż czeka (zaległy), a treningu tego dnia nie było.
  * Od sm w dniu widać nazwy treningów (kropka w kolorze statusu planera, „Poza planem”
  * dla treningu zapisanego bez planera), na telefonie same kropki. Pod spodem
  * podsumowanie tygodnia i najbliższy zaplanowany trening.
@@ -76,6 +77,8 @@ export async function WeekStrip({
           const isToday = date === today;
           const didTrain = trained.has(date);
           const offPlan = summary.offPlan.has(date);
+          // Zakończony trening wygrywa: dzień z wykonaną pracą nie świeci się na czerwono.
+          const overdue = !didTrain && dayEntries.some((e) => displayStatus(e, today) === "OVERDUE");
           const labels = [
             ...dayEntries.map((e) => {
               const status = displayStatus(e, today);
@@ -100,7 +103,11 @@ export async function WeekStrip({
                 })}
                 aria-current={isToday ? "date" : undefined}
                 className={`flex h-[4.5rem] flex-col items-center gap-1.5 rounded-lg py-2 transition-colors sm:h-full sm:min-h-32 sm:px-2 ${
-                  didTrain ? "bg-success-surface hover:bg-success-surface/70" : "hover:bg-surface-muted"
+                  didTrain
+                    ? "bg-success-surface hover:bg-success-surface/70"
+                    : overdue
+                      ? "bg-danger-surface hover:bg-danger-surface/70"
+                      : "hover:bg-surface-muted"
                 }`}
               >
                 <span className={`text-[11px] font-medium first-letter:uppercase ${isToday ? "text-accent" : "text-muted"}`}>
