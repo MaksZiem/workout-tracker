@@ -100,7 +100,17 @@
         "startEmpty": "Zacznij pusty trening",
         "toPlanner": "Otwórz planer",
         "untitled": "Trening bez szablonu",
-        "startError": "Nie udało się rozpocząć treningu. Spróbuj ponownie."
+        "startError": "Nie udało się rozpocząć treningu. Spróbuj ponownie.",
+        "scheduledToday": "Zaplanowany na dziś",
+        "fromPlan": "według planu"
+      },
+      "streak": {
+        "label": "Passy",
+        "weeks": "{count, plural, one {tydzień z rzędu} few {tygodnie z rzędu} many {tygodni z rzędu} other {tygodnia z rzędu}}",
+        "weeksHint": "Kolejne tygodnie z co najmniej jednym treningiem.",
+        "weeksAtRisk": "W tym tygodniu jeszcze nie było treningu. Zrób go, żeby nie stracić passy.",
+        "plan": "{count, plural, one {trening z planu bez opuszczenia} few {treningi z planu bez opuszczenia} many {treningów z planu bez opuszczenia} other {treningu z planu bez opuszczenia}}",
+        "planHint": "Kolejne zaplanowane treningi wykonane bez pominięcia i bez zaległości."
       },
       "week": {
         "title": "Ten tydzień",
@@ -110,7 +120,17 @@
         "day": "{date}: {summary}",
         "trained": "trening zapisany",
         "free": "wolne",
-        "planned": "{count, plural, one {# trening w planie} few {# treningi w planie} many {# treningów w planie} other {# treningów w planie}}"
+        "planned": "{count, plural, one {# trening w planie} few {# treningi w planie} many {# treningów w planie} other {# treningów w planie}}",
+        "tons": "{value} t",
+        "untitled": "Trening bez szablonu",
+        "noNext": "Nic więcej nie zaplanowano",
+        "offPlan": "Poza planem",
+        "stats": {
+          "workouts": "Treningi",
+          "sets": "Serie",
+          "volume": "Objętość",
+          "next": "Następny w planie"
+        }
       },
       "ai": {
         "title": "Opisz trening tekstem",

@@ -100,7 +100,17 @@
         "startEmpty": "Start empty workout",
         "toPlanner": "Open planner",
         "untitled": "Workout without template",
-        "startError": "Couldn't start the workout. Try again."
+        "startError": "Couldn't start the workout. Try again.",
+        "scheduledToday": "Scheduled for today",
+        "fromPlan": "from plan"
+      },
+      "streak": {
+        "label": "Streaks",
+        "weeks": "{count, plural, one {week in a row} other {weeks in a row}}",
+        "weeksHint": "Consecutive weeks with at least one workout.",
+        "weeksAtRisk": "No workout yet this week. Train to keep your streak.",
+        "plan": "{count, plural, one {planned workout, none missed} other {planned workouts, none missed}}",
+        "planHint": "Consecutive planned workouts done without skipping or falling behind."
       },
       "week": {
         "title": "This week",
@@ -110,7 +120,17 @@
         "day": "{date}: {summary}",
         "trained": "workout logged",
         "free": "free",
-        "planned": "{count, plural, one {# workout planned} other {# workouts planned}}"
+        "planned": "{count, plural, one {# workout planned} other {# workouts planned}}",
+        "tons": "{value} t",
+        "untitled": "Workout without template",
+        "noNext": "Nothing else planned",
+        "offPlan": "Off plan",
+        "stats": {
+          "workouts": "Workouts",
+          "sets": "Sets",
+          "volume": "Volume",
+          "next": "Next up"
+        }
       },
       "ai": {
         "title": "Describe a workout",

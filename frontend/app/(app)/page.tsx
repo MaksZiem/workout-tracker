@@ -12,6 +12,7 @@ import { AiQuick } from "@/components/dashboard/ai-quick";
 import { RecentWorkouts } from "@/components/dashboard/recent-workouts";
 import { FreshRecords } from "@/components/dashboard/fresh-records";
 import { Onboarding } from "@/components/dashboard/onboarding";
+import { Streaks } from "@/components/dashboard/streaks";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pages.dashboard");
@@ -32,18 +33,21 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6 sm:gap-8">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t("greeting", { name: user.name })}</h1>
-        <p className="mt-1 text-sm text-muted first-letter:uppercase">
-          {format.dateTime(displayDate(today), { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" })}
-        </p>
+      <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t("greeting", { name: user.name })}</h1>
+          <p className="mt-1 text-sm text-muted first-letter:uppercase">
+            {format.dateTime(displayDate(today), { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" })}
+          </p>
+        </div>
+        <Streaks weeks={data.streak} plan={data.planStreak} weekAtRisk={data.weekTrained.size === 0} />
       </header>
 
       <div className="flex flex-col gap-3 sm:gap-4">
         {data.today.ok ? <TodayCard items={data.today.data} today={today} groupNames={groupNames} /> : <SectionError retryHref="/" />}
         {onboarding ? <Onboarding steps={steps} /> : null}
         {data.week.ok ? (
-          <WeekStrip entries={data.week.data} trained={data.weekTrained} today={today} streak={data.streak} />
+          <WeekStrip entries={data.week.data} trained={data.weekTrained} summary={data.weekSummary} today={today} />
         ) : (
           <SectionError retryHref="/" />
         )}

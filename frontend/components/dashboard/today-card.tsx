@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
-import { Check, CircleDot, Play, Plus } from "lucide-react";
+import { CalendarCheck, Check, CircleDot, ClipboardList, Play, Plus } from "lucide-react";
 import { startEmpty, startScheduled, type StartState } from "@/lib/log/actions";
 import type { TodayItem } from "@/lib/dashboard/load";
 import { displayDate } from "@/lib/planner/dates";
@@ -53,6 +53,33 @@ function Title({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** Skąd jest trening: „zaplanowany na dziś” i/lub plan, według którego jest robiony. */
+function Origin({ plan, scheduled = false }: { plan: { id: number; name: string } | null; scheduled?: boolean }) {
+  const t = useTranslations("pages.dashboard.today");
+  if (!plan && !scheduled) return null;
+  return (
+    <p className="mt-1.5 flex min-w-0 flex-col gap-y-0.5 text-[13px] sm:flex-row sm:items-center sm:gap-x-1.5">
+      {scheduled ? (
+        <span className="flex items-center gap-1.5 font-medium">
+          <CalendarCheck className="size-3.5 shrink-0" strokeWidth={2.25} aria-hidden />
+          {t("scheduledToday")}
+        </span>
+      ) : null}
+      {scheduled && plan ? <span className="hidden text-muted sm:inline" aria-hidden>·</span> : null}
+      {plan ? (
+        <span className="flex min-w-0 items-center gap-1.5 text-muted">
+          {scheduled ? null : <ClipboardList className="size-3.5 shrink-0" strokeWidth={2} aria-hidden />}
+          {/* Samodzielnie („Według planu …”) z wielkiej litery; po „Zaplanowany na dziś ·” z małej. */}
+          <span className={`shrink-0 ${scheduled ? "" : "first-letter:uppercase"}`}>{t("fromPlan")}</span>
+          <Link href={`/plans/${plan.id}`} className="truncate font-medium text-foreground underline-offset-2 hover:underline">
+            {plan.name}
+          </Link>
+        </span>
+      ) : null}
+    </p>
+  );
+}
+
 function actionClass(primary: boolean) {
   return primary
     ? "flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-accent px-6 text-[15px] font-semibold text-accent-foreground hover:opacity-90 disabled:opacity-60 sm:w-auto"
@@ -84,6 +111,7 @@ function PlannedRow({
       body={
         <>
           <Title>{item.title ?? t("untitled")}</Title>
+          <Origin plan={item.plan} scheduled />
           <p className="mt-1 text-[13px] text-muted tabular-nums">
             {t("exercises", { count: item.exerciseCount })} · {t("sets", { count: item.setCount })}
             {item.muscleGroups.length ? ` · ${item.muscleGroups.map((g) => groupNames[g] ?? g).join(", ")}` : null}
@@ -136,6 +164,7 @@ function InProgressRow({
             <span className="font-medium">{status}</span>
             <span className="text-muted">· {t("exercises", { count: item.exerciseCount })}</span>
           </p>
+          <Origin plan={item.plan} />
           {item.setCount ? (
             <div className="mt-3 flex items-center gap-3">
               <span
@@ -183,6 +212,7 @@ function DoneRow({ item }: { item: Extract<TodayItem, { kind: "done" }> }) {
                 {format.number(Math.round(item.volume))} kg
               </span>
             </p>
+            <Origin plan={item.plan} />
           </div>
         </div>
       }

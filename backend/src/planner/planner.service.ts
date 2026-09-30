@@ -106,7 +106,8 @@ export class PlannerService {
 
     return this.repo.find({
       where,
-      relations: ['template', 'workout'],
+      // template.plan: UI pokazuje, według jakiego planu jest trening.
+      relations: ['template', 'template.plan', 'workout'],
       order: { date: 'ASC' },
     });
   }
@@ -117,7 +118,7 @@ export class PlannerService {
     const today = date ?? new Date().toISOString().slice(0, 10);
     return this.repo.find({
       where: { user: { id: userId }, date: today },
-      relations: ['template', 'template.exercises', 'template.exercises.exercise', 'workout'],
+      relations: ['template', 'template.plan', 'template.exercises', 'template.exercises.exercise', 'workout'],
     });
   }
 
