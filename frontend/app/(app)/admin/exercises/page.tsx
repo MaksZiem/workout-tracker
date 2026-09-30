@@ -1,27 +1,22 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { PageHeader } from "@/components/page-header";
-import { Placeholder } from "@/components/placeholder";
+import { MUSCLE_GROUPS, type MuscleGroup } from "@/lib/api/extra-types";
+import { loadAdminCatalog } from "@/lib/admin/load";
+import { AdminExercisesView } from "@/components/admin/admin-exercises-view";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pages.adminExercises");
   return { title: t("title") };
 }
 
-export default async function Page() {
-  const t = await getTranslations("pages.adminExercises");
+function parseGroup(value: unknown): MuscleGroup | null {
+  return MUSCLE_GROUPS.includes(value as MuscleGroup) ? (value as MuscleGroup) : null;
+}
 
-  return (
-    <>
-      <PageHeader title={t("title")} description={t("description")} />
-      <Placeholder
-        endpoints={[
-          "POST /exercise",
-          "PATCH /exercise/:id",
-          "DELETE /exercise/:id",
-          "POST /exercise/backfill-embeddings",
-        ]}
-      />
-    </>
-  );
+export default async function Page(props: PageProps<"/admin/exercises">) {
+  const { group } = await props.searchParams;
+  const items = await loadAdminCatalog();
+  const selected = parseGroup(group);
+  // Filtr po zmianie grupy zaczyna z pustą wyszukiwarką.
+  return <AdminExercisesView key={selected ?? "all"} items={items} group={selected} />;
 }

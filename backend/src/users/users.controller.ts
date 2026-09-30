@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, ForbiddenException, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, ForbiddenException, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import {
   ApiBearerAuth,
   ApiBody,
@@ -23,6 +23,9 @@ import { UpdateUserDto } from "./dtos/update-user.dto";
 import { AdminGuard } from "src/guards/admin.guard";
 import { UserRole } from "src/enums/user-role.enum";
 import { TokenResponseDto } from "./dtos/token-response.dto";
+import { AdminUserDto } from "./dtos/admin-user.dto";
+import { AdminUsersPageDto } from "./dtos/admin-users-page.dto";
+import { FindUsersDto } from "./dtos/find-users.dto";
 import { BadRequestErrorDto, ForbiddenErrorDto, NotFoundErrorDto, UnauthorizedErrorDto } from "src/common/dtos/error-response.dto";
 
 @ApiTags('auth')
@@ -45,6 +48,23 @@ export class UsersController {
   async getContext(@CurrentUser() user: User) {
     const found = await this.usersService.findOne(user.id)
     return plainToInstance(UserDto, found, {excludeExtraneousValues: true})
+  }
+
+  @Get('/users')
+  @UseGuards(AdminGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: 'Lista użytkowników (tylko administrator)',
+    description:
+      'Strona użytkowników wraz z liczbą zapisanych treningów. Wyszukiwanie (`search`), sortowanie (`sort`, `order`) i paginacja (`page`, `limit`) odbywają się w bazie. Przy remisie kolejność wyznacza id.',
+  })
+  @ApiResponse({ status: 200, description: 'Strona listy użytkowników', type: AdminUsersPageDto })
+  @ApiResponse({ status: 400, description: 'Nieprawidłowe parametry (np. nieznane pole sortowania, limit spoza 1-100)', type: BadRequestErrorDto })
+  @ApiUnauthorizedResponse({ description: 'Brak tokenu lub token nieprawidłowy', type: UnauthorizedErrorDto })
+  @ApiForbiddenResponse({ description: 'Zalogowany użytkownik nie jest administratorem', type: ForbiddenErrorDto })
+  async listUsers(@Query() filters: FindUsersDto) {
+    const result = await this.usersService.findPage(filters)
+    return { ...result, items: plainToInstance(AdminUserDto, result.items, { excludeExtraneousValues: true }) }
   }
 
   @Post('/signup')
@@ -76,14 +96,18 @@ export class UsersController {
   @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: 'Usuń użytkownika (tylko administrator)',
-    description: 'Trwale usuwa konto użytkownika o podanym id. Wymaga roli ADMIN.',
+    description: 'Trwale usuwa konto użytkownika o podanym id wraz z jego treningami, szablonami, planami i wpisami w planerze. Wymaga roli ADMIN. Administrator nie może usunąć własnego konta (403).',
   })
   @ApiParam({ name: 'id', type: Number, description: 'Identyfikator użytkownika', example: 1 })
   @ApiResponse({ status: 200, description: 'Użytkownik usunięty', type: User })
   @ApiUnauthorizedResponse({ description: 'Brak tokenu lub token nieprawidłowy', type: UnauthorizedErrorDto })
-  @ApiForbiddenResponse({ description: 'Zalogowany użytkownik nie jest administratorem', type: ForbiddenErrorDto })
+  @ApiForbiddenResponse({ description: 'Zalogowany użytkownik nie jest administratorem albo próbuje usunąć własne konto', type: ForbiddenErrorDto })
   @ApiNotFoundResponse({ description: 'Użytkownik o podanym id nie istnieje', type: NotFoundErrorDto })
-  removeUser(@Param('id', ParseIntPipe) id: number) {
+  removeUser(@Param('id', ParseIntPipe) id: number, @CurrentUser() currentUser: User) {
+    // Własne konto usuwa się gdzie indziej; tu chroni przed odcięciem ostatniego administratora.
+    if (currentUser.id === id) {
+      throw new ForbiddenException('Admins cannot delete their own account')
+    }
     return this.usersService.remove(id)
   }
 
@@ -93,7 +117,7 @@ export class UsersController {
   @ApiOperation({
     summary: 'Zaktualizuj dane użytkownika',
     description:
-      'Użytkownik może zaktualizować wyłącznie własny profil (e-mail, hasło). Zmiana pola `role` dozwolona jest tylko dla administratora - w przeciwnym razie zwracany jest błąd 403.',
+      'Użytkownik może zaktualizować wyłącznie własny profil (e-mail, hasło). Zmiana pola `role` dozwolona jest tylko dla administratora - w przeciwnym razie zwracany jest błąd 403. Administrator nie może odebrać roli samemu sobie (403), więc w systemie zawsze zostaje co najmniej jeden administrator.',
   })
   @ApiParam({ name: 'id', type: Number, description: 'Identyfikator użytkownika do zaktualizowania', example: 1 })
   @ApiBody({ type: UpdateUserDto })
@@ -117,6 +141,9 @@ export class UsersController {
     }
     if(!isAdmin && body.role !== undefined) {
       throw new ForbiddenException('Action not allowed')
+    }
+    if(isAdmin && isSelf && body.role !== undefined && body.role !== UserRole.ADMIN) {
+      throw new ForbiddenException('Admins cannot revoke their own admin role')
     }
     return this.usersService.update(id, body)
   }

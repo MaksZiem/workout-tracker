@@ -24,6 +24,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lista użytkowników (tylko administrator)
+         * @description Strona użytkowników wraz z liczbą zapisanych treningów. Wyszukiwanie (`search`), sortowanie (`sort`, `order`) i paginacja (`page`, `limit`) odbywają się w bazie. Przy remisie kolejność wyznacza id.
+         */
+        get: operations["UsersController_listUsers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/signup": {
         parameters: {
             query?: never;
@@ -76,14 +96,14 @@ export interface paths {
         post?: never;
         /**
          * Usuń użytkownika (tylko administrator)
-         * @description Trwale usuwa konto użytkownika o podanym id. Wymaga roli ADMIN.
+         * @description Trwale usuwa konto użytkownika o podanym id wraz z jego treningami, szablonami, planami i wpisami w planerze. Wymaga roli ADMIN. Administrator nie może usunąć własnego konta (403).
          */
         delete: operations["UsersController_removeUser"];
         options?: never;
         head?: never;
         /**
          * Zaktualizuj dane użytkownika
-         * @description Użytkownik może zaktualizować wyłącznie własny profil (e-mail, hasło). Zmiana pola `role` dozwolona jest tylko dla administratora - w przeciwnym razie zwracany jest błąd 403.
+         * @description Użytkownik może zaktualizować wyłącznie własny profil (e-mail, hasło). Zmiana pola `role` dozwolona jest tylko dla administratora - w przeciwnym razie zwracany jest błąd 403. Administrator nie może odebrać roli samemu sobie (403), więc w systemie zawsze zostaje co najmniej jeden administrator.
          */
         patch: operations["UsersController_updateUser"];
         trace?: never;
@@ -123,7 +143,10 @@ export interface paths {
         get: operations["ExerciseController_findOne"];
         put?: never;
         post?: never;
-        /** Usuń ćwiczenie (tylko administrator) */
+        /**
+         * Usuń ćwiczenie (tylko administrator)
+         * @description Usuwa ćwiczenie z katalogu. Ćwiczenia użytego w treningu lub szablonie nie da się usunąć (409), żeby nie skasować historii - zmień wtedy jego nazwę.
+         */
         delete: operations["ExerciseController_removeExercise"];
         options?: never;
         head?: never;
@@ -174,6 +197,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/exercise/{id}/usage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Sprawdź, gdzie ćwiczenie jest używane (tylko administrator)
+         * @description Liczba treningów i szablonów zawierających ćwiczenie. Usunąć można tylko ćwiczenie nieużywane.
+         */
+        get: operations["ExerciseController_usage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/workout": {
         parameters: {
             query?: never;
@@ -214,7 +257,7 @@ export interface paths {
         post?: never;
         /**
          * Usuń trening
-         * @description Usuwa trening wraz ze wszystkimi jego ćwiczeniami i seriami (kaskadowo).
+         * @description Usuwa trening wraz ze wszystkimi jego ćwiczeniami i seriami (kaskadowo). Jeśli trening pochodził z planera, wpis wraca do statusu PLANNED.
          */
         delete: operations["WorkoutController_remove"];
         options?: never;
@@ -929,6 +972,96 @@ export interface components {
             /** @example Token is wrong */
             message: Record<string, never>;
         };
+        AdminUserDto: {
+            /**
+             * @description Unikalny identyfikator użytkownika
+             * @example 1
+             */
+            id: number;
+            /**
+             * @description Adres e-mail (login)
+             * @example jan.kowalski@example.com
+             */
+            email: string;
+            /**
+             * @description Imię użytkownika
+             * @example Jan
+             */
+            name: string;
+            /**
+             * @description Nazwisko użytkownika
+             * @example Kowalski
+             */
+            surname: string;
+            /**
+             * @description Rola użytkownika
+             * @example USER
+             * @enum {string}
+             */
+            role: "USER" | "ADMIN";
+            /**
+             * @description Liczba zapisanych treningów użytkownika
+             * @example 24
+             */
+            workoutCount: number;
+        };
+        AdminUsersPageDto: {
+            /** @description Użytkownicy na tej stronie */
+            items: components["schemas"]["AdminUserDto"][];
+            /**
+             * @description Liczba wszystkich użytkowników pasujących do wyszukiwania
+             * @example 45
+             */
+            total: number;
+            /**
+             * @description Zwrócona strona (po przycięciu do zakresu)
+             * @example 1
+             */
+            page: number;
+            /**
+             * @description Rozmiar strony
+             * @example 20
+             */
+            limit: number;
+            /**
+             * @description Liczba stron (co najmniej 1)
+             * @example 3
+             */
+            pageCount: number;
+        };
+        BadRequestErrorDto: {
+            /** @example 2026-09-23T17:45:12.345Z */
+            timestamp: string;
+            /** @example /auth/signup */
+            path: string;
+            /** @example POST */
+            method: string;
+            /** @example 400 */
+            statusCode: number;
+            /** @example Bad Request */
+            error: string;
+            /**
+             * @example [
+             *       "email must be an email",
+             *       "password must be longer than or equal to 8 characters"
+             *     ]
+             */
+            message: Record<string, never>;
+        };
+        ForbiddenErrorDto: {
+            /** @example 2026-09-23T17:45:12.345Z */
+            timestamp: string;
+            /** @example /auth/5 */
+            path: string;
+            /** @example PATCH */
+            method: string;
+            /** @example 403 */
+            statusCode: number;
+            /** @example Forbidden */
+            error: string;
+            /** @example Action not allowed */
+            message: Record<string, never>;
+        };
         CreateUserDto: {
             /**
              * Format: email
@@ -958,25 +1091,6 @@ export interface components {
              * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqYW4ua293YWxza2lAZXhhbXBsZS5jb20iLCJyb2xlIjoiVVNFUiIsIm5hbWUiOiJKYW4iLCJzdXJuYW1lIjoiS293YWxza2kiLCJpYXQiOjE3NTg2MzY3MTJ9.abcdefghijklmnopqrstuvwxyz1234567890
              */
             access_token: string;
-        };
-        BadRequestErrorDto: {
-            /** @example 2026-09-23T17:45:12.345Z */
-            timestamp: string;
-            /** @example /auth/signup */
-            path: string;
-            /** @example POST */
-            method: string;
-            /** @example 400 */
-            statusCode: number;
-            /** @example Bad Request */
-            error: string;
-            /**
-             * @example [
-             *       "email must be an email",
-             *       "password must be longer than or equal to 8 characters"
-             *     ]
-             */
-            message: Record<string, never>;
         };
         SigninDto: {
             /**
@@ -1019,20 +1133,6 @@ export interface components {
              */
             role: "USER" | "ADMIN";
             password: string;
-        };
-        ForbiddenErrorDto: {
-            /** @example 2026-09-23T17:45:12.345Z */
-            timestamp: string;
-            /** @example /auth/5 */
-            path: string;
-            /** @example PATCH */
-            method: string;
-            /** @example 403 */
-            statusCode: number;
-            /** @example Forbidden */
-            error: string;
-            /** @example Action not allowed */
-            message: Record<string, never>;
         };
         NotFoundErrorDto: {
             /** @example 2026-09-23T17:45:12.345Z */
@@ -1085,13 +1185,10 @@ export interface components {
              */
             muscleGroup: "CHEST" | "BACK" | "SHOULDERS" | "BICEPS" | "TRICEPS" | "LEGS" | "GLUTES" | "ABS" | "FULL_BODY" | "CARDIO";
             /**
-             * @description Wektor embeddingu semantycznego (generowany automatycznie przez Gemini) używany do wyszukiwania podobnych ćwiczeń. Pole wewnętrzne - nie jest wypełniane ręcznie.
-             * @example [
-             *       0.0123,
-             *       -0.0456,
-             *       0.0789
-             *     ]
+             * @description Czy ćwiczenie ma już embedding (bez niego nie działa wyszukiwanie podobnych ćwiczeń)
+             * @example true
              */
+            hasEmbedding: boolean;
             embedding: number[] | null;
             workoutExercises: components["schemas"]["WorkoutExercise"][];
         };
@@ -1190,6 +1287,35 @@ export interface components {
              * @enum {string}
              */
             muscleGroup: "CHEST" | "BACK" | "SHOULDERS" | "BICEPS" | "TRICEPS" | "LEGS" | "GLUTES" | "ABS" | "FULL_BODY" | "CARDIO";
+        };
+        ErrorResponseDto: {
+            /**
+             * @description Znacznik czasu wystąpienia błędu (ISO 8601)
+             * @example 2026-09-23T17:45:12.345Z
+             */
+            timestamp: string;
+            /**
+             * @description Ścieżka żądania, na której wystąpił błąd
+             * @example /workout/123
+             */
+            path: string;
+            /**
+             * @description Metoda HTTP żądania
+             * @example GET
+             */
+            method: string;
+            /**
+             * @description Kod statusu HTTP
+             * @example 404
+             */
+            statusCode: number;
+            /**
+             * @description Nazwa błędu HTTP
+             * @example Not Found
+             */
+            error: string;
+            /** @description Komunikat błędu. Dla błędów walidacji (400) jest to tablica komunikatów - po jednym na każde niepoprawne pole. */
+            message: string | string[];
         };
         UpdateExerciseDto: {
             /**
@@ -1682,6 +1808,64 @@ export interface operations {
             };
         };
     };
+    UsersController_listUsers: {
+        parameters: {
+            query?: {
+                /** @description Fraza szukana w imieniu, nazwisku, pełnym imieniu i nazwisku oraz e-mailu (bez względu na wielkość liter) */
+                search?: string;
+                /** @description Pole sortowania. `name` sortuje po imieniu, potem nazwisku; `role` malejąco stawia administratorów na górze. */
+                sort?: "name" | "email" | "role" | "workoutCount";
+                /** @description Kierunek sortowania */
+                order?: "asc" | "desc";
+                /** @description Numer strony (od 1). Strona poza zakresem zwraca ostatnią istniejącą. */
+                page?: number;
+                /** @description Liczba użytkowników na stronie (1-100) */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Strona listy użytkowników */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminUsersPageDto"];
+                };
+            };
+            /** @description Nieprawidłowe parametry (np. nieznane pole sortowania, limit spoza 1-100) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestErrorDto"];
+                };
+            };
+            /** @description Brak tokenu lub token nieprawidłowy */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthorizedErrorDto"];
+                };
+            };
+            /** @description Zalogowany użytkownik nie jest administratorem */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForbiddenErrorDto"];
+                };
+            };
+        };
+    };
     UsersController_signUp: {
         parameters: {
             query?: never;
@@ -1778,7 +1962,7 @@ export interface operations {
                     "application/json": components["schemas"]["UnauthorizedErrorDto"];
                 };
             };
-            /** @description Zalogowany użytkownik nie jest administratorem */
+            /** @description Zalogowany użytkownik nie jest administratorem albo próbuje usunąć własne konto */
             403: {
                 headers: {
                     [name: string]: unknown;
@@ -1897,7 +2081,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Ćwiczenie utworzone */
+            /** @description Ćwiczenie utworzone. Gdy Gemini nie odpowie, ćwiczenie zapisuje się bez embeddingu (hasEmbedding: false) - uzupełnia go backfill. */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -1929,6 +2113,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ForbiddenErrorDto"];
+                };
+            };
+            /** @description Ćwiczenie o tej nazwie już istnieje (bez względu na wielkość liter) */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
         };
@@ -2020,6 +2213,15 @@ export interface operations {
                     "application/json": components["schemas"]["NotFoundErrorDto"];
                 };
             };
+            /** @description Ćwiczenie jest używane w treningach lub szablonach */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     ExerciseController_updateExercise: {
@@ -2071,6 +2273,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["NotFoundErrorDto"];
+                };
+            };
+            /** @description Inne ćwiczenie ma już tę nazwę */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
         };
@@ -2149,6 +2360,55 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ForbiddenErrorDto"];
+                };
+            };
+        };
+    };
+    ExerciseController_usage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Liczniki użycia */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Brak tokenu lub token nieprawidłowy */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthorizedErrorDto"];
+                };
+            };
+            /** @description Zalogowany użytkownik nie jest administratorem */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForbiddenErrorDto"];
+                };
+            };
+            /** @description Ćwiczenie nie istnieje */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundErrorDto"];
                 };
             };
         };

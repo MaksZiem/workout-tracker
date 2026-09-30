@@ -78,6 +78,10 @@ Authorization: Bearer {{authToken}}
 POST {{baseUrl}}/exercise/backfill-embeddings
 Authorization: Bearer {{authToken}}
 
-### Delete an exercise
+### Where is it used (admin; only unused exercises can be deleted)
+GET {{baseUrl}}/exercise/{{exerciseId}}/usage
+Authorization: Bearer {{authToken}}
+
+### Delete an exercise (409 when it is used in a workout or template)
 DELETE {{baseUrl}}/exercise/{{exerciseId}}
 Authorization: Bearer {{authToken}}

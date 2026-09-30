@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOperation,
@@ -17,7 +18,7 @@ import { AdminGuard } from 'src/guards/admin.guard';
 import { CreateExerciseDto } from './dtos/create-exercise.dto';
 import { UpdateExerciseDto } from './dtos/update-exercise.dto';
 import { Exercise } from './exercise.entity';
-import { ForbiddenErrorDto, NotFoundErrorDto, UnauthorizedErrorDto } from 'src/common/dtos/error-response.dto';
+import { ErrorResponseDto, ForbiddenErrorDto, NotFoundErrorDto, UnauthorizedErrorDto } from 'src/common/dtos/error-response.dto';
 
 @ApiTags('exercise')
 @ApiBearerAuth('access-token')
@@ -78,8 +79,9 @@ export class ExerciseController {
     summary: 'Dodaj nowe ćwiczenie (tylko administrator)',
     description: 'Tworzy nowe ćwiczenie w globalnym katalogu i automatycznie generuje dla niego embedding semantyczny (Gemini).',
   })
-  @ApiResponse({ status: 201, description: 'Ćwiczenie utworzone', type: Exercise })
+  @ApiResponse({ status: 201, description: 'Ćwiczenie utworzone. Gdy Gemini nie odpowie, ćwiczenie zapisuje się bez embeddingu (hasEmbedding: false) - uzupełnia go backfill.', type: Exercise })
   @ApiResponse({ status: 400, description: 'Nieprawidłowe dane wejściowe' })
+  @ApiConflictResponse({ description: 'Ćwiczenie o tej nazwie już istnieje (bez względu na wielkość liter)', type: ErrorResponseDto })
   @ApiForbiddenResponse({ description: 'Zalogowany użytkownik nie jest administratorem', type: ForbiddenErrorDto })
   createExercise(@Body() dto: CreateExerciseDto) {
     return this.exerciseService.create(dto)
@@ -107,17 +109,36 @@ export class ExerciseController {
   @ApiResponse({ status: 200, description: 'Zaktualizowane ćwiczenie', type: Exercise })
   @ApiForbiddenResponse({ description: 'Zalogowany użytkownik nie jest administratorem', type: ForbiddenErrorDto })
   @ApiNotFoundResponse({ description: 'Ćwiczenie nie istnieje', type: NotFoundErrorDto })
+  @ApiConflictResponse({ description: 'Inne ćwiczenie ma już tę nazwę', type: ErrorResponseDto })
   updateExercise(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateExerciseDto) {
     return this.exerciseService.update(id, dto)
   }
 
+  @Get('/:id/usage')
+  @UseGuards(AdminGuard)
+  @ApiOperation({
+    summary: 'Sprawdź, gdzie ćwiczenie jest używane (tylko administrator)',
+    description: 'Liczba treningów i szablonów zawierających ćwiczenie. Usunąć można tylko ćwiczenie nieużywane.',
+  })
+  @ApiParam({ name: 'id', type: Number, example: 1 })
+  @ApiResponse({ status: 200, description: 'Liczniki użycia', schema: { example: { workoutCount: 12, templateCount: 2 } } })
+  @ApiForbiddenResponse({ description: 'Zalogowany użytkownik nie jest administratorem', type: ForbiddenErrorDto })
+  @ApiNotFoundResponse({ description: 'Ćwiczenie nie istnieje', type: NotFoundErrorDto })
+  usage(@Param('id', ParseIntPipe) id: number) {
+    return this.exerciseService.usage(id)
+  }
+
   @Delete('/:id')
   @UseGuards(AdminGuard)
-  @ApiOperation({ summary: 'Usuń ćwiczenie (tylko administrator)' })
+  @ApiOperation({
+    summary: 'Usuń ćwiczenie (tylko administrator)',
+    description: 'Usuwa ćwiczenie z katalogu. Ćwiczenia użytego w treningu lub szablonie nie da się usunąć (409), żeby nie skasować historii - zmień wtedy jego nazwę.',
+  })
   @ApiParam({ name: 'id', type: Number, example: 1 })
   @ApiResponse({ status: 200, description: 'Ćwiczenie usunięte', type: Exercise })
   @ApiForbiddenResponse({ description: 'Zalogowany użytkownik nie jest administratorem', type: ForbiddenErrorDto })
   @ApiNotFoundResponse({ description: 'Ćwiczenie nie istnieje', type: NotFoundErrorDto })
+  @ApiConflictResponse({ description: 'Ćwiczenie jest używane w treningach lub szablonach', type: ErrorResponseDto })
   removeExercise(@Param('id', ParseIntPipe) id: number) {
     return this.exerciseService.remove(id)
   }

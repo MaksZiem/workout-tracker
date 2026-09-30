@@ -64,7 +64,7 @@ export function ActionMenu({
                 setOpen(false);
                 action.onSelect();
               }}
-              className={`flex w-full items-center rounded-md px-3 py-2.5 text-left text-sm ${
+              className={`flex w-full items-center rounded-md px-3 py-2.5 text-left text-sm whitespace-nowrap ${
                 action.tone === "danger" ? "text-danger hover:bg-danger-surface" : "hover:bg-surface-muted"
               }`}
             >

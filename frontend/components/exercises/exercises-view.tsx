@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
-import { ChevronRight, Search, X } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { MUSCLE_GROUPS, type MuscleGroup } from "@/lib/api/extra-types";
 import type { CatalogExercise } from "@/lib/exercises/load";
 import { displayDate } from "@/lib/planner/dates";
 import { roundKg } from "@/lib/stats/model";
 import { SegmentedLinks } from "@/components/stats/segmented-links";
 import { E1rmTip } from "@/components/ui/e1rm-tip";
+import { SearchField } from "./search-field";
 
 /** Katalog: wyszukiwarka na miejscu, filtr grupy w URL, twoje wyniki przy każdym ćwiczeniu. */
 export function ExercisesView({
@@ -49,27 +50,7 @@ export function ExercisesView({
       </header>
 
       <div className="mt-6 flex flex-col gap-3">
-        <label className="flex h-11 items-center gap-2 rounded-lg bg-surface-muted px-3 focus-within:ring-2 focus-within:ring-accent sm:max-w-sm">
-          <span className="sr-only">{t("search")}</span>
-          <Search className="size-4 shrink-0 text-muted" strokeWidth={2} aria-hidden />
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={t("search")}
-            className="h-full w-full bg-transparent text-[15px] outline-none placeholder:text-muted [&::-webkit-search-cancel-button]:appearance-none"
-          />
-          {query ? (
-            <button
-              type="button"
-              onClick={() => setQuery("")}
-              aria-label={t("clear")}
-              className="-mr-1.5 grid size-8 shrink-0 place-items-center rounded-md text-muted hover:bg-surface hover:text-foreground"
-            >
-              <X className="size-4" strokeWidth={2.25} aria-hidden />
-            </button>
-          ) : null}
-        </label>
+        <SearchField value={query} onChange={setQuery} label={t("search")} />
         <SegmentedLinks
           label={t("filter")}
           items={[

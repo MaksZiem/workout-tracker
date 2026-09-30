@@ -29,7 +29,11 @@ content-type: application/json
 GET {{baseUrl}}/auth/context
 Authorization: Bearer {{authToken}}
 
-### delete user with a given id
+### List users with their workout counts (admin): search, sort, paginate
+GET {{baseUrl}}/auth/users?search=kowal&sort=workoutCount&order=desc&page=1&limit=20
+Authorization: Bearer {{authToken}}
+
+### delete user with a given id (admin; 403 for your own account)
 DELETE {{baseUrl}}/auth/1
 Authorization: Bearer {{authToken}}
 

@@ -11,6 +11,8 @@ export type Workout = Schemas["Workout"];
 export type WorkoutPlan = Schemas["WorkoutPlan"];
 export type WorkoutTemplate = Schemas["WorkoutTemplate"];
 export type UserDto = Schemas["UserDto"];
+export type AdminUserDto = Schemas["AdminUserDto"];
+export type AdminUsersPage = Schemas["AdminUsersPageDto"];
 export type ScheduledWorkout = Schemas["ScheduledWorkout"];
 
 export const USER_ROLES = ["USER", "ADMIN"] as const;
@@ -128,6 +130,9 @@ export type SimilarExercise = { exercise: Exercise; similarity: number };
 /** POST /exercise/backfill-embeddings */
 export type BackfillEmbeddingsResult = { updated: number };
 
+/** GET /exercise/:id/usage */
+export type ExerciseUsage = { workoutCount: number; templateCount: number };
+
 /** POST /ai/generate-plan */
 export type GeneratedPlan = { plan: WorkoutPlan; templates: WorkoutTemplate[] };
 
@@ -152,6 +157,7 @@ export type ResponseOverrides = {
   "/stats/stagnation": StagnantExercise[];
   "/exercise/{id}/similar": SimilarExercise[];
   "/exercise/backfill-embeddings": BackfillEmbeddingsResult;
+  "/exercise/{id}/usage": ExerciseUsage;
   "/ai/generate-plan": GeneratedPlan;
   "/ai/parse-workout": ParsedWorkout;
 };
