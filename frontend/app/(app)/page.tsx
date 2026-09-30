@@ -44,7 +44,7 @@ export default async function DashboardPage() {
       </header>
 
       <div className="flex flex-col gap-3 sm:gap-4">
-        {data.today.ok ? <TodayCard items={data.today.data} today={today} groupNames={groupNames} /> : <SectionError retryHref="/" />}
+        {data.today.ok ? <TodayCard items={data.today.data} today={today} groupNames={groupNames} offPlan={data.offPlan} /> : <SectionError retryHref="/" />}
         {onboarding ? <Onboarding steps={steps} /> : null}
         {data.week.ok ? (
           <WeekStrip entries={data.week.data} trained={data.weekTrained} summary={data.weekSummary} today={today} />

@@ -139,6 +139,8 @@ export async function loadDashboard(today: string) {
   return {
     today: todayPlan.ok && workouts.ok ? { ok: true as const, data: todayItems(today, todayPlan.data, list, details) } : { ok: false as const },
     week: scheduled.ok ? { ok: true as const, data: weekEntries(scheduled.data, monday, sunday) } : { ok: false as const },
+    // Nic zaplanowanego od dziś: użytkownik trenuje bez planu (karta „Dziś” proponuje trening z ręki).
+    offPlan: scheduled.ok ? !scheduled.data.some((s) => s.status === "PLANNED" && s.date >= today) : false,
     weekSummary: weekSummary(today, monday, sunday, list, scheduled.ok ? scheduled.data : []),
     // Zielony dzień = zakończony trening; rozpoczęty jeszcze nie jest „zrobiony”.
     weekTrained: new Set(list.filter((w) => w.finishedAt && w.date >= monday && w.date <= sunday).map((w) => w.date)),

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
-import { CalendarCheck, Check, CircleDot, ClipboardList, Play, Plus } from "lucide-react";
+import { CalendarCheck, Check, CircleDot, ClipboardList, LayoutList, Play, Plus } from "lucide-react";
 import { startEmpty, startScheduled, type StartState } from "@/lib/log/actions";
 import type { TodayItem } from "@/lib/dashboard/load";
 import { displayDate } from "@/lib/planner/dates";
@@ -11,8 +11,19 @@ import { displayDate } from "@/lib/planner/dates";
 /**
  * Karta „Dziś”: jedna odpowiedź na pytanie, co dziś robię, i jedno niebieskie działanie.
  * Kolejność: trening w toku → zaplanowane → zrobione. Tylko pierwszy wiersz z akcją jest niebieski.
+ * Pusty dzień: „Dziś wolne”, a bez niczego w planerze od dziś „Trening bez planu”.
  */
-export function TodayCard({ items, today, groupNames }: { items: TodayItem[]; today: string; groupNames: Record<string, string> }) {
+export function TodayCard({
+  items,
+  today,
+  groupNames,
+  offPlan,
+}: {
+  items: TodayItem[];
+  today: string;
+  groupNames: Record<string, string>;
+  offPlan: boolean;
+}) {
   const t = useTranslations("pages.dashboard.today");
   const primary = items.findIndex((i) => i.kind !== "done");
 
@@ -20,7 +31,7 @@ export function TodayCard({ items, today, groupNames }: { items: TodayItem[]; to
     // Tytuł karty to nazwa treningu; „Dziś” jest tylko w nazwie dostępnej sekcji.
     <section aria-label={t("label")} className="overflow-hidden rounded-xl border border-border bg-surface">
       {items.length === 0 ? (
-        <RestDay />
+        offPlan ? <OffPlan /> : <RestDay />
       ) : (
         <ul className="divide-y divide-border">
           {items.map((item, i) => (
@@ -254,6 +265,49 @@ function RestDay() {
                 {pending ? t("starting") : t("startEmpty")}
               </button>
             </form>
+          </div>
+        }
+      />
+    </div>
+  );
+}
+
+/** Nic w planerze od dziś: trening z ręki jest tu główną akcją, szablon i plan to alternatywy. */
+function OffPlan() {
+  const t = useTranslations("pages.dashboard.today");
+  const [state, action, pending] = useActionState<StartState>(startEmpty, {});
+  return (
+    <div className="px-4 py-4 sm:px-5 sm:py-5">
+      <Row
+        body={
+          <>
+            <Title>{t("offPlanTitle")}</Title>
+            <p className="mt-1 max-w-prose text-sm text-muted">{t("offPlanBody")}</p>
+            {state.error ? (
+              <p role="alert" className="mt-2 text-sm text-danger">
+                {t("startError")}
+              </p>
+            ) : null}
+          </>
+        }
+        action={
+          <div className="flex flex-col gap-2 sm:flex-row-reverse sm:items-center">
+            <form action={action} className="w-full sm:w-auto">
+              <button type="submit" disabled={pending} className={actionClass(true)}>
+                <Plus className="size-4" strokeWidth={2.5} aria-hidden />
+                {pending ? t("starting") : t("startEmpty")}
+              </button>
+            </form>
+            <Link href="/templates" className={actionClass(false)}>
+              <LayoutList className="size-4" strokeWidth={2} aria-hidden />
+              {t("fromTemplate")}
+            </Link>
+            <Link
+              href="/plans"
+              className="-ml-3 flex h-11 items-center self-start rounded-lg px-3 text-sm font-medium text-accent hover:bg-accent-surface sm:ml-0 sm:self-auto"
+            >
+              {t("toPlans")}
+            </Link>
           </div>
         }
       />
