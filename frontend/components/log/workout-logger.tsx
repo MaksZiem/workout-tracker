@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useFormatter, useNow, useTranslations } from "next-intl";
-import { Dumbbell, Ellipsis, Plus, Sparkles } from "lucide-react";
+import { Dumbbell, Plus, Sparkles } from "lucide-react";
 import { workoutTotals, type LogWorkout } from "@/lib/log/model";
 import { useWorkoutLog } from "@/lib/log/use-workout-log";
 import { ExerciseBlock } from "./exercise-block";
@@ -10,7 +10,6 @@ import { AddExerciseSheet } from "./add-exercise-sheet";
 import { ParseSheet } from "./parse-sheet";
 import { FinishSheet } from "./finish-sheet";
 import { CancelWorkoutSheet } from "./cancel-sheet";
-import { ActionMenu } from "@/components/ui/action-menu";
 import { ToastView } from "@/components/ui/toast";
 
 type SheetName = "exercise" | "parse" | "finish" | "cancel" | null;
@@ -57,14 +56,14 @@ export function WorkoutLogger({ workout }: { workout: LogWorkout }) {
               {muscleGroups.length ? muscleGroups.map((g) => tEnum(g)).join(" · ") : t("header.fullBody")}
             </p>
           </div>
-          <div className="flex shrink-0 items-center gap-1">
-            <ActionMenu
-              label={t("cancel.menu")}
-              align="right"
-              trigger={<Ellipsis className="size-5" strokeWidth={2} aria-hidden />}
-              triggerClassName="grid size-10 place-items-center rounded-lg text-muted hover:bg-surface-muted hover:text-foreground"
-              actions={[{ label: t("cancel.action"), tone: "danger", onSelect: () => setSheet("cancel") }]}
-            />
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setSheet("cancel")}
+              className="h-10 rounded-lg px-3 text-sm font-medium text-danger hover:bg-danger-surface"
+            >
+              {t("cancel.action")}
+            </button>
             <button
               type="button"
               onClick={() => setSheet("finish")}
