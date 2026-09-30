@@ -141,6 +141,8 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
   const timers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
   const retries = useRef(new Map<string, () => void>());
   const toastSeq = useRef(0);
+  /** Trening przerwany: kolejka nic już nie wysyła (trening zniknął z backendu). */
+  const cancelled = useRef(false);
 
   const dismissToast = useCallback(() => setToast(null), []);
 
@@ -159,8 +161,9 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
   const enqueue = useCallback<Enqueue>(
     (exKey: string, entityKey: string, op: () => Promise<void>, onStatus: (s: SyncStatus) => void) => {
       const run = async () => {
+        if (cancelled.current) return;
         setPendingCount((n) => n + 1);
-        for (let attempt = 0; ; attempt++) {
+        for (let attempt = 0; !cancelled.current; attempt++) {
           try {
             await op();
             onStatus("saved");
@@ -560,6 +563,22 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
     [enqueue, saveSet, workoutId],
   );
 
+  /**
+   * Przerywa trening: porzuca niewysłane zapisy i usuwa trening w backendzie
+   * (wpis w planerze wraca do „zaplanowanych”). Przy błędzie kolejka rusza dalej.
+   */
+  const cancel = useCallback(async () => {
+    cancelled.current = true;
+    try {
+      await unwrap(clientApi.POST("/workout/{id}/cancel", { params: { path: { id: workoutId } } }));
+      for (const timer of timers.current.values()) clearTimeout(timer);
+      timers.current.clear();
+    } catch (error) {
+      cancelled.current = false;
+      throw error;
+    }
+  }, [workoutId]);
+
   /** Oznacza trening jako zakończony bez czekania na kolejkę zapisów. */
   const finishNow = useCallback(async () => {
     await unwrap(clientApi.POST("/workout/{id}/finish", { params: { path: { id: workoutId } } }));
@@ -567,6 +586,7 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
 
   return {
     finishNow,
+    cancel,
     exercises,
     toast,
     dismissToast,

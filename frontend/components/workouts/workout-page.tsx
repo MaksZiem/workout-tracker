@@ -15,6 +15,7 @@ import { Sheet } from "@/components/ui/sheet";
 import { ToastView, useToast } from "@/components/ui/toast";
 import { InlineText } from "@/components/plans/inline-text";
 import { ExerciseRecordsSheet } from "@/components/stats/exercise-records-sheet";
+import { CancelWorkoutSheet } from "@/components/log/cancel-sheet";
 
 // Wspólna siatka nagłówka i serii: # | kg | powt. | status. Telefon: status przy prawej krawędzi;
 // od `sm` status stoi tuż za powtórzeniami, żeby czytał się razem z serią.
@@ -33,6 +34,7 @@ export function WorkoutPage({ workout }: { workout: WorkoutDetail }) {
   const [confirming, setConfirming] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [redating, setRedating] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
 
   const inProgress = !workout.finishedAt;
   const monthHref = `/workouts?month=${workout.date.slice(0, 7)}`;
@@ -158,7 +160,10 @@ export function WorkoutPage({ workout }: { workout: WorkoutDetail }) {
             triggerClassName="grid size-11 place-items-center rounded-lg border border-border text-muted hover:bg-surface-muted hover:text-foreground"
             actions={[
               { label: t("changeDate"), onSelect: () => setRedating(true) },
-              { label: t("delete"), tone: "danger", onSelect: () => setConfirming(true) },
+              // W trakcie: przerwanie (wpis w planerze wraca do „zaplanowanych”); zakończony: usunięcie.
+              inProgress
+                ? { label: t("cancelWorkout"), tone: "danger", onSelect: () => setCancelling(true) }
+                : { label: t("delete"), tone: "danger", onSelect: () => setConfirming(true) },
             ]}
           />
         </div>
@@ -211,6 +216,13 @@ export function WorkoutPage({ workout }: { workout: WorkoutDetail }) {
         pending={deleting}
         onConfirm={remove}
         onClose={() => setConfirming(false)}
+      />
+      <CancelWorkoutSheet
+        open={cancelling}
+        sets={workout.totalSets}
+        onClose={() => setCancelling(false)}
+        onCancel={() => unwrap(clientApi.POST("/workout/{id}/cancel", { params: { path: { id: workout.id } } }))}
+        onError={(message) => show({ message, tone: "error" })}
       />
       <ToastView toast={toast} onDismiss={dismiss} undoLabel={tUndo("undo")} />
     </div>

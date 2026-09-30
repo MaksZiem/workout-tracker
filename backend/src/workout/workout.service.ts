@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Workout } from './workout.entity';
 import {
   Between,
   FindOptionsWhere,
+  In,
   LessThanOrEqual,
   MoreThanOrEqual,
   Repository,
@@ -118,7 +119,32 @@ export class WorkoutService {
     if (!workout) {
       throw new NotFoundException('Workout not found');
     }
+    // Trening z planera: wpis wraca do „zaplanowanych”, żeby dało się go rozpocząć
+    // od nowa (inaczej zostałby „w trakcie”/„wykonany” bez żadnego treningu).
+    await this.scheduledRepo.update(
+      {
+        workout: { id },
+        user: { id: userId },
+        status: In([ScheduledWorkoutStatus.IN_PROGRESS, ScheduledWorkoutStatus.COMPLETED]),
+      },
+      { status: ScheduledWorkoutStatus.PLANNED },
+    );
     return this.repo.remove(workout);
+  }
+
+  // Przerywa trening w trakcie: usuwa go razem z seriami i cofa wpis w planerze.
+  async cancel(userId: number, id: number) {
+    const workout = await this.repo.findOne({
+      where: { id, user: { id: userId } },
+    });
+    if (!workout) {
+      throw new NotFoundException('Workout not found');
+    }
+    if (workout.finishedAt) {
+      throw new ConflictException('Workout is already finished');
+    }
+    await this.remove(userId, id);
+    return { cancelled: true };
   }
 
   async duplicateWorkout(userId: number, id: number) {

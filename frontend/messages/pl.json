@@ -275,7 +275,16 @@
         "title": "Pusty trening",
         "body": "Dodaj pierwsze ćwiczenie z katalogu albo opisz trening, a AI go rozpozna."
       },
-      "notFound": "Nie znaleziono tego treningu."
+      "notFound": "Nie znaleziono tego treningu.",
+      "cancel": {
+        "menu": "Opcje treningu",
+        "action": "Przerwij trening",
+        "title": "Przerwać trening?",
+        "body": "Ten trening i {sets, plural, =0 {jego ćwiczenia} one {# seria} few {# serie} other {# serii}} zostaną usunięte, a czas się wyzeruje. Jeśli trening pochodzi z planera, wróci tam jako zaplanowany i rozpoczniesz go od nowa.",
+        "confirm": "Przerwij trening",
+        "keep": "Wróć do treningu",
+        "error": "Nie udało się przerwać treningu. Spróbuj ponownie."
+      }
     },
     "workouts": {
       "title": "Historia treningów",
@@ -326,7 +335,7 @@
       "changeDate": "Zmień datę",
       "delete": "Usuń trening",
       "deleteTitle": "Usunąć trening z {date}?",
-      "deleteBody": "Usuniesz ten trening i {sets, plural, one {# serię} few {# serie} other {# serii}}. Rekordy i statystyki przeliczą się bez niego, a wpis w planerze zostanie. Tego nie da się cofnąć.",
+      "deleteBody": "Usuniesz ten trening i {sets, plural, one {# serię} few {# serie} other {# serii}}. Rekordy i statystyki przeliczą się bez niego, a wpis w planerze wróci do zaplanowanych. Tego nie da się cofnąć.",
       "deleteConfirm": "Usuń trening",
       "deleteError": "Nie udało się usunąć treningu.",
       "cancel": "Anuluj",
@@ -369,7 +378,8 @@
         "saved": "Przeniesiono na {date}"
       },
       "exerciseMenu": "Opcje ćwiczenia",
-      "records": "Rekordy"
+      "records": "Rekordy",
+      "cancelWorkout": "Przerwij trening"
     },
     "planner": {
       "title": "Planer",

@@ -275,7 +275,16 @@
         "title": "Empty workout",
         "body": "Add your first exercise from the catalog, or describe the workout and AI will recognize it."
       },
-      "notFound": "This workout wasn't found."
+      "notFound": "This workout wasn't found.",
+      "cancel": {
+        "menu": "Workout options",
+        "action": "Cancel workout",
+        "title": "Cancel this workout?",
+        "body": "This workout and {sets, plural, =0 {its exercises} one {# set} other {# sets}} will be deleted and the timer resets. If it came from the planner, it goes back to planned so you can start it again.",
+        "confirm": "Cancel workout",
+        "keep": "Keep training",
+        "error": "Couldn't cancel the workout. Try again."
+      }
     },
     "workouts": {
       "title": "Workout history",
@@ -326,7 +335,7 @@
       "changeDate": "Change date",
       "delete": "Delete workout",
       "deleteTitle": "Delete the workout from {date}?",
-      "deleteBody": "This deletes the workout and its {sets, plural, one {# set} other {# sets}}. Records and stats recalculate without it, and the planner entry stays. This can’t be undone.",
+      "deleteBody": "This deletes the workout and its {sets, plural, one {# set} other {# sets}}. Records and stats recalculate without it, and its planner entry goes back to planned. This can’t be undone.",
       "deleteConfirm": "Delete workout",
       "deleteError": "Couldn’t delete the workout.",
       "cancel": "Cancel",
@@ -369,7 +378,8 @@
         "saved": "Moved to {date}"
       },
       "exerciseMenu": "Exercise options",
-      "records": "Records"
+      "records": "Records",
+      "cancelWorkout": "Cancel workout"
     },
     "planner": {
       "title": "Planner",

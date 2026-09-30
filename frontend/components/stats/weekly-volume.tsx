@@ -3,7 +3,7 @@
 import { useState, type KeyboardEvent, type PointerEvent } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import type { WeeklyStats } from "@/lib/api/extra-types";
-import { addDays, displayDate, weekStart } from "@/lib/planner/dates";
+import { addDays, displayDate, plainSpaces, weekStart } from "@/lib/planner/dates";
 import { niceScale, yPosition } from "@/lib/stats/chart";
 import { WEEKLY_BASELINE, weeklyChange } from "@/lib/stats/model";
 import { StatsTip } from "./stats-tip";
@@ -43,12 +43,14 @@ export function WeeklyVolume({ weeks, today }: { weeks: WeeklyStats[]; today: st
     inTons ? t("tons", { value: format.number(v / 1000, { maximumFractionDigits: 1 }) }) : `${format.number(Math.round(v))} kg`;
   const axis = (v: number) => (inTons ? format.number(v / 1000, { maximumFractionDigits: 1 }) : format.number(v));
   const weekRange = (w: WeeklyStats, year = false) =>
-    format.dateTimeRange(displayDate(w.weekStart), displayDate(addDays(w.weekStart, 6)), {
-      day: "numeric",
-      month: "short",
-      year: year ? "numeric" : undefined,
-      timeZone: "UTC",
-    });
+    plainSpaces(
+      format.dateTimeRange(displayDate(w.weekStart), displayDate(addDays(w.weekStart, 6)), {
+        day: "numeric",
+        month: "short",
+        year: year ? "numeric" : undefined,
+        timeZone: "UTC",
+      }),
+    );
   const details = (w: WeeklyStats) => `${t("workouts", { count: w.workouts })} · ${t("sets", { count: w.sets })}`;
   const percent = (v: number) => format.number(v, { style: "percent", maximumFractionDigits: 0, signDisplay: "exceptZero" });
 

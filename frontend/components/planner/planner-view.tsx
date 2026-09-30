@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import { CalendarPlus, ChevronLeft, ChevronRight } from "lucide-react";
 import { ToastView } from "@/components/ui/toast";
-import { displayDate, shiftAnchor, type PlannerView as View } from "@/lib/planner/dates";
+import { displayDate, plainSpaces, shiftAnchor, type PlannerView as View } from "@/lib/planner/dates";
 import type { PlanOption, PlannerEntry, TemplateOption } from "@/lib/planner/model";
 import { usePlanner } from "./use-planner";
 import { WeekBoard } from "./week-board";
@@ -44,7 +44,7 @@ export function PlannerView({ view, anchor, from, to, today, entries: serverEntr
 
   const rangeLabel =
     view === "week"
-      ? format.dateTimeRange(displayDate(from), displayDate(to), { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })
+      ? plainSpaces(format.dateTimeRange(displayDate(from), displayDate(to), { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }))
       : format.dateTime(displayDate(`${month}-01`), { month: "long", year: "numeric", timeZone: "UTC" });
 
   const prev = shiftAnchor(view, anchor, -1);

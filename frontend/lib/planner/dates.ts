@@ -69,3 +69,11 @@ export function shiftAnchor(view: PlannerView, anchor: string, direction: -1 | 1
 export function displayDate(iso: string) {
   return new Date(`${iso}T12:00:00Z`);
 }
+
+/**
+ * Zakres dat z `dateTimeRange` z jednolitymi spacjami. ICU w Node (serwer) i w przeglądarce
+ * wstawia wokół „–” różne spacje (cienka U+2009 vs zwykła), co psuje hydratację.
+ */
+export function plainSpaces(text: string) {
+  return text.replace(/\s/g, " ");
+}

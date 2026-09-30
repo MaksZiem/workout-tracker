@@ -2,16 +2,18 @@
 
 import { useMemo, useState } from "react";
 import { useFormatter, useNow, useTranslations } from "next-intl";
-import { Dumbbell, Plus, Sparkles } from "lucide-react";
+import { Dumbbell, Ellipsis, Plus, Sparkles } from "lucide-react";
 import { workoutTotals, type LogWorkout } from "@/lib/log/model";
 import { useWorkoutLog } from "@/lib/log/use-workout-log";
 import { ExerciseBlock } from "./exercise-block";
 import { AddExerciseSheet } from "./add-exercise-sheet";
 import { ParseSheet } from "./parse-sheet";
 import { FinishSheet } from "./finish-sheet";
+import { CancelWorkoutSheet } from "./cancel-sheet";
+import { ActionMenu } from "@/components/ui/action-menu";
 import { ToastView } from "@/components/ui/toast";
 
-type SheetName = "exercise" | "parse" | "finish" | null;
+type SheetName = "exercise" | "parse" | "finish" | "cancel" | null;
 
 export function WorkoutLogger({ workout }: { workout: LogWorkout }) {
   const t = useTranslations("pages.log");
@@ -55,13 +57,22 @@ export function WorkoutLogger({ workout }: { workout: LogWorkout }) {
               {muscleGroups.length ? muscleGroups.map((g) => tEnum(g)).join(" · ") : t("header.fullBody")}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => setSheet("finish")}
-            className="h-10 shrink-0 rounded-lg bg-accent px-4 text-sm font-semibold text-accent-foreground hover:opacity-90"
-          >
-            {t("header.finish")}
-          </button>
+          <div className="flex shrink-0 items-center gap-1">
+            <ActionMenu
+              label={t("cancel.menu")}
+              align="right"
+              trigger={<Ellipsis className="size-5" strokeWidth={2} aria-hidden />}
+              triggerClassName="grid size-10 place-items-center rounded-lg text-muted hover:bg-surface-muted hover:text-foreground"
+              actions={[{ label: t("cancel.action"), tone: "danger", onSelect: () => setSheet("cancel") }]}
+            />
+            <button
+              type="button"
+              onClick={() => setSheet("finish")}
+              className="h-10 rounded-lg bg-accent px-4 text-sm font-semibold text-accent-foreground hover:opacity-90"
+            >
+              {t("header.finish")}
+            </button>
+          </div>
         </div>
         <div className="mt-3 flex items-center gap-3 text-[13px] font-medium tabular-nums">
           <Elapsed createdAt={workout.createdAt} label={t("header.elapsed")} />
@@ -152,6 +163,13 @@ export function WorkoutLogger({ workout }: { workout: LogWorkout }) {
         pendingCount={log.pendingCount}
         onFinish={log.flush}
         onFinishNow={log.finishNow}
+      />
+      <CancelWorkoutSheet
+        open={sheet === "cancel"}
+        sets={totals.total}
+        onClose={() => setSheet(null)}
+        onCancel={log.cancel}
+        onError={(message) => log.showToast({ message, tone: "error" })}
       />
 
       <ToastView toast={log.toast} onDismiss={log.dismissToast} undoLabel={t("toast.undo")} />

@@ -266,6 +266,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/workout/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Przerwij trening
+         * @description Przerywa trening w trakcie: usuwa go wraz z ćwiczeniami i seriami, a powiązany zaplanowany trening wraca do statusu PLANNED, więc można go rozpocząć od nowa. Zakończonego treningu nie można przerwać (409).
+         */
+        post: operations["WorkoutController_cancel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/workout/{workoutId}/exercise": {
         parameters: {
             query?: never;
@@ -1207,6 +1227,20 @@ export interface components {
              * @example 2026-09-23
              */
             date?: string;
+        };
+        ConflictErrorDto: {
+            /** @example 2026-09-23T17:45:12.345Z */
+            timestamp: string;
+            /** @example /auth/signup */
+            path: string;
+            /** @example POST */
+            method: string;
+            /** @example 409 */
+            statusCode: number;
+            /** @example Conflict */
+            error: string;
+            /** @example User already exists */
+            message: Record<string, never>;
         };
         AddExerciseToWorkoutDto: {
             /**
@@ -2398,6 +2432,56 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["NotFoundErrorDto"];
+                };
+            };
+        };
+    };
+    WorkoutController_cancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Identyfikator treningu */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Trening przerwany */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Brak tokenu lub token nieprawidłowy */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthorizedErrorDto"];
+                };
+            };
+            /** @description Trening nie istnieje lub nie należy do zalogowanego użytkownika */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundErrorDto"];
+                };
+            };
+            /** @description Trening jest już zakończony */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConflictErrorDto"];
                 };
             };
         };

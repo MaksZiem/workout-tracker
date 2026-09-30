@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiNotFoundResponse,
   ApiOperation,
   ApiParam,
@@ -34,7 +35,7 @@ import { UpdateSetDto } from './dtos/update-set.dto';
 import { Workout } from './workout.entity';
 import { WorkoutExercise } from './workout-exercise.entity';
 import { ExerciseSet } from './exercise-set.entity';
-import { NotFoundErrorDto, UnauthorizedErrorDto } from 'src/common/dtos/error-response.dto';
+import { ConflictErrorDto, NotFoundErrorDto, UnauthorizedErrorDto } from 'src/common/dtos/error-response.dto';
 
 @ApiTags('workout')
 @ApiBearerAuth('access-token')
@@ -96,7 +97,7 @@ export class WorkoutController {
 
   @Delete('/:id')
   @UseGuards(AuthGuard)
-  @ApiOperation({ summary: 'Usuń trening', description: 'Usuwa trening wraz ze wszystkimi jego ćwiczeniami i seriami (kaskadowo).' })
+  @ApiOperation({ summary: 'Usuń trening', description: 'Usuwa trening wraz ze wszystkimi jego ćwiczeniami i seriami (kaskadowo). Jeśli trening pochodził z planera, wpis wraca do statusu PLANNED.' })
   @ApiParam({ name: 'id', type: Number, example: 1, description: 'Identyfikator treningu' })
   @ApiResponse({ status: 200, description: 'Trening usunięty', type: Workout })
   @ApiNotFoundResponse({ description: 'Trening nie istnieje lub nie należy do zalogowanego użytkownika', type: NotFoundErrorDto })
@@ -132,6 +133,21 @@ export class WorkoutController {
   @ApiNotFoundResponse({ description: 'Trening nie istnieje lub nie należy do zalogowanego użytkownika', type: NotFoundErrorDto })
   finish(@CurrentUser() user: User, @Param('id', ParseIntPipe) id: number) {
     return this.workoutService.finish(user.id, id);
+  }
+
+  @Post('/:id/cancel')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: 'Przerwij trening',
+    description:
+      'Przerywa trening w trakcie: usuwa go wraz z ćwiczeniami i seriami, a powiązany zaplanowany trening wraca do statusu PLANNED, więc można go rozpocząć od nowa. Zakończonego treningu nie można przerwać (409).',
+  })
+  @ApiParam({ name: 'id', type: Number, example: 1, description: 'Identyfikator treningu' })
+  @ApiResponse({ status: 201, description: 'Trening przerwany', schema: { example: { cancelled: true } } })
+  @ApiNotFoundResponse({ description: 'Trening nie istnieje lub nie należy do zalogowanego użytkownika', type: NotFoundErrorDto })
+  @ApiConflictResponse({ description: 'Trening jest już zakończony', type: ConflictErrorDto })
+  cancel(@CurrentUser() user: User, @Param('id', ParseIntPipe) id: number) {
+    return this.workoutService.cancel(user.id, id);
   }
 
   // workout exercise

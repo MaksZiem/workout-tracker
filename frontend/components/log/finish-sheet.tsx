@@ -70,7 +70,9 @@ export function FinishSheet({
   const stats = [
     { label: t("sets"), value: `${totals.done}` },
     { label: t("volume"), value: t("volumeValue", { value: format.number(totals.volume, { maximumFractionDigits: 0 }) }) },
-    { label: t("duration"), value: format.number(minutes, { style: "unit", unit: "minute", unitDisplay: "short" }) },
+    // Tylko przy otwartym arkuszu: zamknięty renderuje się też na serwerze, a „teraz”
+    // serwera i przeglądarki potrafi różnić się o minutę (błąd hydratacji).
+    { label: t("duration"), value: open ? format.number(minutes, { style: "unit", unit: "minute", unitDisplay: "short" }) : "" },
     { label: t("records"), value: `${totals.records}`, highlight: totals.records > 0 },
   ];
 
