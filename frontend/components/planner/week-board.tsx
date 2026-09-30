@@ -24,23 +24,29 @@ type Props = {
  * Oba układy to te same dane i te same karty.
  */
 export function WeekBoard({ hasEntries, from, to, today, entries, planner, onAdd, onMove }: Props) {
+  const t = useTranslations("pages.planner.day");
   const days = daysBetween(from, to);
   const byDate = groupByDate(entries);
 
   return (
     <>
-      <ol className="hidden grid-cols-7 gap-2 xl:grid">
-        {days.map((date) => (
-          <li key={date} className="flex min-h-72 flex-col">
-            <DayHeader date={date} today={today} />
-            <div className="mt-2 flex flex-1 flex-col gap-2">
-              {(byDate.get(date) ?? []).map((entry) => (
-                <EntryCard key={entry.id} entry={entry} today={today} planner={planner} onMove={onMove} compact />
-              ))}
-              <AddButton date={date} onAdd={onAdd} rest={hasEntries && !byDate.get(date)?.length} />
-            </div>
-          </li>
-        ))}
+      {/* Jedna ramka z liniami między dniami: kolumny mają równą wysokość, a „+” zawsze na dole w jednym rzędzie. */}
+      <ol className="hidden grid-cols-7 divide-x divide-border overflow-hidden rounded-xl border border-border xl:grid">
+        {days.map((date) => {
+          const dayEntries = byDate.get(date) ?? [];
+          return (
+            <li key={date} className={`flex min-h-80 min-w-0 flex-col ${date === today ? "bg-accent-surface/35" : ""}`}>
+              <DayHeader date={date} today={today} />
+              <div className="flex flex-1 flex-col gap-2 p-2">
+                {dayEntries.map((entry) => (
+                  <EntryCard key={entry.id} entry={entry} today={today} planner={planner} onMove={onMove} compact />
+                ))}
+                {hasEntries && !dayEntries.length ? <p className="px-[11px] pt-[11px] text-sm text-muted">{t("rest")}</p> : null}
+                <AddButton date={date} onAdd={onAdd} column />
+              </div>
+            </li>
+          );
+        })}
       </ol>
 
       <ol className="flex flex-col divide-y divide-border xl:hidden">
@@ -111,7 +117,7 @@ function DayHeader({
       className={
         stacked
           ? "flex w-12 shrink-0 flex-col items-center pt-1 text-center"
-          : "flex h-10 items-center justify-between border-b border-border pb-1"
+          : `flex h-11 items-center justify-between border-b border-border px-3 ${isToday ? "bg-accent-surface" : "bg-surface"}`
       }
     >
       <span className={`text-xs font-medium first-letter:uppercase ${isToday ? "text-accent" : "text-muted"}`}>
@@ -119,12 +125,13 @@ function DayHeader({
       </span>
       <span
         className={`tabular-nums ${
-          isToday
-            ? "grid size-8 place-items-center rounded-full bg-accent text-sm font-semibold text-accent-foreground"
-            : stacked
-              ? "text-xl font-semibold"
-              : "text-sm font-semibold"
-        } ${stacked && isToday ? "mt-0.5" : ""}`}
+          stacked
+            ? isToday
+              ? "mt-0.5 grid size-8 place-items-center rounded-full bg-accent text-sm font-semibold text-accent-foreground"
+              : "text-xl font-semibold"
+            : // Kolumna: każda data w tym samym polu 28px, żeby dziś nie rozpychało nagłówka.
+              `grid size-7 place-items-center rounded-full text-sm font-semibold ${isToday ? "bg-accent text-accent-foreground" : ""}`
+        }`}
         aria-label={isToday ? `${t("today")}, ${day} ${month}` : undefined}
       >
         {day}
@@ -139,16 +146,33 @@ function AddButton({
   onAdd,
   rest = false,
   inline = false,
+  column = false,
 }: {
   date: string;
   onAdd: (date: string) => void;
   rest?: boolean;
   /** W wierszu (telefon, pusty dzień) wypełnia szerokość obok nagłówka dnia. */
   inline?: boolean;
+  /** Kolumna tygodnia (desktop): pełna szerokość, przyklejony do dołu kolumny. */
+  column?: boolean;
 }) {
   const t = useTranslations("pages.planner.day");
   const format = useFormatter();
   const label = t("addTo", { date: format.dateTime(displayDate(date), { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }) });
+
+  if (column) {
+    return (
+      <button
+        type="button"
+        onClick={() => onAdd(date)}
+        aria-label={label}
+        title={label}
+        className="mt-auto grid h-9 w-full shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-muted hover:text-foreground"
+      >
+        <Plus className="size-4" strokeWidth={2.25} aria-hidden />
+      </button>
+    );
+  }
 
   return (
     <div className={`flex items-center justify-end gap-2 ${inline ? "min-w-0 flex-1" : "w-full"}`}>

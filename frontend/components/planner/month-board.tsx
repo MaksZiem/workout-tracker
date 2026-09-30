@@ -39,15 +39,23 @@ export function MonthBoard({ from, to, month, today, entries, planner, onAdd, on
 
   return (
     <div className="2xl:grid 2xl:grid-cols-[minmax(0,1fr)_17rem] 2xl:gap-6">
-      <div role="group" aria-label={format.dateTime(displayDate(`${month}-01`), { month: "long", year: "numeric", timeZone: "UTC" })}>
-        <div aria-hidden className="grid grid-cols-7 gap-1 pb-1">
+      <div
+        role="group"
+        aria-label={format.dateTime(displayDate(`${month}-01`), { month: "long", year: "numeric", timeZone: "UTC" })}
+        className="overflow-hidden rounded-xl border border-border"
+      >
+        <div aria-hidden className="grid grid-cols-7 divide-x divide-border border-b border-border bg-surface">
           {weekdays.map((w) => (
-            <span key={w} className="text-center text-xs font-medium text-muted first-letter:uppercase">
-              {w}
+            <span
+              key={w}
+              className="flex h-9 items-center justify-center text-xs font-medium text-muted md:justify-start md:px-3"
+            >
+              <span className="first-letter:uppercase">{w}</span>
             </span>
           ))}
         </div>
-        <div className="grid grid-cols-7 gap-1">
+        {/* Linie siatki: 1px przerwy na tle koloru krawędzi. */}
+        <div className="grid grid-cols-7 gap-px bg-border">
           {days.map((date) => {
             const inMonth = date.startsWith(month);
             const isToday = date === today;
@@ -69,13 +77,15 @@ export function MonthBoard({ from, to, month, today, entries, planner, onAdd, on
                         .join(", ")}`
                     : ""
                 }`}
-                className={`flex h-14 flex-col items-center gap-1 rounded-lg p-1 text-left transition-colors md:h-24 md:items-stretch md:p-2 ${
-                  isSelected ? "bg-accent-surface ring-1 ring-accent" : "hover:bg-surface-muted"
-                } ${inMonth ? "" : "opacity-40"}`}
+                className={`flex h-14 flex-col items-center gap-1 p-1 text-left transition-colors focus-visible:-outline-offset-2 md:h-24 md:items-stretch md:p-2 ${
+                  isSelected
+                    ? "bg-accent-surface ring-2 ring-inset ring-accent"
+                    : `${inMonth ? "bg-surface" : "bg-background"} hover:bg-surface-muted`
+                }`}
               >
                 <span
                   className={`grid size-7 place-items-center rounded-full text-sm tabular-nums md:self-start ${
-                    isToday ? "bg-accent font-semibold text-accent-foreground" : "font-medium"
+                    isToday ? "bg-accent font-semibold text-accent-foreground" : inMonth ? "font-medium" : "text-muted"
                   }`}
                 >
                   {Number(date.slice(8))}
@@ -89,7 +99,7 @@ export function MonthBoard({ from, to, month, today, entries, planner, onAdd, on
                 </span>
 
                 {/* Desktop: nazwy szablonów */}
-                <span className="hidden min-w-0 flex-col gap-0.5 md:flex" aria-hidden>
+                <span className={`hidden min-w-0 flex-col gap-0.5 md:flex ${inMonth ? "" : "opacity-50"}`} aria-hidden>
                   {dayEntries.slice(0, 2).map((e) => {
                     const status = displayStatus(e, today);
                     return (
@@ -118,7 +128,7 @@ export function MonthBoard({ from, to, month, today, entries, planner, onAdd, on
         </div>
       </div>
 
-      <section aria-live="polite" className="mt-6 2xl:mt-7">
+      <section aria-live="polite" className="mt-6 2xl:mt-0">
         <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
           <h2 className="text-base font-semibold first-letter:uppercase">
             {format.dateTime(displayDate(selected), { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" })}
