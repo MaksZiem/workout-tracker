@@ -456,6 +456,7 @@
         "body": "Wygeneruj harmonogram z planu, a treningi pojawią się w kalendarzu."
       },
       "summary": "{done} z {total} wykonanych",
+      "plan": "Plan",
       "toast": {
         "removed": "Usunięto z planu",
         "skipped": "Oznaczono jako pominięty",

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
-import { CalendarPlus, ChevronLeft, ChevronRight } from "lucide-react";
+import { CalendarPlus, ChevronLeft, ChevronRight, ClipboardList } from "lucide-react";
 import { ToastView } from "@/components/ui/toast";
 import { displayDate, plainSpaces, shiftAnchor, type PlannerView as View } from "@/lib/planner/dates";
 import type { PlanOption, PlannerEntry, TemplateOption } from "@/lib/planner/model";
@@ -41,6 +41,8 @@ export function PlannerView({ view, anchor, from, to, today, entries: serverEntr
   const visible = view === "month" ? planner.entries.filter((e) => e.date.startsWith(month)) : planner.entries;
   const done = visible.filter((e) => e.status === "COMPLETED").length;
   const countable = visible.filter((e) => e.status !== "SKIPPED").length;
+  // Plany, według których są treningi w widocznym zakresie (w kolejności dat).
+  const activePlans = [...new Map(visible.flatMap((e) => (e.plan ? [[e.plan.id, e.plan] as const] : []))).values()];
 
   const rangeLabel =
     view === "week"
@@ -58,8 +60,23 @@ export function PlannerView({ view, anchor, from, to, today, entries: serverEntr
           <div>
             <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t("title")}</h1>
             {/* Stała wysokość, żeby pasek narzędzi nie skakał między stanami. */}
-            <p className="mt-1 h-5 text-sm text-muted tabular-nums">
-              {countable ? t("summary", { done, total: countable }) : null}
+            <p className="mt-1 flex h-5 min-w-0 items-center gap-x-2 text-sm text-muted tabular-nums">
+              {activePlans.length ? (
+                <span className="flex min-w-0 items-center gap-1.5 truncate">
+                  <ClipboardList className="size-4 shrink-0" strokeWidth={2} aria-hidden />
+                  <span className="sr-only">{t("plan")}: </span>
+                  {activePlans.map((plan, i) => (
+                    <span key={plan.id} className="truncate">
+                      {i > 0 ? ", " : null}
+                      <Link href={`/plans/${plan.id}`} title={plan.name} className="font-medium text-foreground underline-offset-2 hover:underline">
+                        {plan.name}
+                      </Link>
+                    </span>
+                  ))}
+                </span>
+              ) : null}
+              {activePlans.length && countable ? <span aria-hidden>·</span> : null}
+              {countable ? <span className="shrink-0">{t("summary", { done, total: countable })}</span> : null}
             </p>
           </div>
           <div className="flex w-full items-center gap-2 sm:w-auto">

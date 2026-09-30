@@ -456,6 +456,7 @@
         "body": "Generate a schedule from a plan and your workouts will appear on the calendar."
       },
       "summary": "{done} of {total} done",
+      "plan": "Plan",
       "toast": {
         "removed": "Removed from plan",
         "skipped": "Marked as skipped",

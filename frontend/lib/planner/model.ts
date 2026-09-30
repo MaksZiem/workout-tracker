@@ -6,6 +6,8 @@ export type PlannerEntry = {
   status: ScheduledWorkoutStatus;
   templateId: number | null;
   templateName: string | null;
+  /** Plan, do którego należy szablon (wpis dodany z szablonu spoza planu: null). */
+  plan: PlanOption | null;
   exerciseCount: number;
   muscleGroups: MuscleGroup[];
   workoutId: number | null;

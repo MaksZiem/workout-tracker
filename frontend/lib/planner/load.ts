@@ -24,6 +24,7 @@ export async function loadPlanner(from: string, to: string) {
     muscleGroups: muscleGroupsOf(t.exercises),
   }));
   const byId = new Map(templates.map((t) => [t.id, t]));
+  const planByTemplate = new Map((templatesData ?? []).map((t) => [t.id, t.plan ? { id: t.plan.id, name: t.plan.name } : null]));
 
   const entries: PlannerEntry[] = (scheduled ?? []).map((item) => {
     const template = item.template ? byId.get(item.template.id) : undefined;
@@ -33,6 +34,7 @@ export async function loadPlanner(from: string, to: string) {
       status: item.status,
       templateId: item.template?.id ?? null,
       templateName: item.template?.name ?? null,
+      plan: item.template ? (planByTemplate.get(item.template.id) ?? null) : null,
       exerciseCount: template?.exerciseCount ?? 0,
       muscleGroups: template?.muscleGroups ?? [],
       workoutId: item.workout?.id ?? null,

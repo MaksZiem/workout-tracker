@@ -203,6 +203,7 @@ function weekEntries(
       status: item.status,
       templateId: item.template?.id ?? null,
       templateName: item.template?.name ?? null,
+      plan: null,
       exerciseCount: 0,
       muscleGroups: [],
       workoutId: item.workout?.id ?? null,
