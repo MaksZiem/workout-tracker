@@ -13,7 +13,8 @@ import { ActivityMap } from "@/components/stats/activity-map";
 import { MuscleBars } from "@/components/stats/muscle-bars";
 import { RecordsTable } from "@/components/stats/records-table";
 import { AdherenceLine } from "@/components/stats/adherence-line";
-import { WeeklyChangeNote, WeeklyVolume, weeklyChange } from "@/components/stats/weekly-volume";
+import { WeeklyVolume } from "@/components/stats/weekly-volume";
+import { StatsTip } from "@/components/stats/stats-tip";
 import { RepRanges } from "@/components/stats/rep-ranges";
 import { StagnationList } from "@/components/stats/stagnation-list";
 import { daysBetween } from "@/lib/planner/dates";
@@ -40,7 +41,7 @@ export default async function StatsPage(props: PageProps<"/stats">) {
     </StatsSection>
   );
   const muscles = (columns: 1 | 2) => (
-    <StatsSection id="muscles" title={t("muscles.title")} hint={t("muscles.hint")}>
+    <StatsSection id="muscles" title={t("muscles.title")} hint={t("muscles.hint")} tip={<StatsTip tip="muscles" />}>
       {data.muscleGroups.ok ? (
         <MuscleBars groups={data.muscleGroups.data} weeks={periodWeeks} columns={columns} />
       ) : (
@@ -60,7 +61,7 @@ export default async function StatsPage(props: PageProps<"/stats">) {
         <EmptyState />
       ) : (
         <>
-          <StatsSection id="main" title={t("main.title")} hint={t("main.hint")}>
+          <StatsSection id="main" title={t("main.title")} hint={t("main.hint")} tip={<StatsTip tip="e1rm" />}>
             {!data.main.ok ? (
               <SectionError retryHref={self} />
             ) : data.main.data.length ? (
@@ -81,12 +82,7 @@ export default async function StatsPage(props: PageProps<"/stats">) {
             </div>
           </StatsSection>
 
-          <StatsSection
-            id="weekly"
-            title={t("weekly.title")}
-            hint={t("weekly.hint")}
-            aside={data.weekly.ok ? <WeeklyChangeNote change={weeklyChange(data.weekly.data, today)} /> : null}
-          >
+          <StatsSection id="weekly" title={t("weekly.title")} hint={t("weekly.hint")} tip={<StatsTip tip="weekly" />}>
             {data.weekly.ok ? <WeeklyVolume weeks={data.weekly.data} today={today} /> : <SectionError retryHref={self} />}
           </StatsSection>
 
@@ -104,15 +100,20 @@ export default async function StatsPage(props: PageProps<"/stats">) {
           )}
 
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
-            <StatsSection id="rep-ranges" title={t("repRanges.title")} hint={t("repRanges.hint")}>
+            <StatsSection id="rep-ranges" title={t("repRanges.title")} hint={t("repRanges.hint")} tip={<StatsTip tip="repRanges" />}>
               {data.repRanges.ok ? <RepRanges ranges={data.repRanges.data} /> : <SectionError retryHref={self} />}
             </StatsSection>
-            <StatsSection id="stagnation" title={t("stagnation.title")} hint={t("stagnation.hint")}>
+            <StatsSection id="stagnation" title={t("stagnation.title")} hint={t("stagnation.hint")} tip={<StatsTip tip="stagnation" />}>
               {data.stagnation.ok ? <StagnationList exercises={data.stagnation.data} range={range} /> : <SectionError retryHref={self} />}
             </StatsSection>
           </div>
 
-          <StatsSection id="records" title={t("records.title")} hint={range === "all" ? t("records.hintAll") : t("records.hint")}>
+          <StatsSection
+            id="records"
+            title={t("records.title")}
+            hint={range === "all" ? t("records.hintAll") : t("records.hint")}
+            tip={<StatsTip tip="records" />}
+          >
             {data.records.ok ? (
               <RecordsTable records={data.records.data} range={range} bounds={data.bounds} />
             ) : (
@@ -146,7 +147,8 @@ async function StreakNote({ weeks, days }: { weeks: number | null; days: number 
         {" · "}
         {days !== null ? `${t("days", { count: days })} · ` : null}
         {t("scope")}
-      </span>
+      </span>{" "}
+      <StatsTip tip="streak" />
     </p>
   );
 }

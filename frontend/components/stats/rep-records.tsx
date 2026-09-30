@@ -1,4 +1,5 @@
 import type { RepRecord } from "@/lib/api/extra-types";
+import { StatsTip } from "./stats-tip";
 
 /** Rekordy dla 1, 3, 5, 8, 10 i 12 powtórzeń: siatka w stylu RecordStrip. */
 export function RepRecords({
@@ -29,7 +30,15 @@ export function RepRecords({
               <dd className="mt-1 flex items-baseline gap-1.5">
                 <span className="text-2xl font-semibold tracking-tight tabular-nums">{kg(r.weight)}</span>
                 <span className="text-sm text-muted">kg</span>
-                {r.actualReps > r.reps ? <span className="text-[13px] text-muted tabular-nums">{labels.actual(r.actualReps)}</span> : null}
+                {r.actualReps > r.reps ? (
+                  <span className="text-[13px] text-muted tabular-nums">
+                    <StatsTip
+                      tip="repRecordActual"
+                      values={{ reps: r.reps, actual: r.actualReps, below: r.actualReps - 1, weight: kg(r.weight) }}
+                      trigger={labels.actual(r.actualReps)}
+                    />
+                  </span>
+                ) : null}
               </dd>
               <dd className="text-[13px] text-muted tabular-nums">{date(r.date)}</dd>
             </>

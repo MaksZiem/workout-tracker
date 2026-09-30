@@ -3,7 +3,7 @@ import "server-only";
 import { serverApi } from "@/lib/api/server";
 import { ApiError, unwrap } from "@/lib/api/errors";
 import type { ExercisePersonalRecords, MuscleGroup } from "@/lib/api/extra-types";
-import { addDays } from "@/lib/planner/dates";
+import { addDays, weekStart } from "@/lib/planner/dates";
 import { settle, sessionsOf, toMainExercise, weeklyStreak, type MainExercise } from "./model";
 import { rangeBounds, type StatsRange } from "./range";
 
@@ -28,8 +28,15 @@ export async function loadOverview(range: StatsRange, today: string) {
     // Passa liczona zawsze z ostatniego roku, niezależnie od wybranego zakresu.
     settle(unwrap(api.GET("/stats/frequency", { params: { query: { from: addDays(today, -364), to: today } } }))),
     settle(unwrap(api.GET("/stats/adherence", { params: { query } }))),
-    // Bez dolnej granicy backend liczy od tygodnia pierwszego treningu.
-    settle(unwrap(api.GET("/stats/weekly", { params: { query } }))),
+    // Od poniedziałku, żeby pierwszy słupek był pełnym tygodniem. Bez dolnej granicy
+    // backend liczy od tygodnia pierwszego treningu.
+    settle(
+      unwrap(
+        api.GET("/stats/weekly", {
+          params: { query: { from: bounds.from ? weekStart(bounds.from) : undefined, to: bounds.to } },
+        }),
+      ),
+    ),
     settle(unwrap(api.GET("/stats/rep-ranges", { params: { query } }))),
     // Zastój to stan „na dziś”, niezależny od zakresu.
     settle(unwrap(api.GET("/stats/stagnation"))),

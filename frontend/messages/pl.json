@@ -663,14 +663,21 @@
       },
       "weekly": {
         "title": "Objętość tygodniowo",
-        "hint": "Ciężar × powtórzenia z ukończonych serii",
+        "hint": "Suma ciężar × powtórzenia z ukończonych serii, tydzień po tygodniu",
         "label": "Objętość w kolejnych tygodniach",
         "tons": "{value} t",
         "workouts": "{count, plural, =0 {bez treningu} one {# trening} few {# treningi} many {# treningów} other {# treningów}}",
         "partial": "tydzień w trakcie",
         "thisWeek": "Ten tydzień",
-        "changeScope": "ostatni tydzień vs średnia z {weeks} poprzednich",
-        "empty": "Brak ukończonych serii w tym okresie."
+        "empty": "Brak ukończonych serii w tym okresie.",
+        "lastWeek": "Ostatni pełny tydzień",
+        "sets": "{count, plural, one {# seria} few {# serie} many {# serii} other {# serii}}",
+        "average": "śr. {value}",
+        "vsAverage": "{value} vs średnia z {weeks} poprzednich tyg.",
+        "legendWeek": "Tydzień",
+        "legendCurrent": "Bieżący tydzień (w trakcie)",
+        "legendAverage": "Średnia z pełnych tygodni",
+        "chart": "Wykres objętości tygodniowej. Użyj strzałek, aby przejść między tygodniami."
       },
       "repRanges": {
         "title": "Zakresy powtórzeń",
@@ -866,6 +873,72 @@
       "done": "Zamieniono „{from}” na „{to}”",
       "taken": "Już w tym dniu",
       "duplicate": "„{name}” jest już w tym dniu."
+    }
+  },
+  "tips": {
+    "e1rm": {
+      "label": "Co to jest szacowane 1RM?",
+      "body": "<p><b>1RM</b> (one-rep max) to największy ciężar, który podniósłbyś <b>jeden raz</b>.</p><p>Nie musisz go testować: liczymy go z Twoich zwykłych serii wzorem Epleya: ciężar × (1 + powtórzenia ÷ 30). Np. 80 kg × 8 ≈ 101 kg.</p><p>Dzięki temu da się porównać serie z różną liczbą powtórzeń: jeśli rośnie, jesteś silniejszy.</p>"
+    },
+    "maxWeight": {
+      "label": "Maksymalny ciężar",
+      "body": "<p>Najcięższy ciężar użyty w jakiejkolwiek ukończonej serii, <b>bez względu na liczbę powtórzeń</b>.</p><p>To nie to samo co 1RM: 70 kg × 8 to maksymalny ciężar 70 kg, a szacowane 1RM ≈ 89 kg.</p>"
+    },
+    "bestSet": {
+      "label": "Objętość serii",
+      "body": "<p>Najlepszy wynik <b>ciężar × powtórzenia</b> w jednej serii. Np. 80 kg × 10 = 800 kg.</p><p>Nagradza serie, w których zrobiłeś dużo pracy naraz, nawet jeśli ciężar nie był rekordowy.</p>"
+    },
+    "volume": {
+      "label": "Objętość (tonaż)",
+      "body": "<p>Suma <b>ciężar × powtórzenia</b> ze wszystkich ukończonych serii. Np. 3 serie po 80 kg × 10 = 2400 kg.</p><p>To miara całej pracy wykonanej na treningach. Serie bez ciężaru (np. deska) liczą się jako 0.</p>"
+    },
+    "avgSets": {
+      "label": "Serie na trening",
+      "body": "<p>Średnia liczba <b>ukończonych</b> serii na jeden trening w wybranym okresie. Serie nieodhaczone się nie liczą.</p>"
+    },
+    "topGroup": {
+      "label": "Najczęściej trenowana partia",
+      "body": "<p>Partia mięśniowa z największą liczbą ukończonych serii w okresie. Każde ćwiczenie liczy się do swojej <b>głównej</b> partii.</p>"
+    },
+    "adherence": {
+      "label": "Realizacja planu",
+      "body": "<p>Porównanie treningów zaplanowanych w <b>Planerze</b> z tym, co faktycznie zrobiłeś.</p><p><b>Pominięty</b>: sam oznaczyłeś go jako pominięty. <b>Przegapiony</b>: jego dzień minął, a trening się nie zaczął.</p><p>Treningi zaplanowane na dziś i później nie wliczają się do procentu.</p>"
+    },
+    "weekly": {
+      "label": "Jak czytać ten wykres?",
+      "body": "<p>Każdy słupek to <b>jeden tydzień</b> (poniedziałek–niedziela), a jego wysokość to <b>objętość</b>: suma ciężar × powtórzenia ze wszystkich ukończonych serii w tym tygodniu.</p><p>Przerywana linia to średnia z pełnych tygodni. Jaśniejszy słupek to bieżący tydzień, który jeszcze trwa.</p><p>Najedź na słupek (albo dotknij go), żeby zobaczyć szczegóły tygodnia.</p>"
+    },
+    "weeklyChange": {
+      "label": "Zmiana tygodniowa",
+      "body": "<p>Objętość <b>ostatniego pełnego tygodnia</b> w porównaniu ze <b>średnią z {weeks} tygodni przed nim</b>.</p><p>Bieżący tydzień nie jest brany pod uwagę, bo jeszcze trwa. Spadek o kilkadziesiąt procent zwykle oznacza tydzień z mniejszą liczbą treningów albo celowy deload.</p>"
+    },
+    "streak": {
+      "label": "Passa",
+      "body": "<p><b>Passa tygodniowa</b>: ile kolejnych tygodni miało co najmniej jeden trening. Bieżący tydzień bez treningu jeszcze jej nie przerywa.</p><p><b>Dni z rzędu</b>: kolejne dni z treningiem, licząc od dziś lub wczoraj. Przy treningach co drugi dzień zwykle wynosi 0–1 i to normalne.</p>"
+    },
+    "muscles": {
+      "label": "Serie w tygodniu",
+      "body": "<p>Średnia liczba <b>ukończonych serii na tydzień</b> dla każdej partii w wybranym okresie.</p><p>Zielony pas (10–20 serii) to zakres często polecany do budowy mięśni. Poniżej to „za mało”, powyżej „dużo”: może działać, ale trudniej się regenerować.</p><p>Każde ćwiczenie liczy się tylko do swojej <b>głównej</b> partii, więc np. triceps z wyciskania nie jest doliczany. Cardio i ćwiczenia całego ciała nie są oceniane.</p>"
+    },
+    "repRanges": {
+      "label": "Zakresy powtórzeń",
+      "body": "<p><b>1–5</b>: ciężko i krótko, głównie rozwija siłę.</p><p><b>6–12</b>: klasyczny zakres do budowy mięśni.</p><p><b>13+</b>: lżej i dłużej, rozwija wytrzymałość mięśni.</p><p>Nie ma jednego dobrego podziału; ważne, żeby odpowiadał Twojemu celowi.</p>"
+    },
+    "stagnation": {
+      "label": "Kiedy ćwiczenie „stoi”?",
+      "body": "<p>Ćwiczenie trafia tu, gdy:</p><p>• robisz je regularnie (ostatnio w ciągu 3 tygodni),</p><p>• najlepsze szacowane 1RM jest sprzed <b>ponad 6 tygodni</b>,</p><p>• od tamtej pory były co najmniej <b>3 sesje</b>.</p><p>Wyrównanie rekordu nie liczy się jako nowy. Pomóc może zmiana zakresu powtórzeń, wariantu ćwiczenia albo więcej odpoczynku.</p>"
+    },
+    "records": {
+      "label": "Rekordy",
+      "body": "<p><b>Szac. 1RM</b>: najlepszy szacowany ciężar na 1 powtórzenie. <b>Maks. ciężar</b>: najcięższy użyty ciężar. <b>Objętość serii</b>: najlepsze ciężar × powtórzenia w jednej serii.</p><p>Złoty puchar oznacza, że któryś z tych rekordów padł w wybranym okresie.</p>"
+    },
+    "repRecords": {
+      "label": "Co znaczy 5RM?",
+      "body": "<p><b>5RM</b> to największy ciężar, jaki podniosłeś na <b>co najmniej 5 powtórzeń</b>. Tak samo 1RM, 3RM, 8RM itd.</p><p>Seria 70 kg × 8 spełnia warunek dla 1, 3, 5 i 8 powtórzeń, więc jeśli nigdy nie było nic cięższego, <b>ta sama seria</b> jest rekordem w kilku kafelkach.</p><p>1RM tutaj to ciężar faktycznie podniesiony, a nie szacowany. Szacunek znajdziesz w rekordach wyżej.</p>"
+    },
+    "repRecordActual": {
+      "label": "Rekord z serii na {actual} powtórzeń",
+      "body": "<p>Nie było jeszcze cięższej serii na {reps}–{below} powtórzeń, więc rekordem {reps}RM jest seria <b>{weight} kg × {actual}</b>.</p><p>Skoro dałeś radę {actual} razy, {reps} też byś podniósł, a prawdopodobnie więcej.</p>"
     }
   }
 }

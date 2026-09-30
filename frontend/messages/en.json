@@ -663,14 +663,21 @@
       },
       "weekly": {
         "title": "Weekly volume",
-        "hint": "Weight × reps from completed sets",
+        "hint": "Weight × reps from completed sets, week by week",
         "label": "Volume by week",
         "tons": "{value} t",
         "workouts": "{count, plural, =0 {no workouts} one {# workout} other {# workouts}}",
         "partial": "week in progress",
         "thisWeek": "This week",
-        "changeScope": "last week vs {weeks}-week average",
-        "empty": "No completed sets in this range."
+        "empty": "No completed sets in this range.",
+        "lastWeek": "Last complete week",
+        "sets": "{count, plural, one {# set} other {# sets}}",
+        "average": "avg {value}",
+        "vsAverage": "{value} vs previous {weeks}-week average",
+        "legendWeek": "Week",
+        "legendCurrent": "Current week (in progress)",
+        "legendAverage": "Average of complete weeks",
+        "chart": "Weekly volume chart. Use arrow keys to move between weeks."
       },
       "repRanges": {
         "title": "Rep ranges",
@@ -866,6 +873,72 @@
       "done": "Swapped “{from}” for “{to}”",
       "taken": "Already in this day",
       "duplicate": "“{name}” is already in this day."
+    }
+  },
+  "tips": {
+    "e1rm": {
+      "label": "What is estimated 1RM?",
+      "body": "<p><b>1RM</b> (one-rep max) is the heaviest weight you could lift <b>once</b>.</p><p>You don't have to test it: it's estimated from your regular sets with the Epley formula: weight × (1 + reps ÷ 30). E.g. 80 kg × 8 ≈ 101 kg.</p><p>This lets you compare sets with different rep counts: if it goes up, you're getting stronger.</p>"
+    },
+    "maxWeight": {
+      "label": "Max weight",
+      "body": "<p>The heaviest weight used in any completed set, <b>regardless of reps</b>.</p><p>Not the same as 1RM: 70 kg × 8 means a max weight of 70 kg, but an estimated 1RM of ≈ 89 kg.</p>"
+    },
+    "bestSet": {
+      "label": "Set volume",
+      "body": "<p>Your best <b>weight × reps</b> in a single set. E.g. 80 kg × 10 = 800 kg.</p><p>It rewards sets where you did a lot of work at once, even if the weight wasn't a record.</p>"
+    },
+    "volume": {
+      "label": "Volume (tonnage)",
+      "body": "<p>The sum of <b>weight × reps</b> across all completed sets. E.g. 3 sets of 80 kg × 10 = 2400 kg.</p><p>It measures the total work you did. Bodyweight sets (e.g. plank) count as 0.</p>"
+    },
+    "avgSets": {
+      "label": "Sets per workout",
+      "body": "<p>Average number of <b>completed</b> sets per workout in the selected range. Unchecked sets don't count.</p>"
+    },
+    "topGroup": {
+      "label": "Most trained muscle group",
+      "body": "<p>The muscle group with the most completed sets in the range. Each exercise counts toward its <b>main</b> muscle group.</p>"
+    },
+    "adherence": {
+      "label": "Plan adherence",
+      "body": "<p>Compares workouts scheduled in the <b>Planner</b> with what you actually did.</p><p><b>Skipped</b>: you marked it as skipped. <b>Missed</b>: its day passed and it was never started.</p><p>Workouts planned for today or later don't count toward the percentage.</p>"
+    },
+    "weekly": {
+      "label": "How to read this chart",
+      "body": "<p>Each bar is <b>one week</b> (Monday–Sunday); its height is the <b>volume</b>: weight × reps summed over all completed sets that week.</p><p>The dashed line is the average of complete weeks. The lighter bar is the current week, still in progress.</p><p>Hover (or tap) a bar to see that week's details.</p>"
+    },
+    "weeklyChange": {
+      "label": "Weekly change",
+      "body": "<p>Volume of the <b>last complete week</b> compared with the <b>average of the {weeks} weeks before it</b>.</p><p>The current week is ignored because it isn't over. A drop of tens of percent usually means fewer workouts that week or a planned deload.</p>"
+    },
+    "streak": {
+      "label": "Streak",
+      "body": "<p><b>Weekly streak</b>: how many consecutive weeks had at least one workout. The current week without a workout doesn't break it yet.</p><p><b>Days in a row</b>: consecutive days with a workout, counting from today or yesterday. With every-other-day training it's usually 0–1, which is fine.</p>"
+    },
+    "muscles": {
+      "label": "Sets per week",
+      "body": "<p>Average <b>completed sets per week</b> for each muscle group in the selected range.</p><p>The green band (10–20 sets) is a commonly recommended range for building muscle. Below it is “too few”; above it is “a lot”: it can work, but recovery gets harder.</p><p>Each exercise counts only toward its <b>main</b> muscle group, so e.g. triceps work from bench press isn't included. Cardio and full-body exercises aren't rated.</p>"
+    },
+    "repRanges": {
+      "label": "Rep ranges",
+      "body": "<p><b>1–5</b>: heavy and short, mostly builds strength.</p><p><b>6–12</b>: the classic muscle-building range.</p><p><b>13+</b>: lighter and longer, builds muscular endurance.</p><p>There's no single right split; it should match your goal.</p>"
+    },
+    "stagnation": {
+      "label": "When is an exercise stalled?",
+      "body": "<p>An exercise shows up here when:</p><p>• you do it regularly (within the last 3 weeks),</p><p>• your best estimated 1RM is <b>more than 6 weeks old</b>,</p><p>• you've had at least <b>3 sessions</b> since.</p><p>Matching a record doesn't count as a new one. Changing the rep range, the exercise variation or getting more rest can help.</p>"
+    },
+    "records": {
+      "label": "Records",
+      "body": "<p><b>Est. 1RM</b>: best estimated weight for 1 rep. <b>Max weight</b>: heaviest weight used. <b>Set volume</b>: best weight × reps in one set.</p><p>The gold trophy means one of these records was set in the selected range.</p>"
+    },
+    "repRecords": {
+      "label": "What does 5RM mean?",
+      "body": "<p><b>5RM</b> is the heaviest weight you've lifted for <b>at least 5 reps</b>. Same for 1RM, 3RM, 8RM and so on.</p><p>A 70 kg × 8 set qualifies for 1, 3, 5 and 8 reps, so if you've never lifted anything heavier, <b>the same set</b> is the record in several tiles.</p><p>1RM here is weight actually lifted, not estimated. You'll find the estimate in the records above.</p>"
+    },
+    "repRecordActual": {
+      "label": "Record from a {actual}-rep set",
+      "body": "<p>There's no heavier set for {reps}–{below} reps yet, so the {reps}RM record is the <b>{weight} kg × {actual}</b> set.</p><p>If you managed {actual} reps, you could lift it {reps} times, and probably more weight.</p>"
     }
   }
 }

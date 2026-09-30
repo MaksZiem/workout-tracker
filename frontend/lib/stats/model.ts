@@ -1,4 +1,4 @@
-import type { ExerciseProgressPoint, MuscleGroup } from "@/lib/api/extra-types";
+import type { ExerciseProgressPoint, MuscleGroup, WeeklyStats } from "@/lib/api/extra-types";
 import { addDays, weekStart } from "@/lib/planner/dates";
 import type { StatsMetric } from "./range";
 
@@ -84,4 +84,20 @@ export function weeklyStreak(days: { date: string; count: number }[], today: str
 /** Kilogramy do wyświetlenia: pół kilograma dokładności wystarcza. */
 export function roundKg(value: number) {
   return Math.round(value * 2) / 2;
+}
+
+/** Z iloma poprzednimi tygodniami porównujemy ostatni pełny tydzień. */
+export const WEEKLY_BASELINE = 4;
+
+/**
+ * Ostatni pełny tydzień względem średniej z WEEKLY_BASELINE poprzednich.
+ * null bez punktu odniesienia (za mało tygodni albo same zera).
+ */
+export function weeklyChange(weeks: WeeklyStats[], today: string) {
+  const complete = weeks.filter((w) => w.weekStart < weekStart(today));
+  const last = complete.at(-1);
+  const baseline = complete.slice(-1 - WEEKLY_BASELINE, -1);
+  if (!last || !baseline.length) return null;
+  const average = baseline.reduce((sum, w) => sum + w.volume, 0) / baseline.length;
+  return average > 0 ? { week: last, change: last.volume / average - 1 } : null;
 }

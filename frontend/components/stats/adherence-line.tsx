@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { CalendarCheck } from "lucide-react";
 import type { Adherence } from "@/lib/api/extra-types";
+import { StatsTip } from "./stats-tip";
 
 /** Realizacja planu z kalendarza w jednym wierszu. Nic, gdy w okresie nic nie zaplanowano. */
 export async function AdherenceLine({ adherence }: { adherence: Adherence }) {
@@ -26,6 +27,7 @@ export async function AdherenceLine({ adherence }: { adherence: Adherence }) {
           {adherence.missed ? <span className="text-muted">· {t("missed", { count: adherence.missed })}</span> : null}
         </>
       )}
+      <StatsTip tip="adherence" />
       <Link href="/planner" className="ml-auto text-[13px] font-medium text-accent hover:underline">
         {t("planner")}
       </Link>

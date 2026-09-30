@@ -6,6 +6,7 @@ export function StatsSection({
   id,
   title,
   hint,
+  tip,
   aside,
   children,
   className = "",
@@ -13,6 +14,8 @@ export function StatsSection({
   id: string;
   title: string;
   hint?: ReactNode;
+  /** Wyjaśnienie sekcji (np. <StatsTip />) obok tytułu. */
+  tip?: ReactNode;
   aside?: ReactNode;
   children: ReactNode;
   className?: string;
@@ -21,9 +24,12 @@ export function StatsSection({
     <section aria-labelledby={id} className={className}>
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <div>
-          <h2 id={id} className="text-[17px] font-semibold leading-snug">
-            {title}
-          </h2>
+          <div className="flex items-center gap-1.5">
+            <h2 id={id} className="text-[17px] font-semibold leading-snug">
+              {title}
+            </h2>
+            {tip}
+          </div>
           {hint ? <p className="mt-0.5 text-[13px] text-muted">{hint}</p> : null}
         </div>
         {aside}

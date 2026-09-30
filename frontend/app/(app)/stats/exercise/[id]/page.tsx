@@ -11,6 +11,7 @@ import { parseMetric, parseRange, STATS_METRICS, STATS_RANGES, statsHref, type S
 import { LineChart } from "@/components/stats/line-chart";
 import { RecordStrip } from "@/components/stats/record-strip";
 import { RepRecords } from "@/components/stats/rep-records";
+import { StatsTip } from "@/components/stats/stats-tip";
 import { SegmentedLinks } from "@/components/stats/segmented-links";
 import { SectionError, StatsSection } from "@/components/stats/section";
 
@@ -152,11 +153,11 @@ export default async function ExerciseStatsPage(props: Props) {
 
           {/* Bez serii z ciężarem rekordy powtórzeń byłyby samymi kreskami. */}
           {!data.repRecords.ok ? (
-            <StatsSection id="rep-records" title={t("repRecords.title")} hint={t("repRecords.hint")}>
+            <StatsSection id="rep-records" title={t("repRecords.title")} hint={t("repRecords.hint")} tip={<StatsTip tip="repRecords" />}>
               <SectionError retryHref={self} />
             </StatsSection>
           ) : data.repRecords.data.some((r) => r.weight !== null) ? (
-            <StatsSection id="rep-records" title={t("repRecords.title")} hint={t("repRecords.hint")}>
+            <StatsSection id="rep-records" title={t("repRecords.title")} hint={t("repRecords.hint")} tip={<StatsTip tip="repRecords" />}>
               <RepRecords
                 records={data.repRecords.data}
                 kg={kg}

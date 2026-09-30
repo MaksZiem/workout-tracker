@@ -12,6 +12,7 @@ import { roundKg } from "@/lib/stats/model";
 import { Sheet } from "@/components/ui/sheet";
 import { RecordStrip } from "./record-strip";
 import { RepRecords } from "./rep-records";
+import { StatsTip } from "./stats-tip";
 
 type Loaded = { records: PersonalRecords | null; repRecords: RepRecord[] };
 type State = { status: "loading" } | { status: "error" } | { status: "ready"; data: Loaded };
@@ -88,9 +89,12 @@ export function ExerciseRecordsSheet({ exercise, onClose }: { exercise: { id: nu
           />
           {state.data.repRecords.some((r) => r.weight !== null) ? (
             <section aria-labelledby="sheet-rep-records">
-              <h3 id="sheet-rep-records" className="text-[15px] font-semibold">
-                {t("repRecords.title")}
-              </h3>
+              <div className="flex items-center gap-1.5">
+                <h3 id="sheet-rep-records" className="text-[15px] font-semibold">
+                  {t("repRecords.title")}
+                </h3>
+                <StatsTip tip="repRecords" />
+              </div>
               <p className="mt-0.5 mb-2 text-[13px] text-muted">{t("repRecords.hint")}</p>
               <RepRecords
                 records={state.data.repRecords}

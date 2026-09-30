@@ -1,5 +1,6 @@
 import { getFormatter, getTranslations } from "next-intl/server";
 import type { StatsSummary } from "@/lib/api/extra-types";
+import { StatsTip, type TipKey } from "./stats-tip";
 
 /** Podsumowanie okresu jako jeden wiersz liczb, bez kafelków. */
 export async function SummaryLine({ summary }: { summary: StatsSummary }) {
@@ -12,12 +13,12 @@ export async function SummaryLine({ summary }: { summary: StatsSummary }) {
       ? t("tons", { value: format.number(summary.totalVolume / 1000, { maximumFractionDigits: 1 }) })
       : `${format.number(Math.round(summary.totalVolume))} kg`;
 
-  const items = [
+  const items: { label: string; value: string; tip?: TipKey }[] = [
     { label: t("workouts"), value: format.number(summary.totalWorkouts) },
     { label: t("sets"), value: format.number(summary.totalSets) },
-    { label: t("volume"), value: volume },
-    { label: t("avgSets"), value: format.number(summary.avgSetsPerWorkout, { maximumFractionDigits: 1 }) },
-    { label: t("topGroup"), value: summary.mostTrainedMuscleGroup ? tGroup(summary.mostTrainedMuscleGroup) : "—" },
+    { label: t("volume"), value: volume, tip: "volume" },
+    { label: t("avgSets"), value: format.number(summary.avgSetsPerWorkout, { maximumFractionDigits: 1 }), tip: "avgSets" },
+    { label: t("topGroup"), value: summary.mostTrainedMuscleGroup ? tGroup(summary.mostTrainedMuscleGroup) : "—", tip: "topGroup" },
   ];
 
   return (
@@ -27,7 +28,10 @@ export async function SummaryLine({ summary }: { summary: StatsSummary }) {
     >
       {items.map((item, i) => (
         <div key={item.label} className={`min-w-0 lg:px-5 ${i === 0 ? "lg:pl-0" : "lg:border-l lg:border-border"}`}>
-          <dt className="text-xs text-muted">{item.label}</dt>
+          <dt className="flex items-center gap-1 text-xs text-muted">
+            {item.label}
+            {item.tip ? <StatsTip tip={item.tip} /> : null}
+          </dt>
           <dd className="truncate text-[17px] font-semibold tabular-nums">{item.value}</dd>
         </div>
       ))}
