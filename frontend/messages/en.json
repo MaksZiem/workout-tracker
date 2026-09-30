@@ -299,7 +299,15 @@
       "minutes": "{count} min",
       "inProgress": "In progress",
       "more": "+{count}",
+      "moreExercises": "+ {count, plural, one {# exercise} other {# exercises}}",
       "noExercises": "No exercises",
+      "record": "Record",
+      "plan": "Plan",
+      "view": {
+        "label": "View",
+        "list": "List",
+        "calendar": "Calendar"
+      },
       "summary": {
         "label": "Month summary",
         "workouts": "Workouts",

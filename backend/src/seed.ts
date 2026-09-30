@@ -121,9 +121,16 @@ async function seed() {
     const routine = routines[sessionsAgo % routines.length];
     const weekIndex = Math.floor((8 - sessionsAgo) / 3);
 
+    // Historyczny trening jest zakończony: bez finishedAt UI pokazywałby go jako „W trakcie”.
+    // Start 18:00, koniec po 55-70 min, żeby w historii był też czas trwania.
+    const startedAt = new Date(`${dateStr}T18:00:00`);
+    const finishedAt = new Date(startedAt.getTime() + (55 + (sessionsAgo % 4) * 5) * 60_000);
+
     const workout = workoutRepo.create({
       date: dateStr,
       user,
+      createdAt: startedAt,
+      finishedAt,
       exercises: routine.map((exercise, order) =>
         workoutExerciseRepo.create({
           exercise,

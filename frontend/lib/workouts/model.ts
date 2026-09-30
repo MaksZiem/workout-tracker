@@ -26,14 +26,28 @@ export type HistoryRow = {
   volume: number;
   minutes: number | null;
   inProgress: boolean;
+  /** Szablon, z którego trening powstał w planerze (trening zapisany „z ręki”: null). */
+  templateName: string | null;
+  /** Plan, według którego był ten trening (przez zaplanowany wpis i jego szablon). */
+  plan: { id: number; name: string } | null;
+  /** Czy tego dnia padł rekord w którymś z ćwiczeń treningu. */
+  record: boolean;
+};
+
+/** Skąd trening się wziął: planer (szablon, plan) i rekordy ćwiczeń. */
+export type RowContext = {
+  scheduled: Map<number, { templateName: string | null; plan: { id: number; name: string } | null }>;
+  records: ExercisePersonalRecords[];
 };
 
 export type HistoryWeek = { start: string; end: string; rows: HistoryRow[] };
 
 export type MonthSummary = { workouts: number; sets: number; volume: number; days: number };
 
-export function toRow(w: Workout): HistoryRow {
+export function toRow(w: Workout, ctx?: RowContext): HistoryRow {
   const exercises = [...(w.exercises ?? [])].sort((a, b) => a.order - b.order);
+  const ids = new Set(exercises.map((we) => we.exercise.id));
+  const source = ctx?.scheduled.get(w.id);
   return {
     id: w.id,
     date: w.date,
@@ -42,6 +56,14 @@ export function toRow(w: Workout): HistoryRow {
     volume: volumeOf(setsOf(w)),
     minutes: minutesOf(w),
     inProgress: !w.finishedAt,
+    templateName: source?.templateName ?? null,
+    plan: source?.plan ?? null,
+    // Rekord z datą treningu w jednym z jego ćwiczeń (jak medale w szczegółach treningu).
+    record: (ctx?.records ?? []).some(
+      (r) =>
+        ids.has(r.exerciseId) &&
+        [r.bestEstimatedOneRepMaxDate, r.maxWeightDate, r.bestVolumeDate].includes(w.date),
+    ),
   };
 }
 

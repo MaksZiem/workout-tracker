@@ -4,7 +4,7 @@ import { serverApi } from "@/lib/api/server";
 import { unwrap } from "@/lib/api/errors";
 import { addDays, monthEnd, monthStart } from "@/lib/planner/dates";
 import { settle } from "@/lib/stats/model";
-import { summarize, toDetail, toRow, toWeeks } from "./model";
+import { summarize, toDetail, toRow, toWeeks, type RowContext } from "./model";
 
 /** Jak daleko wstecz szukamy poprzedniego miesiąca z treningami (2 lata). */
 const EARLIER_WINDOW_DAYS = 730;
@@ -17,10 +17,31 @@ export function parseMonth(value: unknown, today: string) {
 /** Treningi miesiąca (z ćwiczeniami i seriami) pogrupowane w tygodnie. */
 export async function loadMonth(month: string) {
   const api = await serverApi();
-  const list = await settle(unwrap(api.GET("/workout", { params: { query: { from: month, to: monthEnd(month) } } })));
+  const from = month;
+  const to = monthEnd(month);
+  // Planer, szablony i rekordy tylko dopisują etykiety: bez nich lista działa dalej.
+  const [list, scheduled, templates, records] = await Promise.all([
+    settle(unwrap(api.GET("/workout", { params: { query: { from, to } } }))),
+    settle(unwrap(api.GET("/planner/scheduled", { params: { query: { from, to } } }))),
+    settle(unwrap(api.GET("/template"))),
+    settle(unwrap(api.GET("/stats/records"))),
+  ]);
   if (!list.ok) return { ok: false as const };
 
-  const rows = list.data.map(toRow);
+  const planByTemplate = new Map(
+    (templates.ok ? templates.data : []).map((t) => [t.id, t.plan ? { id: t.plan.id, name: t.plan.name } : null]),
+  );
+  const ctx: RowContext = {
+    scheduled: new Map(
+      (scheduled.ok ? scheduled.data : []).flatMap((s) =>
+        s.workout
+          ? [[s.workout.id, { templateName: s.template?.name ?? null, plan: s.template ? (planByTemplate.get(s.template.id) ?? null) : null }] as const]
+          : [],
+      ),
+    ),
+    records: records.ok ? records.data : [],
+  };
+  const rows = list.data.map((w) => toRow(w, ctx));
   // Pusty miesiąc: gdzie jest ostatni wcześniejszy trening. Mapa aktywności zwraca same
   // daty (tanio), a okno EARLIER_WINDOW_DAYS ogranicza zapytanie.
   let earlier: string | null = null;
@@ -40,7 +61,7 @@ export async function loadMonth(month: string) {
     }
   }
 
-  return { ok: true as const, weeks: toWeeks(rows), summary: summarize(rows), earlier };
+  return { ok: true as const, rows, weeks: toWeeks(rows), summary: summarize(rows), earlier };
 }
 
 /** Trening z rekordami do oznaczenia serii; `null`, gdy nie istnieje. */

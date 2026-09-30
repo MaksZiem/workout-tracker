@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ClipboardList, Trophy } from "lucide-react";
 import { localDate } from "@/lib/log/model";
 import { addMonths, displayDate, monthStart } from "@/lib/planner/dates";
 import { loadMonth, parseMonth } from "@/lib/workouts/load";
 import type { HistoryRow, MonthSummary } from "@/lib/workouts/model";
 import { SectionError } from "@/components/stats/section";
+import { HistoryCalendar } from "@/components/workouts/history-calendar";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pages.workouts");
@@ -16,10 +17,20 @@ export async function generateMetadata(): Promise<Metadata> {
 /** Na liście widać dwa pierwsze ćwiczenia, reszta jako „+N”. */
 const NAMES_SHOWN = 2;
 
-const monthHref = (month: string, current: string) => (month === current ? "/workouts" : `/workouts?month=${month.slice(0, 7)}`);
+type View = "list" | "calendar";
+
+/** Adres miesiąca w danym widoku; bieżący miesiąc w liście to po prostu /workouts. */
+const monthHref = (month: string, current: string, view: View = "list") => {
+  const params = new URLSearchParams();
+  if (view === "calendar") params.set("view", "calendar");
+  if (month !== current) params.set("month", month.slice(0, 7));
+  const query = params.toString();
+  return query ? `/workouts?${query}` : "/workouts";
+};
 
 export default async function WorkoutsPage(props: PageProps<"/workouts">) {
-  const { month: monthParam } = await props.searchParams;
+  const { month: monthParam, view: viewParam } = await props.searchParams;
+  const view: View = viewParam === "calendar" ? "calendar" : "list";
   const today = localDate();
   const current = monthStart(today);
   const month = parseMonth(monthParam, today);
@@ -39,11 +50,27 @@ export default async function WorkoutsPage(props: PageProps<"/workouts">) {
 
   return (
     <div className="mx-auto w-full max-w-5xl">
-      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t("title")}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t("title")}</h1>
+        <nav aria-label={t("view.label")} className="flex rounded-lg bg-surface-muted p-1">
+          {(["list", "calendar"] as const).map((v) => (
+            <Link
+              key={v}
+              href={monthHref(month, current, v)}
+              aria-current={v === view ? "page" : undefined}
+              className={`flex h-9 items-center rounded-md px-3.5 text-sm font-medium ${
+                v === view ? "bg-surface text-foreground" : "text-muted hover:text-foreground"
+              }`}
+            >
+              {t(`view.${v}`)}
+            </Link>
+          ))}
+        </nav>
+      </div>
 
       <nav aria-label={t("monthNav")} className="mt-4 flex items-center gap-1">
         <Link
-          href={monthHref(addMonths(month, -1), current)}
+          href={monthHref(addMonths(month, -1), current, view)}
           aria-label={t("prev")}
           aria-disabled={isOldest}
           tabIndex={isOldest ? -1 : undefined}
@@ -52,7 +79,7 @@ export default async function WorkoutsPage(props: PageProps<"/workouts">) {
           <ChevronLeft className="size-5" strokeWidth={2} aria-hidden />
         </Link>
         <Link
-          href={monthHref(addMonths(month, 1), current)}
+          href={monthHref(addMonths(month, 1), current, view)}
           aria-label={t("next")}
           aria-disabled={isFuture}
           tabIndex={isFuture ? -1 : undefined}
@@ -64,7 +91,7 @@ export default async function WorkoutsPage(props: PageProps<"/workouts">) {
           {monthLabel(month)}
         </p>
         {month !== current ? (
-          <Link href="/workouts" className="ml-auto flex h-10 items-center rounded-lg px-2 text-sm font-medium text-accent hover:bg-accent-surface">
+          <Link href={monthHref(current, current, view)} className="ml-auto flex h-10 items-center rounded-lg px-2 text-sm font-medium text-accent hover:bg-accent-surface">
             {t("thisMonth")}
           </Link>
         ) : null}
@@ -72,7 +99,7 @@ export default async function WorkoutsPage(props: PageProps<"/workouts">) {
 
       {!data.ok ? (
         <div className="mt-6">
-          <SectionError retryHref={monthHref(month, current)} />
+          <SectionError retryHref={monthHref(month, current, view)} />
         </div>
       ) : data.summary.workouts === 0 ? (
         <div className="mt-6 max-w-xl rounded-xl border border-border bg-surface p-5">
@@ -83,7 +110,7 @@ export default async function WorkoutsPage(props: PageProps<"/workouts">) {
           <div className="mt-3 flex flex-wrap gap-x-4">
             {data.earlier ? (
               <Link
-                href={monthHref(data.earlier, current)}
+                href={monthHref(data.earlier, current, view)}
                 className="-ml-2 flex h-10 items-center gap-1 rounded-lg px-2 text-sm font-medium text-accent hover:bg-accent-surface"
               >
                 <ChevronLeft className="size-4" strokeWidth={2.25} aria-hidden />
@@ -96,7 +123,7 @@ export default async function WorkoutsPage(props: PageProps<"/workouts">) {
                 {t("empty.log")}
               </Link>
             ) : (
-              <Link href="/workouts" className="-ml-2 flex h-10 items-center rounded-lg px-2 text-sm font-medium text-accent hover:bg-accent-surface">
+              <Link href={monthHref(current, current, view)} className="-ml-2 flex h-10 items-center rounded-lg px-2 text-sm font-medium text-accent hover:bg-accent-surface">
                 {t("thisMonth")}
               </Link>
             )}
@@ -105,6 +132,11 @@ export default async function WorkoutsPage(props: PageProps<"/workouts">) {
       ) : (
         <>
           <Summary summary={data.summary} />
+          {view === "calendar" ? (
+            <div className="mt-6">
+              <HistoryCalendar month={month} today={today} rows={data.rows} />
+            </div>
+          ) : (
           <div className="mt-8 flex flex-col gap-8">
             {data.weeks.map((week) => {
               const sameMonth = week.start.slice(0, 7) === week.end.slice(0, 7);
@@ -129,6 +161,7 @@ export default async function WorkoutsPage(props: PageProps<"/workouts">) {
               );
             })}
           </div>
+          )}
         </>
       )}
     </div>
@@ -178,13 +211,29 @@ async function Row({ row }: { row: HistoryRow }) {
       <span className="min-w-0 flex-1">
         <span className="flex min-w-0 items-baseline gap-1.5 text-sm font-medium">
           <span className="truncate">{row.exercises.length ? names : t("noExercises")}</span>
-          {rest > 0 ? <span className="shrink-0 text-muted tabular-nums">{t("more", { count: rest })}</span> : null}
+          {rest > 0 ? <span className="shrink-0 text-muted tabular-nums">{t("moreExercises", { count: rest })}</span> : null}
+          {row.record ? (
+            <span className="shrink-0 self-center" title={t("record")}>
+              <Trophy className="size-3.5 text-pr" strokeWidth={2.25} aria-hidden />
+              <span className="sr-only">{t("record")}</span>
+            </span>
+          ) : null}
         </span>
         <span className="mt-0.5 block text-[13px] text-muted tabular-nums">
           {row.inProgress ? <span className="font-medium text-foreground">{t("inProgress")} · </span> : null}
           {t("sets", { count: row.doneSets })} · {format.number(Math.round(row.volume))} kg
           {row.minutes ? ` · ${t("minutes", { count: row.minutes })}` : null}
         </span>
+        {row.plan ? (
+          <span className="mt-0.5 flex min-w-0 items-center gap-1 text-[13px] text-muted">
+            <ClipboardList className="size-3.5 shrink-0" strokeWidth={2} aria-hidden />
+            <span className="sr-only">{t("plan")}: </span>
+            <span className="truncate">
+              {row.templateName ? `${row.templateName} · ` : null}
+              {row.plan.name}
+            </span>
+          </span>
+        ) : null}
       </span>
       <ChevronRight className="size-4 shrink-0 text-muted" strokeWidth={2} aria-hidden />
     </Link>
