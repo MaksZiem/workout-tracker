@@ -187,6 +187,10 @@
           "body": "Wygeneruj harmonogram z planu w planerze.",
           "action": "Planer"
         }
+      },
+      "activity": {
+        "title": "Aktywność",
+        "all": "Statystyki"
       }
     },
     "log": {
@@ -665,7 +669,10 @@
         "phoneWindow": "Ostatnie 20 tygodni",
         "day": "{date}: {count, plural, =0 {brak treningu} one {# trening} few {# treningi} many {# treningów} other {# treningów}}",
         "less": "Mniej",
-        "more": "Więcej"
+        "more": "Więcej",
+        "missedDay": "{date}: {missed, plural, one {pominięty trening z planu} few {# pominięte treningi z planu} many {# pominiętych treningów z planu} other {# pominiętych treningów z planu}}",
+        "missed": "Pominięty",
+        "missedCount": "{count, plural, one {# pominięty} few {# pominięte} many {# pominiętych} other {# pominiętych}}"
       },
       "muscles": {
         "title": "Partie mięśniowe",

@@ -6,9 +6,14 @@ import { displayDate, mondayIndex } from "@/lib/planner/dates";
 const PHONE_WEEKS = 20;
 
 const LEVEL = ["bg-surface-muted", "bg-success/55", "bg-success"];
+const MISSED = "bg-danger";
+
+/** Czerwony dzień: trening z planu pominięty lub przegapiony i żadnego innego tego dnia. */
+const isMissed = (day: WorkoutFrequencyDay) => day.count === 0 && day.missed > 0;
 
 /**
- * Mapa dni treningowych: kolumna = tydzień (pon–niedz.), zieleń = trening zrobiony.
+ * Mapa dni treningowych: kolumna = tydzień (pon–niedz.), zieleń = trening zrobiony,
+ * czerwień = pominięty trening z planu.
  * Sama siatka jest ukryta przed czytnikiem ekranu; liczba dni jest podana tekstem.
  */
 export async function ActivityMap({ days, allTime }: { days: WorkoutFrequencyDay[]; allTime: boolean }) {
@@ -21,6 +26,7 @@ export async function ActivityMap({ days, allTime }: { days: WorkoutFrequencyDay
   for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
 
   const trainingDays = days.filter((d) => d.count > 0).length;
+  const missedDays = days.filter(isMissed).length;
   const firstDate = (week: (WorkoutFrequencyDay | null)[]) => week.find(Boolean)?.date ?? "";
   const monthLabel = (week: (WorkoutFrequencyDay | null)[], i: number) => {
     const starts = week.find((d) => d?.date.endsWith("-01"));
@@ -41,7 +47,10 @@ export async function ActivityMap({ days, allTime }: { days: WorkoutFrequencyDay
   return (
     <div className="rounded-xl border border-border bg-surface p-4">
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-[13px]">
-        <p className="font-medium tabular-nums">{t("days", { count: trainingDays, total: format.number(days.length) })}</p>
+        <p className="tabular-nums">
+          <span className="font-medium">{t("days", { count: trainingDays, total: format.number(days.length) })}</span>
+          {missedDays > 0 ? <span className="text-danger">{" · "}{t("missedCount", { count: missedDays })}</span> : null}
+        </p>
         <p className="text-muted">
           {allTime ? t("lastYear") : null}
           {weeks.length > PHONE_WEEKS ? <span className="sm:hidden">{allTime ? " · " : ""}{t("phoneWindow")}</span> : null}
@@ -63,26 +72,26 @@ export async function ActivityMap({ days, allTime }: { days: WorkoutFrequencyDay
               <span className="h-4 overflow-visible text-[11px] leading-4 whitespace-nowrap text-muted first-letter:uppercase">
                 {labels[i]}
               </span>
-              {Array.from({ length: 7 }, (_, d) => week[d] ?? null).map((day, d) =>
-                day ? (
+              {Array.from({ length: 7 }, (_, d) => week[d] ?? null).map((day, d) => {
+                if (!day) return <span key={d} className={cell} />;
+                const date = format.dateTime(displayDate(day.date), { weekday: "short", day: "numeric", month: "long", timeZone: "UTC" });
+                const missed = isMissed(day);
+                return (
                   <span
                     key={d}
-                    title={t("day", {
-                      date: format.dateTime(displayDate(day.date), { weekday: "short", day: "numeric", month: "long", timeZone: "UTC" }),
-                      count: day.count,
-                    })}
-                    className={`${cell} rounded-[3px] ${LEVEL[Math.min(day.count, 2)]}`}
+                    title={missed ? t("missedDay", { date, missed: day.missed }) : t("day", { date, count: day.count })}
+                    className={`${cell} rounded-[3px] ${missed ? MISSED : LEVEL[Math.min(day.count, 2)]}`}
                   />
-                ) : (
-                  <span key={d} className={cell} />
-                ),
-              )}
+                );
+              })}
             </div>
           ))}
         </div>
       </div>
 
       <div aria-hidden className="mt-3 flex items-center justify-end gap-1.5 text-[11px] text-muted">
+        <span className={`size-2.5 rounded-[3px] ${MISSED}`} />
+        <span className="mr-3">{t("missed")}</span>
         {t("less")}
         {LEVEL.map((c) => (
           <span key={c} className={`size-2.5 rounded-[3px] ${c}`} />

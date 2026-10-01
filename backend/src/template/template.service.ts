@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { WorkoutTemplate } from './workout-template.entity';
 import { WorkoutTemplateExercise } from './workout-template-exercise.entity';
@@ -11,6 +11,8 @@ import { UpdateTemplateExerciseDto } from './dtos/update-template-exercise.dto';
 import { assignDefined } from 'src/helpers/assign-defined';
 import { ExerciseService } from 'src/exercise/exercise.service';
 import { PlanService } from './plan.service';
+import { ScheduledWorkout } from 'src/planner/scheduled-workout.entity';
+import { ScheduledWorkoutStatus } from 'src/enums/scheduled-workout-status.enum';
 
 @Injectable()
 export class TemplateService {
@@ -66,9 +68,24 @@ export class TemplateService {
     return this.repo.save(template);
   }
 
+  // Jak przy usuwaniu planu: nadchodzące nierozpoczęte treningi z tego
+  // szablonu znikają razem z nim, przeszłe zostają w historii.
   async remove(userId: number, id: number) {
     const template = await this.findOwned(userId, id);
-    return this.repo.remove(template);
+    const today = new Date().toISOString().slice(0, 10);
+
+    return this.repo.manager.transaction(async (manager) => {
+      const upcoming = await manager.find(ScheduledWorkout, {
+        where: {
+          user: { id: userId },
+          template: { id: template.id },
+          status: ScheduledWorkoutStatus.PLANNED,
+          date: MoreThanOrEqual(today),
+        },
+      });
+      await manager.remove(upcoming);
+      return manager.remove(template);
+    });
   }
 
   async addExercise(

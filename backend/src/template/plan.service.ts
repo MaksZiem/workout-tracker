@@ -1,11 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { WorkoutPlan } from './workout-plan.entity';
 import { CreateWorkoutPlanDto } from './dtos/create-workout-plan.dto';
 import { UpdateWorkoutPlanDto } from './dtos/update-workout-plan.dto';
 import { assignDefined } from 'src/helpers/assign-defined';
+import { ScheduledWorkout } from 'src/planner/scheduled-workout.entity';
+import { ScheduledWorkoutStatus } from 'src/enums/scheduled-workout-status.enum';
 
 @Injectable()
 export class PlanService {
@@ -52,8 +54,24 @@ export class PlanService {
     return this.repo.save(plan);
   }
 
+  // Usuwa też nadchodzące (od dziś) nierozpoczęte treningi z planu - inaczej
+  // zostałyby jako sieroty bez szablonu i z czasem liczyły się jako opuszczone.
+  // Przeszłe wpisy zostają, żeby historia na heatmapie była uczciwa.
   async remove(userId: number, id: number) {
     const plan = await this.findOwned(userId, id);
-    return this.repo.remove(plan);
+    const today = new Date().toISOString().slice(0, 10);
+
+    return this.repo.manager.transaction(async (manager) => {
+      const upcoming = await manager.find(ScheduledWorkout, {
+        where: {
+          user: { id: userId },
+          template: { plan: { id: plan.id } },
+          status: ScheduledWorkoutStatus.PLANNED,
+          date: MoreThanOrEqual(today),
+        },
+      });
+      await manager.remove(upcoming);
+      return manager.remove(plan);
+    });
   }
 }

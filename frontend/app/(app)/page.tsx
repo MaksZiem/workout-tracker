@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { displayDate } from "@/lib/planner/dates";
 import { requireUser } from "@/lib/auth/session";
@@ -13,6 +15,7 @@ import { RecentWorkouts } from "@/components/dashboard/recent-workouts";
 import { FreshRecords } from "@/components/dashboard/fresh-records";
 import { Onboarding } from "@/components/dashboard/onboarding";
 import { Streaks } from "@/components/dashboard/streaks";
+import { ActivityMap } from "@/components/stats/activity-map";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pages.dashboard");
@@ -52,6 +55,21 @@ export default async function DashboardPage() {
           <SectionError retryHref="/" />
         )}
       </div>
+
+      {steps.workout || steps.schedule ? (
+        <section aria-labelledby="activity">
+          <div className="mb-3 flex items-baseline justify-between gap-4">
+            <h2 id="activity" className="text-[17px] font-semibold">
+              {t("activity.title")}
+            </h2>
+            <Link href="/stats" className="-mr-2 flex h-9 items-center gap-0.5 rounded-lg px-2 text-sm font-medium text-accent hover:bg-accent-surface">
+              {t("activity.all")}
+              <ChevronRight className="size-4" strokeWidth={2.25} aria-hidden />
+            </Link>
+          </div>
+          {data.activity.ok ? <ActivityMap days={data.activity.data} allTime /> : <SectionError retryHref="/" />}
+        </section>
+      ) : null}
 
       <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start">
         <div className="flex flex-col gap-6 sm:gap-8">

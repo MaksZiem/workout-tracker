@@ -145,6 +145,8 @@ export async function loadDashboard(today: string) {
     // Zielony dzień = zakończony trening; rozpoczęty jeszcze nie jest „zrobiony”.
     weekTrained: new Set(list.filter((w) => w.finishedAt && w.date >= monday && w.date <= sunday).map((w) => w.date)),
     streak: frequency.ok ? weeklyStreak(frequency.data, today) : null,
+    // Rok dni pod mapę aktywności (z pominiętymi treningami z planu).
+    activity: frequency,
     planStreak: scheduled.ok ? planStreak(scheduled.data, today) : null,
     recent: workouts.ok
       ? { ok: true as const, data: recentWorkouts(list, details) }

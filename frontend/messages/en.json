@@ -187,6 +187,10 @@
           "body": "Generate a schedule from a plan in the planner.",
           "action": "Planner"
         }
+      },
+      "activity": {
+        "title": "Activity",
+        "all": "Stats"
       }
     },
     "log": {
@@ -665,7 +669,10 @@
         "phoneWindow": "Last 20 weeks",
         "day": "{date}: {count, plural, =0 {no workout} one {# workout} other {# workouts}}",
         "less": "Less",
-        "more": "More"
+        "more": "More",
+        "missedDay": "{date}: {missed, plural, one {skipped planned workout} other {# skipped planned workouts}}",
+        "missed": "Skipped",
+        "missedCount": "{count} skipped"
       },
       "muscles": {
         "title": "Muscle groups",

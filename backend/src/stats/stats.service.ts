@@ -24,6 +24,7 @@ import {
 } from './helpers';
 import { MuscleGroup } from 'src/enums/muscle-group.enum';
 import { ScheduledWorkout } from 'src/planner/scheduled-workout.entity';
+import { ScheduledWorkoutStatus } from 'src/enums/scheduled-workout-status.enum';
 
 @Injectable()
 export class StatsService {
@@ -147,17 +148,25 @@ export class StatsService {
 
   // Zwraca gęstą listę dni (bez dziur) w danym zakresie - domyślnie ostatnie
   // 365 dni - gotową pod heatmapę w stylu GitHub contributions.
+  // `missed` to liczba treningów z planu pominiętych albo przegapionych
+  // (zaplanowanych w przeszłości i nierozpoczętych) danego dnia.
   async getWorkoutFrequency(userId: number, from?: string, to?: string) {
-    const rangeTo = to ?? new Date().toISOString().slice(0, 10);
+    const rangeTo = to ?? today();
     const rangeFrom = from ?? addDays(rangeTo, -364);
 
-    const workouts = await this.workoutRepo.find({
-      where: {
-        user: { id: userId },
-        date: Between(rangeFrom, rangeTo),
-      },
-      select: ['date'],
-    });
+    const [workouts, scheduled] = await Promise.all([
+      this.workoutRepo.find({
+        where: {
+          user: { id: userId },
+          date: Between(rangeFrom, rangeTo),
+        },
+        select: ['date'],
+      }),
+      this.scheduledRepo.find({
+        where: { user: { id: userId }, date: Between(rangeFrom, rangeTo) },
+        select: ['date', 'status'],
+      }),
+    ]);
 
     const countsByDate = new Map<string, number>();
     for (const workout of workouts) {
@@ -167,9 +176,22 @@ export class StatsService {
       );
     }
 
-    const days: { date: string; count: number }[] = [];
+    const now = today();
+    const missedByDate = new Map<string, number>();
+    for (const s of scheduled) {
+      const missed =
+        s.status === ScheduledWorkoutStatus.SKIPPED ||
+        (s.status === ScheduledWorkoutStatus.PLANNED && s.date < now);
+      if (missed) missedByDate.set(s.date, (missedByDate.get(s.date) ?? 0) + 1);
+    }
+
+    const days: { date: string; count: number; missed: number }[] = [];
     for (let date = rangeFrom; date <= rangeTo; date = addDays(date, 1)) {
-      days.push({ date, count: countsByDate.get(date) ?? 0 });
+      days.push({
+        date,
+        count: countsByDate.get(date) ?? 0,
+        missed: missedByDate.get(date) ?? 0,
+      });
     }
 
     return days;

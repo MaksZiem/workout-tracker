@@ -74,8 +74,11 @@ export type MuscleGroupStats = {
   volume: number;
 };
 
-/** GET /stats/frequency (tablica, gęsta lista dni) */
-export type WorkoutFrequencyDay = { date: string; count: number };
+/**
+ * GET /stats/frequency (tablica, gęsta lista dni).
+ * `missed`: treningi z planu pominięte albo przegapione (zaplanowane w przeszłości, nierozpoczęte).
+ */
+export type WorkoutFrequencyDay = { date: string; count: number; missed: number };
 
 /** GET /stats/summary */
 export type StatsSummary = {

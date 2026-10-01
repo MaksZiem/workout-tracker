@@ -143,16 +143,16 @@ export class StatsController {
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary: 'Częstotliwość treningów (heatmapa)',
-    description: 'Zwraca gęstą listę dni (bez dziur) z liczbą treningów w danym dniu - gotową pod heatmapę w stylu GitHub contributions. Domyślnie ostatnie 365 dni.',
+    description: 'Zwraca gęstą listę dni (bez dziur) z liczbą treningów w danym dniu oraz liczbą pominiętych lub przegapionych treningów z planu (`missed`) - gotową pod heatmapę w stylu GitHub contributions. Domyślnie ostatnie 365 dni.',
   })
   @ApiResponse({
     status: 200,
     description: 'Lista dni z liczbą treningów',
     schema: {
       example: [
-        { date: '2026-09-21', count: 1 },
-        { date: '2026-09-22', count: 0 },
-        { date: '2026-09-23', count: 1 },
+        { date: '2026-09-21', count: 1, missed: 0 },
+        { date: '2026-09-22', count: 0, missed: 1 },
+        { date: '2026-09-23', count: 1, missed: 0 },
       ],
     },
   })
