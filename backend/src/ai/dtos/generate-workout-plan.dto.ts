@@ -1,6 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsEnum, IsIn, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 import { TrainingGoal } from 'src/enums/training-goal.enum';
+
+export const PLAN_LANGUAGES = ['pl', 'en'] as const;
+export type PlanLanguage = (typeof PLAN_LANGUAGES)[number];
 
 export class GenerateWorkoutPlanDto {
   @ApiProperty({ description: 'Cel treningowy', enum: TrainingGoal, example: TrainingGoal.HYPERTROPHY })
@@ -20,4 +23,13 @@ export class GenerateWorkoutPlanDto {
   @IsOptional()
   @IsString()
   constraints?: string;
+
+  @ApiPropertyOptional({
+    description: 'Język nazw i notatek w wygenerowanym planie (domyślnie pl)',
+    enum: PLAN_LANGUAGES,
+    example: 'pl',
+  })
+  @IsOptional()
+  @IsIn(PLAN_LANGUAGES)
+  language?: PlanLanguage;
 }

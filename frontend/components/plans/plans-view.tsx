@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ChevronRight, Minus, Plus, Sparkles } from "lucide-react";
 import { clientApi } from "@/lib/api/client";
 import { unwrap } from "@/lib/api/errors";
@@ -152,6 +152,7 @@ function AiPlanSheet({ open, onClose }: { open: boolean; onClose: () => void }) 
   const router = useRouter();
   const [goal, setGoal] = useState<TrainingGoal>("HYPERTROPHY");
   const [days, setDays] = useState(3);
+  const locale = useLocale();
   const [constraints, setConstraints] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(false);
@@ -163,7 +164,12 @@ function AiPlanSheet({ open, onClose }: { open: boolean; onClose: () => void }) 
     try {
       const result = await unwrap(
         clientApi.POST("/ai/generate-plan", {
-          body: { goal, daysPerWeek: days, ...(constraints.trim() ? { constraints: constraints.trim() } : {}) },
+          body: {
+            goal,
+            daysPerWeek: days,
+            language: locale,
+            ...(constraints.trim() ? { constraints: constraints.trim() } : {}),
+          },
         }),
       );
       router.push(`/plans/${result.plan.id}?ai=1`);

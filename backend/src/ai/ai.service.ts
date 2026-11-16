@@ -3,13 +3,41 @@ import { GeminiService } from 'src/gemini/gemini.service';
 import { ExerciseService } from 'src/exercise/exercise.service';
 import { TemplateService } from 'src/template/template.service';
 import { User } from 'src/users/user.entity';
-import { GenerateWorkoutPlanDto } from './dtos/generate-workout-plan.dto';
+import { GenerateWorkoutPlanDto, PlanLanguage } from './dtos/generate-workout-plan.dto';
+import { TrainingGoal } from 'src/enums/training-goal.enum';
 import { workoutPlanSchema } from './schemas/workout-plan.schema';
 import { WorkoutTemplate } from 'src/template/workout-template.entity';
 import { PlanService } from 'src/template/plan.service';
 import { WorkoutService } from 'src/workout/workout.service';
 import { ParseWorkoutDto } from './dtos/parse-workout.dto';
 import { parsedWorkoutSchema } from './schemas/parsed-workout.schema';
+
+// Nazwa planu i język odpowiedzi AI zależą od języka interfejsu użytkownika.
+const GOAL_NAMES: Record<PlanLanguage, Record<TrainingGoal, string>> = {
+  pl: {
+    [TrainingGoal.STRENGTH]: 'Siła',
+    [TrainingGoal.HYPERTROPHY]: 'Hipertrofia',
+    [TrainingGoal.ENDURANCE]: 'Wytrzymałość',
+    [TrainingGoal.GENERAL]: 'Ogólny',
+  },
+  en: {
+    [TrainingGoal.STRENGTH]: 'Strength',
+    [TrainingGoal.HYPERTROPHY]: 'Hypertrophy',
+    [TrainingGoal.ENDURANCE]: 'Endurance',
+    [TrainingGoal.GENERAL]: 'General',
+  },
+};
+
+const PROMPT_LANGUAGE: Record<PlanLanguage, string> = {
+  pl: 'polski',
+  en: 'angielski',
+};
+
+function planName(dto: GenerateWorkoutPlanDto) {
+  const language = dto.language ?? 'pl';
+  const perWeek = language === 'pl' ? 'tydzień' : 'week';
+  return `Plan: ${GOAL_NAMES[language][dto.goal]} — ${dto.daysPerWeek}x/${perWeek}`;
+}
 
 interface GeneratedPlan {
   templates: {
@@ -54,7 +82,7 @@ export class AiService {
     );
 
     const workoutPlan = await this.planService.create(user, {
-      name: `Plan ${dto.goal} — ${dto.daysPerWeek}x/tydzień`,
+      name: planName(dto),
       notes: dto.constraints,
     });
 
@@ -142,6 +170,7 @@ export class AiService {
         Cel: ${dto.goal}
         Liczba dni treningowych w tygodniu: ${dto.daysPerWeek}
         Dodatkowe ograniczenia: ${dto.constraints ?? 'brak'}
+        Język nazw szablonów i notatek: ${PROMPT_LANGUAGE[dto.language ?? 'pl']}
         Dostępne ćwiczenia (używaj WYŁĄCZNIE poniższych id, nie wymyślaj nowych):
         ${exerciseList}
         Zwróć ${dto.daysPerWeek} szablonów treningowych (po jednym na dzień treningowy), każdy z sensownym doborem ćwiczeń pod dany cel, w formacie JSON zgodnym z podanym schematem.`;

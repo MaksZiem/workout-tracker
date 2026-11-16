@@ -1817,6 +1817,12 @@ export interface components {
              * @example Kontuzja barku - unikać wyciskania nad głowę, brak dostępu do sztangi
              */
             constraints?: string;
+            /**
+             * @description Język nazw i notatek w wygenerowanym planie (domyślnie pl)
+             * @example pl
+             * @enum {string}
+             */
+            language?: "pl" | "en";
         };
         ParseWorkoutDto: {
             /**
