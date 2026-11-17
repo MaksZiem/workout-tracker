@@ -1,7 +1,7 @@
 import "server-only";
 
 import { serverApi } from "@/lib/api/server";
-import { ApiError, unwrap } from "@/lib/api/errors";
+import { ApiError, errorCode, unwrap } from "@/lib/api/errors";
 import type { ExercisePersonalRecords, MuscleGroup } from "@/lib/api/extra-types";
 import { addDays, weekStart } from "@/lib/planner/dates";
 import { settle, sessionsOf, toMainExercise, weeklyStreak, type MainExercise } from "./model";
@@ -107,8 +107,8 @@ export async function loadExercise(exerciseId: number, range: StatsRange, today:
   const bounds = rangeBounds(range, today);
 
   const exercise = await api.GET("/exercise/{id}", { params: { path: { id: exerciseId } } });
-  if (exercise.response.status === 404 || !exercise.data) {
-    if (exercise.response.status === 404) return null;
+  if (!exercise.data) {
+    if (errorCode(exercise.error) === "EXERCISE_NOT_FOUND") return null;
     throw ApiError.from(exercise.error, exercise.response);
   }
 
@@ -142,7 +142,7 @@ async function loadRecords(api: Awaited<ReturnType<typeof serverApi>>, exerciseI
     const records = await unwrap(api.GET("/stats/exercise/{exerciseId}/records", { params: { path: { exerciseId } } }));
     return { ok: true as const, data: records };
   } catch (error) {
-    if (error instanceof ApiError && error.status === 404) return { ok: true as const, data: null };
+    if (error instanceof ApiError && error.code === "NO_COMPLETED_SETS") return { ok: true as const, data: null };
     return { ok: false as const };
   }
 }

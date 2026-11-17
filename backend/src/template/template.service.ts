@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
+import { errorBody } from 'src/common/error-body';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 import { User } from 'src/users/user.entity';
@@ -57,7 +58,7 @@ export class TemplateService {
   private async findOwned(userId: number, id: number) {
     const template = await this.findOne(userId, id);
     if (!template) {
-      throw new NotFoundException('Workout template not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'TEMPLATE_NOT_FOUND', 'Workout template not found'));
     }
     return template;
   }
@@ -97,7 +98,7 @@ export class TemplateService {
 
     const exercise = await this.exerciseService.findOne(dto.exerciseId);
     if (!exercise) {
-      throw new NotFoundException('Exercise not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'EXERCISE_NOT_FOUND', 'Exercise not found'));
     }
 
     const templateExercise = this.templateExerciseRepo.create({
@@ -122,13 +123,13 @@ export class TemplateService {
       where: { id: teId, template: { id: templateId, user: { id: userId } } },
     });
     if (!te) {
-      throw new NotFoundException('Template exercise not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'TEMPLATE_EXERCISE_NOT_FOUND', 'Template exercise not found'));
     }
     const { exerciseId, ...targets } = dto;
     if (exerciseId !== undefined) {
       const exercise = await this.exerciseService.findOne(exerciseId);
       if (!exercise) {
-        throw new NotFoundException('Exercise not found');
+        throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'EXERCISE_NOT_FOUND', 'Exercise not found'));
       }
       te.exercise = exercise;
     }
@@ -141,7 +142,7 @@ export class TemplateService {
       where: { id: teId, template: { id: templateId, user: { id: userId } } },
     });
     if (!te) {
-      throw new NotFoundException('Template exercise not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'TEMPLATE_EXERCISE_NOT_FOUND', 'Template exercise not found'));
     }
     return this.templateExerciseRepo.remove(te);
   }

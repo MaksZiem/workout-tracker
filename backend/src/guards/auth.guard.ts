@@ -1,4 +1,5 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException, HttpStatus } from '@nestjs/common';
+import { errorBody } from 'src/common/error-body';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
@@ -16,7 +17,7 @@ export class AuthGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request)
 
     if(!token) {
-      throw new UnauthorizedException('Token is wrong')
+      throw new UnauthorizedException(errorBody(HttpStatus.UNAUTHORIZED, 'MISSING_TOKEN', 'Missing authorization token'))
     }
 
     let payload: {id: number}
@@ -24,12 +25,12 @@ export class AuthGuard implements CanActivate {
     try {
       payload = await this.jwtService.verifyAsync(token)
     } catch (error) {
-      throw new UnauthorizedException('Token is wrong')
+      throw new UnauthorizedException(errorBody(HttpStatus.UNAUTHORIZED, 'INVALID_TOKEN', 'Token is wrong'))
     }
 
     const user = await this.usersService.findOne(payload.id)
     if(!user) {
-      throw new UnauthorizedException('User not found')
+      throw new UnauthorizedException(errorBody(HttpStatus.UNAUTHORIZED, 'USER_NOT_FOUND', 'User not found'))
     }
 
     request['currentUser'] = user

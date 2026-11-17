@@ -1,36 +1,59 @@
-/** Format błędu zwracany przez HttpExceptionFilter w backendzie. */
+export type ErrorParams = Record<string, string | number>;
+
+/** Format błędu zwracany przez backend: `code` i `params` służą do przetłumaczenia komunikatu. */
 export type BackendErrorBody = {
-  timestamp?: string;
-  path?: string;
-  method?: string;
   statusCode: number;
-  error: string;
+  code?: string;
   message: string | string[];
+  params?: ErrorParams;
+  error?: string;
 };
 
 export class ApiError extends Error {
   readonly status: number;
   readonly error: string;
+  /** Stały kod błędu z backendu (np. `EXERCISE_NAME_TAKEN`); brak przy błędach walidacji. */
+  readonly code: string | undefined;
+  readonly params: ErrorParams;
   /** Zawsze tablica: przy błędach walidacji (400) jeden komunikat na pole. */
   readonly messages: string[];
 
-  constructor(status: number, error: string, messages: string[]) {
+  constructor(
+    status: number,
+    error: string,
+    messages: string[],
+    code?: string,
+    params: ErrorParams = {},
+  ) {
     super(messages[0] ?? error);
     this.name = "ApiError";
     this.status = status;
     this.error = error;
     this.messages = messages;
+    this.code = code;
+    this.params = params;
   }
 
   static from(body: unknown, response?: Response): ApiError {
     const status = response?.status ?? 500;
     if (isBackendErrorBody(body)) {
       const messages = Array.isArray(body.message) ? body.message : [body.message];
-      return new ApiError(body.statusCode ?? status, body.error, messages);
+      return new ApiError(
+        body.statusCode ?? status,
+        body.error ?? response?.statusText ?? "Error",
+        messages,
+        body.code,
+        body.params,
+      );
     }
     const text = response?.statusText || "Request failed";
     return new ApiError(status, text, [text]);
   }
+}
+
+/** Kod błędu z odpowiedzi backendu, także gdy nie została opakowana w ApiError. */
+export function errorCode(body: unknown): string | undefined {
+  return isBackendErrorBody(body) ? body.code : undefined;
 }
 
 function isBackendErrorBody(body: unknown): body is BackendErrorBody {

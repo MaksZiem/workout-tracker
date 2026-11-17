@@ -44,7 +44,7 @@ async function forward(request: NextRequest, ctx: RouteContext<"/api/backend/[..
     });
   } catch {
     return NextResponse.json(
-      { statusCode: 502, error: "Bad Gateway", message: "Backend is unreachable" },
+      { statusCode: 502, code: "BACKEND_UNREACHABLE", error: "Bad Gateway", message: "Backend is unreachable" },
       { status: 502 },
     );
   }

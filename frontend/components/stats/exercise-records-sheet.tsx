@@ -22,7 +22,7 @@ async function loadRecords(exerciseId: number): Promise<Loaded> {
   const [records, repRecords] = await Promise.all([
     // 404 oznacza „brak ukończonych serii”, nie błąd.
     unwrap(clientApi.GET("/stats/exercise/{exerciseId}/records", path)).catch((error) => {
-      if (error instanceof ApiError && error.status === 404) return null;
+      if (error instanceof ApiError && error.code === "NO_COMPLETED_SETS") return null;
       throw error;
     }),
     unwrap(clientApi.GET("/stats/exercise/{exerciseId}/rep-records", path)),

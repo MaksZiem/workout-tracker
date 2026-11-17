@@ -58,7 +58,7 @@ export function ExerciseSheet({
       router.refresh();
       onClose();
     } catch (err) {
-      setError(err instanceof ApiError && err.status === 409 ? "duplicate" : "error");
+      setError(err instanceof ApiError && err.code === "EXERCISE_NAME_TAKEN" ? "duplicate" : "error");
       setPending(false);
     }
   };
@@ -306,7 +306,7 @@ export function DeleteExerciseSheet({
       onClose();
     } catch (err) {
       setPending(false);
-      if (err instanceof ApiError && err.status === 409) {
+      if (err instanceof ApiError && err.code === "EXERCISE_IN_USE") {
         // Ktoś zdążył użyć ćwiczenia: pokaż aktualne liczniki zamiast błędu.
         const fresh = await clientApi.GET("/exercise/{id}/usage", { params: { path: { id: exercise.id } } }).catch(() => null);
         setUsage(fresh?.data ? { state: "ready", usage: fresh.data } : { state: "error" });

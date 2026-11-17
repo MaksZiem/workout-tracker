@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
+import { errorBody } from 'src/common/error-body';
 import { GeminiService } from 'src/gemini/gemini.service';
 import { ExerciseService } from 'src/exercise/exercise.service';
 import { TemplateService } from 'src/template/template.service';
@@ -118,7 +119,7 @@ export class AiService {
   async parseWorkout(user: User, dto: ParseWorkoutDto) {
     const workout = await this.workoutService.findOne(user.id, dto.workoutId);
     if (!workout) {
-      throw new NotFoundException('Workout not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_NOT_FOUND', 'Workout not found'));
     }
     const exercises = await this.exerciseService.findAll();
     const validExerciseIds = new Set(exercises.map((e) => e.id));

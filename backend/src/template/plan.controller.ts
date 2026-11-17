@@ -9,16 +9,26 @@ import {
   Patch,
   Post,
   UseGuards,
+  HttpStatus,
 } from '@nestjs/common';
+import { errorBody } from 'src/common/error-body';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiCreatedResponse,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import {
+  BadRequestErrorDto,
+  NotFoundErrorDto,
+  UnauthorizedErrorDto,
+} from 'src/common/swagger/error-response.dto';
+import { BEARER_AUTH } from 'src/common/swagger/swagger.setup';
 import { PlanService } from './plan.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
@@ -26,10 +36,9 @@ import { User } from 'src/users/user.entity';
 import { CreateWorkoutPlanDto } from './dtos/create-workout-plan.dto';
 import { UpdateWorkoutPlanDto } from './dtos/update-workout-plan.dto';
 import { WorkoutPlan } from './workout-plan.entity';
-import { NotFoundErrorDto, UnauthorizedErrorDto } from 'src/common/dtos/error-response.dto';
 
 @ApiTags('plan')
-@ApiBearerAuth('access-token')
+@ApiBearerAuth(BEARER_AUTH)
 @ApiUnauthorizedResponse({ description: 'Brak tokenu lub token nieprawidłowy', type: UnauthorizedErrorDto })
 @Controller('plan')
 export class PlanController {
@@ -38,8 +47,8 @@ export class PlanController {
   @Post()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Utwórz plan treningowy', description: 'Plan grupuje wiele szablonów treningowych (np. plan tygodniowy złożony z dni Push/Pull/Legs).' })
-  @ApiResponse({ status: 201, description: 'Plan utworzony', type: WorkoutPlan })
-  @ApiResponse({ status: 400, description: 'Nieprawidłowe dane wejściowe' })
+  @ApiCreatedResponse({ description: 'Plan utworzony', type: WorkoutPlan })
+  @ApiBadRequestResponse({ description: 'Nieprawidłowe dane wejściowe', type: BadRequestErrorDto })
   create(@CurrentUser() user: User, @Body() dto: CreateWorkoutPlanDto) {
     return this.planService.create(user, dto);
   }
@@ -47,7 +56,7 @@ export class PlanController {
   @Get()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Pobierz wszystkie plany użytkownika' })
-  @ApiResponse({ status: 200, description: 'Lista planów', type: WorkoutPlan, isArray: true })
+  @ApiOkResponse({ description: 'Lista planów', type: WorkoutPlan, isArray: true })
   findAll(@CurrentUser() user: User) {
     return this.planService.findAllForUser(user.id);
   }
@@ -55,13 +64,13 @@ export class PlanController {
   @Get('/:id')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Pobierz szczegóły planu wraz z szablonami' })
-  @ApiParam({ name: 'id', type: Number, example: 1 })
-  @ApiResponse({ status: 200, description: 'Szczegóły planu', type: WorkoutPlan })
+  @ApiParam({ name: 'id', type: Number, example: 1, description: 'Identyfikator planu' })
+  @ApiOkResponse({ description: 'Szczegóły planu', type: WorkoutPlan })
   @ApiNotFoundResponse({ description: 'Plan nie istnieje lub nie należy do zalogowanego użytkownika', type: NotFoundErrorDto })
   async findOne(@CurrentUser() user: User, @Param('id', ParseIntPipe) id: number) {
     const plan = await this.planService.findOne(user.id, id);
     if (!plan) {
-      throw new NotFoundException('Workout plan not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'PLAN_NOT_FOUND', 'Workout plan not found'));
     }
     return plan;
   }
@@ -69,8 +78,8 @@ export class PlanController {
   @Patch('/:id')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Zaktualizuj plan (nazwa, notatki)' })
-  @ApiParam({ name: 'id', type: Number, example: 1 })
-  @ApiResponse({ status: 200, description: 'Zaktualizowany plan', type: WorkoutPlan })
+  @ApiParam({ name: 'id', type: Number, example: 1, description: 'Identyfikator planu' })
+  @ApiOkResponse({ description: 'Zaktualizowany plan', type: WorkoutPlan })
   @ApiNotFoundResponse({ description: 'Plan nie istnieje lub nie należy do zalogowanego użytkownika', type: NotFoundErrorDto })
   update(
     @CurrentUser() user: User,
@@ -83,8 +92,8 @@ export class PlanController {
   @Delete('/:id')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Usuń plan', description: 'Usuwa plan. Przypisane szablony są kaskadowo usuwane wraz z planem.' })
-  @ApiParam({ name: 'id', type: Number, example: 1 })
-  @ApiResponse({ status: 200, description: 'Plan usunięty', type: WorkoutPlan })
+  @ApiParam({ name: 'id', type: Number, example: 1, description: 'Identyfikator planu' })
+  @ApiOkResponse({ description: 'Plan usunięty', type: WorkoutPlan })
   @ApiNotFoundResponse({ description: 'Plan nie istnieje lub nie należy do zalogowanego użytkownika', type: NotFoundErrorDto })
   remove(@CurrentUser() user: User, @Param('id', ParseIntPipe) id: number) {
     return this.planService.remove(user.id, id);

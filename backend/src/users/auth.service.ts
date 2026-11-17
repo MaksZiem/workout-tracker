@@ -2,7 +2,9 @@ import {
   BadRequestException,
   Injectable,
   UnauthorizedException,
+  HttpStatus,
 } from '@nestjs/common';
+import { errorBody } from 'src/common/error-body';
 import { UsersService } from './users.service';
 import { JwtService } from '@nestjs/jwt';
 import { hashPassword } from 'src/helpers/hash-password';
@@ -21,7 +23,7 @@ export class AuthService {
   async signup(email: string, password: string, name: string, surname: string) {
     const users = await this.usersService.find(email);
     if (users.length) {
-      throw new BadRequestException('User already exists');
+      throw new BadRequestException(errorBody(HttpStatus.BAD_REQUEST, 'EMAIL_IN_USE', 'User already exists'));
     }
 
     const hashedPassword = await hashPassword(password);
@@ -44,7 +46,7 @@ export class AuthService {
     const [user] = await this.usersService.find(email);
 
     if (!user) {
-      throw new UnauthorizedException('Bad credentials');
+      throw new UnauthorizedException(errorBody(HttpStatus.UNAUTHORIZED, 'INVALID_CREDENTIALS', 'Invalid email or password'));
     }
 
     const [salt, storedHash] = user.password.split('.');
@@ -55,7 +57,7 @@ export class AuthService {
       storedHashBuffer.length !== hash.length ||
       !timingSafeEqual(storedHashBuffer, hash)
     ) {
-      throw new UnauthorizedException('common.auth.invalid_credentials');
+      throw new UnauthorizedException(errorBody(HttpStatus.UNAUTHORIZED, 'INVALID_CREDENTIALS', 'Invalid email or password'));
     }
 
     const payload = { id: user.id, email: user.email, role: user.role, name: user.name, surname: user.surname };

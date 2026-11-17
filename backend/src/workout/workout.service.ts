@@ -1,4 +1,5 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
+import { errorBody } from 'src/common/error-body';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Workout } from './workout.entity';
 import {
@@ -44,7 +45,7 @@ export class WorkoutService {
       where: { id, user: { id: userId } },
     });
     if (!workout) {
-      throw new NotFoundException('Workout not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_NOT_FOUND', 'Workout not found'));
     }
     if (!workout.finishedAt) {
       workout.finishedAt = new Date();
@@ -106,7 +107,7 @@ export class WorkoutService {
       where: { id, user: { id: userId } },
     });
     if (!workout) {
-      throw new NotFoundException('Workout not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_NOT_FOUND', 'Workout not found'));
     }
     assignDefined(workout, dto);
     return this.repo.save(workout);
@@ -117,7 +118,7 @@ export class WorkoutService {
       where: { id, user: { id: userId } },
     });
     if (!workout) {
-      throw new NotFoundException('Workout not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_NOT_FOUND', 'Workout not found'));
     }
     // Trening z planera: wpis wraca do „zaplanowanych”, żeby dało się go rozpocząć
     // od nowa (inaczej zostałby „w trakcie”/„wykonany” bez żadnego treningu).
@@ -138,10 +139,10 @@ export class WorkoutService {
       where: { id, user: { id: userId } },
     });
     if (!workout) {
-      throw new NotFoundException('Workout not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_NOT_FOUND', 'Workout not found'));
     }
     if (workout.finishedAt) {
-      throw new ConflictException('Workout is already finished');
+      throw new ConflictException(errorBody(HttpStatus.CONFLICT, 'WORKOUT_ALREADY_FINISHED', 'Workout is already finished'));
     }
     await this.remove(userId, id);
     return { cancelled: true };
@@ -153,7 +154,7 @@ export class WorkoutService {
       relations: ['exercises', 'exercises.exercise', 'exercises.sets'],
     });
     if (!workout) {
-      throw new NotFoundException('Workout not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_NOT_FOUND', 'Workout not found'));
     }
 
     const duplicate = this.repo.create({
@@ -214,12 +215,12 @@ export class WorkoutService {
       where: { id: workoutId, user: { id: userId } },
     });
     if (!workout) {
-      throw new NotFoundException('Workout not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_NOT_FOUND', 'Workout not found'));
     }
 
     const exercise = await this.exerciseService.findOne(dto.exerciseId);
     if (!exercise) {
-      throw new NotFoundException('Exercise not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'EXERCISE_NOT_FOUND', 'Exercise not found'));
     }
 
     const workoutExercise = this.workoutExerciseRepo.create({
@@ -240,7 +241,7 @@ export class WorkoutService {
       where: { id: weId, workout: { id: workoutId, user: { id: userId } } },
     });
     if (!we) {
-      throw new NotFoundException('Workout exercise not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_EXERCISE_NOT_FOUND', 'Workout exercise not found'));
     }
     assignDefined(we, dto);
     return this.workoutExerciseRepo.save(we);
@@ -251,7 +252,7 @@ export class WorkoutService {
       where: { id: weId, workout: { id: workoutId, user: { id: userId } } },
     });
     if (!we) {
-      throw new NotFoundException('Workout exercise not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_EXERCISE_NOT_FOUND', 'Workout exercise not found'));
     }
     return this.workoutExerciseRepo.remove(we);
   }
@@ -266,7 +267,7 @@ export class WorkoutService {
       where: { id: weId, workout: { id: workoutId, user: { id: userId } } },
     });
     if (!we) {
-      throw new NotFoundException('Workout exercise not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_EXERCISE_NOT_FOUND', 'Workout exercise not found'));
     }
     const exerciseSet = this.exerciseSetRepo.create({
       ...dto,
@@ -289,7 +290,7 @@ export class WorkoutService {
       },
     });
     if (!set) {
-      throw new NotFoundException('Set not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'SET_NOT_FOUND', 'Set not found'));
     }
 
     assignDefined(set, dto);
@@ -310,7 +311,7 @@ export class WorkoutService {
       },
     });
     if (!set) {
-      throw new NotFoundException('Set not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'SET_NOT_FOUND', 'Set not found'));
     }
     return this.exerciseSetRepo.remove(set);
   }

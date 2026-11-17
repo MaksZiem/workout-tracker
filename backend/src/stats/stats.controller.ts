@@ -2,21 +2,25 @@ import { Controller, Get, Param, ParseIntPipe, Query, UseGuards } from '@nestjs/
 import {
   ApiBearerAuth,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import {
+  NotFoundErrorDto,
+  UnauthorizedErrorDto,
+} from 'src/common/swagger/error-response.dto';
+import { BEARER_AUTH } from 'src/common/swagger/swagger.setup';
 import { StatsService } from './stats.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { User } from 'src/users/user.entity';
 import { ExerciseProgressFilterDto } from './dtos/exercise-progress-filter.dto';
-import { NotFoundErrorDto, UnauthorizedErrorDto } from 'src/common/dtos/error-response.dto';
 
 @ApiTags('stats')
-@ApiBearerAuth('access-token')
+@ApiBearerAuth(BEARER_AUTH)
 @ApiUnauthorizedResponse({ description: 'Brak tokenu lub token nieprawidłowy', type: UnauthorizedErrorDto })
 @Controller('stats')
 export class StatsController {
@@ -28,9 +32,8 @@ export class StatsController {
     summary: 'Postęp w danym ćwiczeniu w czasie',
     description: 'Zwraca chronologiczną listę punktów postępu (ciężar, objętość, szacowany 1RM) dla wskazanego ćwiczenia, opcjonalnie w zadanym zakresie dat.',
   })
-  @ApiParam({ name: 'exerciseId', type: Number, example: 1 })
-  @ApiResponse({
-    status: 200,
+  @ApiParam({ name: 'exerciseId', type: Number, example: 1, description: 'Identyfikator ćwiczenia' })
+  @ApiOkResponse({
     description: 'Lista punktów postępu, jeden na trening zawierający dane ćwiczenie',
     schema: {
       example: [
@@ -65,9 +68,8 @@ export class StatsController {
     summary: 'Rekordy życiowe dla danego ćwiczenia',
     description: 'Zwraca najlepszy ciężar, najlepszą objętość w pojedynczej serii oraz najlepszy szacowany ciężar maksymalny (1RM) dla wskazanego ćwiczenia, liczone na podstawie ukończonych serii.',
   })
-  @ApiParam({ name: 'exerciseId', type: Number, example: 1 })
-  @ApiResponse({
-    status: 200,
+  @ApiParam({ name: 'exerciseId', type: Number, example: 1, description: 'Identyfikator ćwiczenia' })
+  @ApiOkResponse({
     description: 'Rekordy życiowe dla ćwiczenia',
     schema: {
       example: {
@@ -94,8 +96,7 @@ export class StatsController {
   @Get('/records')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Rekordy życiowe dla wszystkich ćwiczeń', description: 'Zwraca rekordy życiowe (jak wyżej) dla każdego ćwiczenia, w którym użytkownik ma choć jedną ukończoną serię.' })
-  @ApiResponse({
-    status: 200,
+  @ApiOkResponse({
     description: 'Lista rekordów życiowych pogrupowanych po ćwiczeniu',
     schema: {
       example: [
@@ -122,8 +123,7 @@ export class StatsController {
   @Get('/muscle-groups')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Rozkład objętości treningowej wg grup mięśniowych', description: 'Zwraca liczbę ukończonych serii i całkowitą objętość (ciężar x powtórzenia) dla każdej trenowanej grupy mięśniowej, opcjonalnie w zadanym zakresie dat.' })
-  @ApiResponse({
-    status: 200,
+  @ApiOkResponse({
     description: 'Rozkład serii/objętości wg grupy mięśniowej',
     schema: {
       example: [
@@ -145,8 +145,7 @@ export class StatsController {
     summary: 'Częstotliwość treningów (heatmapa)',
     description: 'Zwraca gęstą listę dni (bez dziur) z liczbą treningów w danym dniu oraz liczbą pominiętych lub przegapionych treningów z planu (`missed`) - gotową pod heatmapę w stylu GitHub contributions. Domyślnie ostatnie 365 dni.',
   })
-  @ApiResponse({
-    status: 200,
+  @ApiOkResponse({
     description: 'Lista dni z liczbą treningów',
     schema: {
       example: [
@@ -166,7 +165,7 @@ export class StatsController {
   @Get('/streak')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Aktualna passa treningowa', description: 'Zwraca liczbę kolejnych dni (licząc wstecz od dziś lub wczoraj) z co najmniej jednym treningiem.' })
-  @ApiResponse({ status: 200, description: 'Liczba dni passy treningowej', schema: { type: 'number', example: 5 } })
+  @ApiOkResponse({ description: 'Liczba dni passy treningowej', schema: { type: 'number', example: 5 } })
   getCurrentStreak(@CurrentUser() user: User) {
     return this.statsService.getCurrentStreak(user.id)
   }
@@ -174,8 +173,7 @@ export class StatsController {
   @Get('/summary')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Podsumowanie aktywności użytkownika', description: 'Zwraca zbiorcze statystyki: liczbę treningów, serii, łączną objętość, średnią liczbę serii na trening, najczęściej trenowaną grupę mięśniową i aktualną passę.' })
-  @ApiResponse({
-    status: 200,
+  @ApiOkResponse({
     description: 'Podsumowanie statystyk',
     schema: {
       example: {
@@ -201,9 +199,8 @@ export class StatsController {
     summary: 'Rekordy powtórzeń dla danego ćwiczenia',
     description: 'Dla 1, 3, 5, 8, 10 i 12 powtórzeń zwraca największy ciężar z ukończonej serii o co najmniej tylu powtórzeniach (seria 100 kg × 8 jest też rekordem 5RM). Brak serii - pola null.',
   })
-  @ApiParam({ name: 'exerciseId', type: Number, example: 1 })
-  @ApiResponse({
-    status: 200,
+  @ApiParam({ name: 'exerciseId', type: Number, example: 1, description: 'Identyfikator ćwiczenia' })
+  @ApiOkResponse({
     description: 'Rekordy dla kolejnych liczb powtórzeń',
     schema: {
       example: [
@@ -226,8 +223,7 @@ export class StatsController {
     summary: 'Realizacja planu treningowego',
     description: 'Zlicza zaplanowane treningi w zakresie: zrealizowane, pominięte, przegapione (zaplanowane w przeszłości i nierozpoczęte) oraz nadchodzące. `rate` to udział zrealizowanych wśród tych, które już powinny się odbyć (null, gdy takich nie ma).',
   })
-  @ApiResponse({
-    status: 200,
+  @ApiOkResponse({
     description: 'Podsumowanie realizacji planu',
     schema: { example: { completed: 11, skipped: 1, missed: 1, upcoming: 3, rate: 0.846 } },
   })
@@ -244,8 +240,7 @@ export class StatsController {
     summary: 'Treningi, serie i objętość tydzień po tygodniu',
     description: 'Zwraca gęstą listę tygodni (pon–niedz.) z liczbą treningów, ukończonych serii i objętością. Bez `from` - od tygodnia pierwszego treningu.',
   })
-  @ApiResponse({
-    status: 200,
+  @ApiOkResponse({
     description: 'Lista tygodni',
     schema: {
       example: [
@@ -267,8 +262,7 @@ export class StatsController {
     summary: 'Rozkład serii wg zakresu powtórzeń',
     description: 'Liczba ukończonych serii w zakresach: STRENGTH (1–5), HYPERTROPHY (6–12), ENDURANCE (13+).',
   })
-  @ApiResponse({
-    status: 200,
+  @ApiOkResponse({
     description: 'Serie w trzech zakresach powtórzeń',
     schema: {
       example: [
@@ -291,8 +285,7 @@ export class StatsController {
     summary: 'Ćwiczenia bez postępu',
     description: 'Ćwiczenia trenowane w ostatnich 21 dniach, w których najlepszy szacowany 1RM pochodzi sprzed ponad 42 dni, a od tamtej pory były co najmniej 3 sesje. Najdłuższy zastój pierwszy.',
   })
-  @ApiResponse({
-    status: 200,
+  @ApiOkResponse({
     description: 'Lista ćwiczeń w zastoju',
     schema: {
       example: [

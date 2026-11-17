@@ -1,7 +1,7 @@
 import "server-only";
 
 import { serverApi } from "@/lib/api/server";
-import { ApiError, unwrap } from "@/lib/api/errors";
+import { ApiError, errorCode, unwrap } from "@/lib/api/errors";
 import { MUSCLE_GROUPS, type ExercisePersonalRecords, type MuscleGroup } from "@/lib/api/extra-types";
 import { settle, type Section } from "@/lib/stats/model";
 
@@ -48,7 +48,7 @@ export type SubstitutesSection = { ok: true; data: SubstituteItem[] } | { ok: fa
 export async function loadExerciseCard(id: number) {
   const api = await serverApi();
   const exercise = await api.GET("/exercise/{id}", { params: { path: { id } } });
-  if (exercise.response.status === 404) return null;
+  if (errorCode(exercise.error) === "EXERCISE_NOT_FOUND") return null;
   if (!exercise.data) throw ApiError.from(exercise.error, exercise.response);
 
   const [records, substitutes] = await Promise.all([

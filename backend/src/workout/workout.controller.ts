@@ -10,17 +10,28 @@ import {
   Post,
   Query,
   UseGuards,
+  HttpStatus,
 } from '@nestjs/common';
+import { errorBody } from 'src/common/error-body';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiConflictResponse,
+  ApiCreatedResponse,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import {
+  BadRequestErrorDto,
+  ConflictErrorDto,
+  NotFoundErrorDto,
+  UnauthorizedErrorDto,
+} from 'src/common/swagger/error-response.dto';
+import { BEARER_AUTH } from 'src/common/swagger/swagger.setup';
 import { WorkoutService } from './workout.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
@@ -35,10 +46,9 @@ import { UpdateSetDto } from './dtos/update-set.dto';
 import { Workout } from './workout.entity';
 import { WorkoutExercise } from './workout-exercise.entity';
 import { ExerciseSet } from './exercise-set.entity';
-import { ConflictErrorDto, NotFoundErrorDto, UnauthorizedErrorDto } from 'src/common/dtos/error-response.dto';
 
 @ApiTags('workout')
-@ApiBearerAuth('access-token')
+@ApiBearerAuth(BEARER_AUTH)
 @ApiUnauthorizedResponse({ description: 'Brak tokenu lub token nieprawidłowy', type: UnauthorizedErrorDto })
 @Controller('workout')
 export class WorkoutController {
@@ -47,8 +57,8 @@ export class WorkoutController {
   @Post()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Utwórz nowy trening', description: 'Zakłada pusty trening (bez ćwiczeń) na wskazany dzień. Ćwiczenia i serie dodaje się osobnymi endpointami.' })
-  @ApiResponse({ status: 201, description: 'Trening utworzony', type: Workout })
-  @ApiResponse({ status: 400, description: 'Nieprawidłowe dane wejściowe (np. zły format daty)' })
+  @ApiCreatedResponse({ description: 'Trening utworzony', type: Workout })
+  @ApiBadRequestResponse({ description: 'Nieprawidłowe dane wejściowe (np. zły format daty)', type: BadRequestErrorDto })
   createWorkout(@CurrentUser() user: User, @Body() dto: CreateWorkoutDto) {
     return this.workoutService.create(user, dto);
   }
@@ -56,7 +66,7 @@ export class WorkoutController {
   @Get()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Pobierz treningi użytkownika', description: 'Zwraca listę treningów zalogowanego użytkownika, posortowaną malejąco po dacie. Opcjonalnie filtruje po zakresie dat.' })
-  @ApiResponse({ status: 200, description: 'Lista treningów', type: Workout, isArray: true })
+  @ApiOkResponse({ description: 'Lista treningów', type: Workout, isArray: true })
   findAllWorkoutsForUser(
     @CurrentUser() user: User,
     @Query() filters: FindWorkoutDto,
@@ -68,7 +78,7 @@ export class WorkoutController {
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Pobierz szczegóły treningu', description: 'Zwraca trening wraz z listą ćwiczeń i seriami.' })
   @ApiParam({ name: 'id', type: Number, example: 1, description: 'Identyfikator treningu' })
-  @ApiResponse({ status: 200, description: 'Szczegóły treningu', type: Workout })
+  @ApiOkResponse({ description: 'Szczegóły treningu', type: Workout })
   @ApiNotFoundResponse({ description: 'Trening nie istnieje lub nie należy do zalogowanego użytkownika', type: NotFoundErrorDto })
   async findOneForUser(
     @CurrentUser() user: User,
@@ -76,7 +86,7 @@ export class WorkoutController {
   ) {
     const workout = await this.workoutService.findOne(user.id, id);
     if (!workout) {
-      throw new NotFoundException('Workout not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_NOT_FOUND', 'Workout not found'));
     }
     return workout;
   }
@@ -85,7 +95,7 @@ export class WorkoutController {
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Zaktualizuj trening', description: 'Aktualizuje datę i/lub notatki treningu.' })
   @ApiParam({ name: 'id', type: Number, example: 1, description: 'Identyfikator treningu' })
-  @ApiResponse({ status: 200, description: 'Zaktualizowany trening', type: Workout })
+  @ApiOkResponse({ description: 'Zaktualizowany trening', type: Workout })
   @ApiNotFoundResponse({ description: 'Trening nie istnieje lub nie należy do zalogowanego użytkownika', type: NotFoundErrorDto })
   update(
     @CurrentUser() user: User,
@@ -99,7 +109,7 @@ export class WorkoutController {
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Usuń trening', description: 'Usuwa trening wraz ze wszystkimi jego ćwiczeniami i seriami (kaskadowo). Jeśli trening pochodził z planera, wpis wraca do statusu PLANNED.' })
   @ApiParam({ name: 'id', type: Number, example: 1, description: 'Identyfikator treningu' })
-  @ApiResponse({ status: 200, description: 'Trening usunięty', type: Workout })
+  @ApiOkResponse({ description: 'Trening usunięty', type: Workout })
   @ApiNotFoundResponse({ description: 'Trening nie istnieje lub nie należy do zalogowanego użytkownika', type: NotFoundErrorDto })
   remove(@CurrentUser() user: User, @Param('id', ParseIntPipe) id: number) {
     return this.workoutService.remove(user.id, id);
@@ -112,7 +122,7 @@ export class WorkoutController {
     description: 'Tworzy kopię treningu (z dzisiejszą datą) wraz z tymi samymi ćwiczeniami i seriami, ale z resetem statusu "completed" na false.',
   })
   @ApiParam({ name: 'id', type: Number, example: 1, description: 'Identyfikator treningu do zduplikowania' })
-  @ApiResponse({ status: 201, description: 'Nowy trening (kopia)', type: Workout })
+  @ApiCreatedResponse({ description: 'Nowy trening (kopia)', type: Workout })
   @ApiNotFoundResponse({ description: 'Trening źródłowy nie istnieje lub nie należy do zalogowanego użytkownika', type: NotFoundErrorDto })
   duplicateWorkout(
     @CurrentUser() user: User,
@@ -129,7 +139,7 @@ export class WorkoutController {
       'Ustawia finishedAt (jeśli jeszcze nie ustawione) i oznacza powiązany zaplanowany trening jako COMPLETED. Operacja idempotentna.',
   })
   @ApiParam({ name: 'id', type: Number, example: 1, description: 'Identyfikator treningu' })
-  @ApiResponse({ status: 201, description: 'Zakończony trening', type: Workout })
+  @ApiCreatedResponse({ description: 'Zakończony trening', type: Workout })
   @ApiNotFoundResponse({ description: 'Trening nie istnieje lub nie należy do zalogowanego użytkownika', type: NotFoundErrorDto })
   finish(@CurrentUser() user: User, @Param('id', ParseIntPipe) id: number) {
     return this.workoutService.finish(user.id, id);
@@ -143,7 +153,7 @@ export class WorkoutController {
       'Przerywa trening w trakcie: usuwa go wraz z ćwiczeniami i seriami, a powiązany zaplanowany trening wraca do statusu PLANNED, więc można go rozpocząć od nowa. Zakończonego treningu nie można przerwać (409).',
   })
   @ApiParam({ name: 'id', type: Number, example: 1, description: 'Identyfikator treningu' })
-  @ApiResponse({ status: 201, description: 'Trening przerwany', schema: { example: { cancelled: true } } })
+  @ApiCreatedResponse({ description: 'Trening przerwany', schema: { example: { cancelled: true } } })
   @ApiNotFoundResponse({ description: 'Trening nie istnieje lub nie należy do zalogowanego użytkownika', type: NotFoundErrorDto })
   @ApiConflictResponse({ description: 'Trening jest już zakończony', type: ConflictErrorDto })
   cancel(@CurrentUser() user: User, @Param('id', ParseIntPipe) id: number) {
@@ -156,7 +166,7 @@ export class WorkoutController {
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Dodaj ćwiczenie do treningu', description: 'Dołącza ćwiczenie z globalnego katalogu do wskazanego treningu.' })
   @ApiParam({ name: 'workoutId', type: Number, example: 1, description: 'Identyfikator treningu' })
-  @ApiResponse({ status: 201, description: 'Ćwiczenie dodane do treningu', type: WorkoutExercise })
+  @ApiCreatedResponse({ description: 'Ćwiczenie dodane do treningu', type: WorkoutExercise })
   @ApiNotFoundResponse({ description: 'Trening lub ćwiczenie nie istnieje', type: NotFoundErrorDto })
   addExercise(
     @CurrentUser() user: User,
@@ -171,7 +181,7 @@ export class WorkoutController {
   @ApiOperation({ summary: 'Zaktualizuj ćwiczenie w treningu', description: 'Pozwala zmienić kolejność ćwiczenia w ramach treningu.' })
   @ApiParam({ name: 'workoutId', type: Number, example: 1, description: 'Identyfikator treningu' })
   @ApiParam({ name: 'weId', type: Number, example: 5, description: 'Identyfikator wpisu ćwiczenia w treningu (workout exercise id)' })
-  @ApiResponse({ status: 200, description: 'Zaktualizowane ćwiczenie treningowe', type: WorkoutExercise })
+  @ApiOkResponse({ description: 'Zaktualizowane ćwiczenie treningowe', type: WorkoutExercise })
   @ApiNotFoundResponse({ description: 'Wpis ćwiczenia nie istnieje w tym treningu', type: NotFoundErrorDto })
   updateExercise(
     @CurrentUser() user: User,
@@ -187,7 +197,7 @@ export class WorkoutController {
   @ApiOperation({ summary: 'Usuń ćwiczenie z treningu', description: 'Usuwa ćwiczenie wraz ze wszystkimi jego seriami (kaskadowo).' })
   @ApiParam({ name: 'workoutId', type: Number, example: 1, description: 'Identyfikator treningu' })
   @ApiParam({ name: 'weId', type: Number, example: 5, description: 'Identyfikator wpisu ćwiczenia w treningu' })
-  @ApiResponse({ status: 200, description: 'Ćwiczenie usunięte z treningu', type: WorkoutExercise })
+  @ApiOkResponse({ description: 'Ćwiczenie usunięte z treningu', type: WorkoutExercise })
   @ApiNotFoundResponse({ description: 'Wpis ćwiczenia nie istnieje w tym treningu', type: NotFoundErrorDto })
   removeExercise(
     @CurrentUser() user: User,
@@ -204,7 +214,7 @@ export class WorkoutController {
   @ApiOperation({ summary: 'Dodaj serię do ćwiczenia', description: 'Rejestruje wykonaną (lub zaplanowaną) serię dla danego ćwiczenia w treningu.' })
   @ApiParam({ name: 'workoutId', type: Number, example: 1, description: 'Identyfikator treningu' })
   @ApiParam({ name: 'weId', type: Number, example: 5, description: 'Identyfikator wpisu ćwiczenia w treningu' })
-  @ApiResponse({ status: 201, description: 'Seria dodana', type: ExerciseSet })
+  @ApiCreatedResponse({ description: 'Seria dodana', type: ExerciseSet })
   @ApiNotFoundResponse({ description: 'Wpis ćwiczenia nie istnieje w tym treningu', type: NotFoundErrorDto })
   addSet(
     @CurrentUser() user: User,
@@ -221,7 +231,7 @@ export class WorkoutController {
   @ApiParam({ name: 'workoutId', type: Number, example: 1, description: 'Identyfikator treningu' })
   @ApiParam({ name: 'weId', type: Number, example: 5, description: 'Identyfikator wpisu ćwiczenia w treningu' })
   @ApiParam({ name: 'setId', type: Number, example: 12, description: 'Identyfikator serii' })
-  @ApiResponse({ status: 200, description: 'Zaktualizowana seria', type: ExerciseSet })
+  @ApiOkResponse({ description: 'Zaktualizowana seria', type: ExerciseSet })
   @ApiNotFoundResponse({ description: 'Seria nie istnieje w tym ćwiczeniu/treningu', type: NotFoundErrorDto })
   updateSet(
     @CurrentUser() user: User,
@@ -239,7 +249,7 @@ export class WorkoutController {
   @ApiParam({ name: 'workoutId', type: Number, example: 1, description: 'Identyfikator treningu' })
   @ApiParam({ name: 'weId', type: Number, example: 5, description: 'Identyfikator wpisu ćwiczenia w treningu' })
   @ApiParam({ name: 'setId', type: Number, example: 12, description: 'Identyfikator serii' })
-  @ApiResponse({ status: 200, description: 'Seria usunięta', type: ExerciseSet })
+  @ApiOkResponse({ description: 'Seria usunięta', type: ExerciseSet })
   @ApiNotFoundResponse({ description: 'Seria nie istnieje w tym ćwiczeniu/treningu', type: NotFoundErrorDto })
   removeSet(
     @CurrentUser() user: User,

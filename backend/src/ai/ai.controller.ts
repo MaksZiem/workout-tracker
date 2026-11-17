@@ -1,23 +1,29 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOperation,
-  ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import {
+  BadRequestErrorDto,
+  NotFoundErrorDto,
+  UnauthorizedErrorDto,
+} from 'src/common/swagger/error-response.dto';
+import { BEARER_AUTH } from 'src/common/swagger/swagger.setup';
 import { AiService } from './ai.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { User } from 'src/users/user.entity';
 import { GenerateWorkoutPlanDto } from './dtos/generate-workout-plan.dto';
 import { ParseWorkoutDto } from './dtos/parse-workout.dto';
-import { NotFoundErrorDto, UnauthorizedErrorDto } from 'src/common/dtos/error-response.dto';
 
 @ApiTags('ai')
-@ApiBearerAuth('access-token')
+@ApiBearerAuth(BEARER_AUTH)
 @ApiUnauthorizedResponse({ description: 'Brak tokenu lub token nieprawidłowy', type: UnauthorizedErrorDto })
 @ApiInternalServerErrorResponse({ description: 'Błąd komunikacji z usługą AI (Gemini)' })
 @Controller('ai')
@@ -31,8 +37,7 @@ export class AiController {
     description:
       'Na podstawie celu treningowego, liczby dni w tygodniu i opcjonalnych ograniczeń, model Gemini układa plan treningowy. Automatycznie tworzy nowy WorkoutPlan oraz po jednym WorkoutTemplate na każdy dzień treningowy, wypełniony ćwiczeniami wyłącznie z istniejącego katalogu ćwiczeń.',
   })
-  @ApiResponse({
-    status: 201,
+  @ApiCreatedResponse({
     description: 'Wygenerowany i zapisany plan treningowy wraz z utworzonymi szablonami',
     schema: {
       example: {
@@ -63,7 +68,7 @@ export class AiController {
       },
     },
   })
-  @ApiResponse({ status: 400, description: 'Nieprawidłowe dane wejściowe (np. daysPerWeek poza zakresem 1-7)' })
+  @ApiBadRequestResponse({ description: 'Nieprawidłowe dane wejściowe (np. daysPerWeek poza zakresem 1-7)', type: BadRequestErrorDto })
   generatePlan(@CurrentUser() user: User, @Body() dto: GenerateWorkoutPlanDto) {
     return this.aiService.generatePlan(user, dto);
   }
@@ -75,8 +80,7 @@ export class AiController {
     description:
       'Analizuje swobodny opis treningu w języku naturalnym za pomocą modelu Gemini, rozpoznaje wykonane ćwiczenia i serie (dopasowując je do istniejącego katalogu ćwiczeń) i dopisuje je do wskazanego, istniejącego treningu jako ukończone serie.',
   })
-  @ApiResponse({
-    status: 201,
+  @ApiCreatedResponse({
     description: 'Zaktualizowany trening z dopisanymi ćwiczeniami i seriami rozpoznanymi z tekstu',
     schema: {
       example: {

@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { errorCode } from "@/lib/api/errors";
 import { serverApi } from "@/lib/api/server";
 import { SESSION_COOKIE } from "./constants";
 import { readToken } from "./token";
@@ -60,7 +61,7 @@ export async function signIn(_prev: AuthFormState, formData: FormData): Promise<
       body: { email, password },
     });
     if (!data) {
-      if (response.status === 401) return { error: "invalidCredentials", values };
+      if (errorCode(error) === "INVALID_CREDENTIALS") return { error: "invalidCredentials", values };
       if (response.status === 400) return { error: "validation", details: toMessages(error), values };
       return { error: "unknown", values };
     }
@@ -88,7 +89,7 @@ export async function signUp(_prev: AuthFormState, formData: FormData): Promise<
     });
     if (!data) {
       const details = toMessages(error);
-      if (details.some((m) => /already exists/i.test(m))) return { error: "userExists", values };
+      if (errorCode(error) === "EMAIL_IN_USE") return { error: "userExists", values };
       if (response.status === 400) return { error: "validation", details, values };
       return { error: "unknown", values };
     }

@@ -1,15 +1,25 @@
-import { Body, Controller, Delete, ForbiddenException, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, ForbiddenException, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards, HttpStatus } from "@nestjs/common";
+import { errorBody } from "src/common/error-body";
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
+  ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
-} from "@nestjs/swagger";
+} from '@nestjs/swagger';
+import {
+  BadRequestErrorDto,
+  ForbiddenErrorDto,
+  NotFoundErrorDto,
+  UnauthorizedErrorDto,
+} from 'src/common/swagger/error-response.dto';
+import { BEARER_AUTH } from 'src/common/swagger/swagger.setup';
 import { UsersService } from "./users.service";
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "src/guards/auth.guard";
@@ -26,7 +36,6 @@ import { TokenResponseDto } from "./dtos/token-response.dto";
 import { AdminUserDto } from "./dtos/admin-user.dto";
 import { AdminUsersPageDto } from "./dtos/admin-users-page.dto";
 import { FindUsersDto } from "./dtos/find-users.dto";
-import { BadRequestErrorDto, ForbiddenErrorDto, NotFoundErrorDto, UnauthorizedErrorDto } from "src/common/dtos/error-response.dto";
 
 @ApiTags('auth')
 @Controller('auth')
@@ -38,12 +47,12 @@ export class UsersController {
 
   @Get('/context')
   @UseGuards(AuthGuard)
-  @ApiBearerAuth('access-token')
+  @ApiBearerAuth(BEARER_AUTH)
   @ApiOperation({
     summary: 'Pobierz dane zalogowanego użytkownika',
     description: 'Zwraca profil użytkownika powiązanego z tokenem JWT przesłanym w nagłówku Authorization.',
   })
-  @ApiResponse({ status: 200, description: 'Dane bieżącego użytkownika', type: UserDto })
+  @ApiOkResponse({ description: 'Dane bieżącego użytkownika', type: UserDto })
   @ApiUnauthorizedResponse({ description: 'Brak tokenu, token nieprawidłowy lub użytkownik nie istnieje', type: UnauthorizedErrorDto })
   async getContext(@CurrentUser() user: User) {
     const found = await this.usersService.findOne(user.id)
@@ -52,14 +61,14 @@ export class UsersController {
 
   @Get('/users')
   @UseGuards(AdminGuard)
-  @ApiBearerAuth('access-token')
+  @ApiBearerAuth(BEARER_AUTH)
   @ApiOperation({
     summary: 'Lista użytkowników (tylko administrator)',
     description:
       'Strona użytkowników wraz z liczbą zapisanych treningów. Wyszukiwanie (`search`), sortowanie (`sort`, `order`) i paginacja (`page`, `limit`) odbywają się w bazie. Przy remisie kolejność wyznacza id.',
   })
-  @ApiResponse({ status: 200, description: 'Strona listy użytkowników', type: AdminUsersPageDto })
-  @ApiResponse({ status: 400, description: 'Nieprawidłowe parametry (np. nieznane pole sortowania, limit spoza 1-100)', type: BadRequestErrorDto })
+  @ApiOkResponse({ description: 'Strona listy użytkowników', type: AdminUsersPageDto })
+  @ApiBadRequestResponse({ description: 'Nieprawidłowe parametry (np. nieznane pole sortowania, limit spoza 1-100)', type: BadRequestErrorDto })
   @ApiUnauthorizedResponse({ description: 'Brak tokenu lub token nieprawidłowy', type: UnauthorizedErrorDto })
   @ApiForbiddenResponse({ description: 'Zalogowany użytkownik nie jest administratorem', type: ForbiddenErrorDto })
   async listUsers(@Query() filters: FindUsersDto) {
@@ -73,8 +82,8 @@ export class UsersController {
     description: 'Tworzy nowego użytkownika o roli USER i od razu zwraca token JWT (bez konieczności osobnego logowania).',
   })
   @ApiBody({ type: CreateUserDto })
-  @ApiResponse({ status: 201, description: 'Konto utworzone, zwrócono token dostępu', type: TokenResponseDto })
-  @ApiResponse({ status: 400, description: 'Błędne dane wejściowe (np. nieprawidłowy e-mail, za krótkie hasło) lub użytkownik o podanym adresie e-mail już istnieje', type: BadRequestErrorDto })
+  @ApiCreatedResponse({ description: 'Konto utworzone, zwrócono token dostępu', type: TokenResponseDto })
+  @ApiBadRequestResponse({ description: 'Błędne dane wejściowe (np. nieprawidłowy e-mail, za krótkie hasło) lub użytkownik o podanym adresie e-mail już istnieje', type: BadRequestErrorDto })
   signUp(@Body() body: CreateUserDto) {
     return this.authService.signup(body.email, body.password, body.name, body.surname)
   }
@@ -85,7 +94,7 @@ export class UsersController {
     description: 'Weryfikuje e-mail i hasło, zwraca token JWT używany do autoryzacji kolejnych żądań.',
   })
   @ApiBody({ type: SigninDto })
-  @ApiResponse({ status: 201, description: 'Zalogowano pomyślnie, zwrócono token dostępu', type: TokenResponseDto })
+  @ApiCreatedResponse({ description: 'Zalogowano pomyślnie, zwrócono token dostępu', type: TokenResponseDto })
   @ApiUnauthorizedResponse({ description: 'Nieprawidłowy e-mail lub hasło', type: UnauthorizedErrorDto })
   signIn(@Body() body: SigninDto){
     return this.authService.signin(body.email, body.password)
@@ -93,27 +102,27 @@ export class UsersController {
 
   @Delete('/:id')
   @UseGuards(AdminGuard)
-  @ApiBearerAuth('access-token')
+  @ApiBearerAuth(BEARER_AUTH)
   @ApiOperation({
     summary: 'Usuń użytkownika (tylko administrator)',
     description: 'Trwale usuwa konto użytkownika o podanym id wraz z jego treningami, szablonami, planami i wpisami w planerze. Wymaga roli ADMIN. Administrator nie może usunąć własnego konta (403).',
   })
   @ApiParam({ name: 'id', type: Number, description: 'Identyfikator użytkownika', example: 1 })
-  @ApiResponse({ status: 200, description: 'Użytkownik usunięty', type: User })
+  @ApiOkResponse({ description: 'Użytkownik usunięty', type: User })
   @ApiUnauthorizedResponse({ description: 'Brak tokenu lub token nieprawidłowy', type: UnauthorizedErrorDto })
   @ApiForbiddenResponse({ description: 'Zalogowany użytkownik nie jest administratorem albo próbuje usunąć własne konto', type: ForbiddenErrorDto })
   @ApiNotFoundResponse({ description: 'Użytkownik o podanym id nie istnieje', type: NotFoundErrorDto })
   removeUser(@Param('id', ParseIntPipe) id: number, @CurrentUser() currentUser: User) {
     // Własne konto usuwa się gdzie indziej; tu chroni przed odcięciem ostatniego administratora.
     if (currentUser.id === id) {
-      throw new ForbiddenException('Admins cannot delete their own account')
+      throw new ForbiddenException(errorBody(HttpStatus.FORBIDDEN, 'ADMIN_CANNOT_DELETE_SELF', 'Admins cannot delete their own account'))
     }
     return this.usersService.remove(id)
   }
 
   @Patch('/:id')
   @UseGuards(AuthGuard)
-  @ApiBearerAuth('access-token')
+  @ApiBearerAuth(BEARER_AUTH)
   @ApiOperation({
     summary: 'Zaktualizuj dane użytkownika',
     description:
@@ -121,7 +130,7 @@ export class UsersController {
   })
   @ApiParam({ name: 'id', type: Number, description: 'Identyfikator użytkownika do zaktualizowania', example: 1 })
   @ApiBody({ type: UpdateUserDto })
-  @ApiResponse({ status: 200, description: 'Zaktualizowany użytkownik', type: User })
+  @ApiOkResponse({ description: 'Zaktualizowany użytkownik', type: User })
   @ApiUnauthorizedResponse({ description: 'Brak tokenu lub token nieprawidłowy', type: UnauthorizedErrorDto })
   @ApiForbiddenResponse({
     description: 'Próba edycji cudzego konta albo zmiany roli bez uprawnień administratora',
@@ -137,13 +146,13 @@ export class UsersController {
     const isSelf = currentUser.id === id
 
     if(!isAdmin && !isSelf) {
-      throw new ForbiddenException('Action not allowed')
+      throw new ForbiddenException(errorBody(HttpStatus.FORBIDDEN, 'ACTION_NOT_ALLOWED', 'Action not allowed'))
     }
     if(!isAdmin && body.role !== undefined) {
-      throw new ForbiddenException('Action not allowed')
+      throw new ForbiddenException(errorBody(HttpStatus.FORBIDDEN, 'ACTION_NOT_ALLOWED', 'Action not allowed'))
     }
     if(isAdmin && isSelf && body.role !== undefined && body.role !== UserRole.ADMIN) {
-      throw new ForbiddenException('Admins cannot revoke their own admin role')
+      throw new ForbiddenException(errorBody(HttpStatus.FORBIDDEN, 'ADMIN_CANNOT_REVOKE_SELF', 'Admins cannot revoke their own admin role'))
     }
     return this.usersService.update(id, body)
   }

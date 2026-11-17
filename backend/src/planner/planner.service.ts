@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
+import { errorBody } from 'src/common/error-body';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   Between,
@@ -35,7 +36,7 @@ export class PlannerService {
       dto.templateId,
     );
     if (!template) {
-      throw new NotFoundException('Workout template not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'TEMPLATE_NOT_FOUND', 'Workout template not found'));
     }
     const scheduled = this.repo.create({ user, template, date: dto.date });
     return this.repo.save(scheduled);
@@ -52,9 +53,7 @@ export class PlannerService {
           assignment.templateId,
         );
         if (!template) {
-          throw new NotFoundException(
-            `Workout template ${assignment.templateId} not found`,
-          );
+          throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'TEMPLATE_NOT_FOUND', `Workout template ${assignment.templateId} not found`, { id: assignment.templateId }));
         }
         templates.set(assignment.templateId, template);
       }
@@ -128,7 +127,7 @@ export class PlannerService {
       relations: ['template'],
     });
     if (!scheduled) {
-      throw new NotFoundException('Scheduled workout not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'SCHEDULED_WORKOUT_NOT_FOUND', 'Scheduled workout not found'));
     }
     return scheduled;
   }
@@ -148,9 +147,7 @@ export class PlannerService {
   async start(userId: number, id: number) {
     const scheduled = await this.findOwned(userId, id);
     if (!scheduled.template) {
-      throw new NotFoundException(
-        'Scheduled workout has no template to start from',
-      );
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'SCHEDULED_WORKOUT_NO_TEMPLATE', 'Scheduled workout has no template to start from'));
     }
 
     const template = await this.templateService.findOne(
@@ -158,7 +155,7 @@ export class PlannerService {
       scheduled.template.id,
     );
     if (!template) {
-      throw new NotFoundException('Workout template not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'TEMPLATE_NOT_FOUND', 'Workout template not found'));
     }
 
     const workout = await this.workoutService.createFromTemplate(

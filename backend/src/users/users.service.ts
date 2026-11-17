@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
+import { errorBody } from 'src/common/error-body';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
@@ -96,7 +97,7 @@ export class UsersService {
   async update(id: number, attrs: Partial<User>) {
     const user = await this.findOne(id)
     if(!user) {
-      throw new NotFoundException('User not found')
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'USER_NOT_FOUND', 'User not found'))
     }
     if(attrs.password) {
       attrs.password = await hashPassword(attrs.password)
@@ -109,7 +110,7 @@ export class UsersService {
   async remove(id: number) {
     const user = await this.findOne(id)
      if(!user) {
-      throw new NotFoundException('User not found')
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'USER_NOT_FOUND', 'User not found'))
     }
     return this.repo.remove(user)
   }

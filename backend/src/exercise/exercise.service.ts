@@ -1,4 +1,5 @@
-import { BadGatewayException, ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadGatewayException, ConflictException, Injectable, Logger, NotFoundException, HttpStatus } from '@nestjs/common';
+import { errorBody } from 'src/common/error-body';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { Exercise } from './exercise.entity';
@@ -41,7 +42,7 @@ export class ExerciseService {
   async update(id: number, dto: UpdateExerciseDto) {
     const exercise = await this.findOne(id)
     if(!exercise) {
-      throw new NotFoundException('Exercise not found')
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'EXERCISE_NOT_FOUND', 'Exercise not found'))
     }
     if (dto.name !== undefined) {
       await this.assertNameFree(dto.name, id)
@@ -59,7 +60,7 @@ export class ExerciseService {
   async usage(id: number) {
     const exercise = await this.findOne(id)
     if (!exercise) {
-      throw new NotFoundException('Exercise not found')
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'EXERCISE_NOT_FOUND', 'Exercise not found'))
     }
     const manager = this.repo.manager
     const [workouts, templates] = await Promise.all([
@@ -80,14 +81,12 @@ export class ExerciseService {
   async remove(id: number) {
     const exercise = await this.findOne(id)
     if(!exercise) {
-      throw new NotFoundException('Exercise not found')
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'EXERCISE_NOT_FOUND', 'Exercise not found'))
     }
     const { workoutCount, templateCount } = await this.usage(id)
     if (workoutCount || templateCount) {
       // Usunięcie skasowałoby historię użytkowników: zamiast tego można zmienić nazwę.
-      throw new ConflictException(
-        `Exercise is used in ${workoutCount} workout(s) and ${templateCount} template(s)`,
-      )
+      throw new ConflictException(errorBody(HttpStatus.CONFLICT, 'EXERCISE_IN_USE', `Exercise is used in ${workoutCount} workout(s) and ${templateCount} template(s)`, { workoutCount, templateCount }))
     }
     return this.repo.remove(exercise)
   }
@@ -96,7 +95,7 @@ export class ExerciseService {
   async findSubstitutes(id: number) {
     const exercise = await this.findOne(id)
     if (!exercise) {
-      throw new NotFoundException('Exercise not found')
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'EXERCISE_NOT_FOUND', 'Exercise not found'))
     }
     const rows = await this.substitutes.find({
       where: { exercise: { id } },
@@ -113,7 +112,7 @@ export class ExerciseService {
   async generateSubstitutes(id: number) {
     const exercise = await this.findOne(id)
     if (!exercise) {
-      throw new NotFoundException('Exercise not found')
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'EXERCISE_NOT_FOUND', 'Exercise not found'))
     }
     const picked = await this.pickSubstitutes([exercise], await this.repo.find())
     await this.saveSubstitutes(id, picked.get(id) ?? [])
@@ -153,7 +152,7 @@ export class ExerciseService {
   async removeSubstitute(id: number, substituteId: number) {
     const result = await this.substitutes.delete({ exercise: { id }, substitute: { id: substituteId } })
     if (!result.affected) {
-      throw new NotFoundException('Substitute not found')
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'SUBSTITUTE_NOT_FOUND', 'Substitute not found'))
     }
     return this.findSubstitutes(id)
   }
@@ -185,7 +184,7 @@ export class ExerciseService {
       const delay = options.retryOnTransient ? transientRetryDelay(error) : null
       if (delay === null) {
         this.logger.warn(`Substitutes failed for ${targets.length} exercise(s): ${errorMessage(error)}`)
-        throw new BadGatewayException('AI could not pick substitutes, try again later')
+        throw new BadGatewayException(errorBody(HttpStatus.BAD_GATEWAY, 'AI_UNAVAILABLE', 'AI could not pick substitutes, try again later'))
       }
       await new Promise((resolve) => setTimeout(resolve, delay))
       return this.pickSubstitutes(targets, catalog)
@@ -255,7 +254,7 @@ ${catalog.map(line).join('\n')}`
       query.andWhere('e.id != :exceptId', { exceptId })
     }
     if (await query.getExists()) {
-      throw new ConflictException('Exercise with this name already exists')
+      throw new ConflictException(errorBody(HttpStatus.CONFLICT, 'EXERCISE_NAME_TAKEN', 'Exercise with this name already exists'))
     }
   }
 }

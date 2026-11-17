@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
+import { errorBody } from 'src/common/error-body';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 import { User } from 'src/users/user.entity';
@@ -43,7 +44,7 @@ export class PlanService {
       where: { id, user: { id: userId } },
     });
     if (!plan) {
-      throw new NotFoundException('Workout plan not found');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'PLAN_NOT_FOUND', 'Workout plan not found'));
     }
     return plan;
   }

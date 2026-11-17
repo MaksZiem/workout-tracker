@@ -15,7 +15,7 @@ export interface paths {
          * Pobierz dane zalogowanego użytkownika
          * @description Zwraca profil użytkownika powiązanego z tokenem JWT przesłanym w nagłówku Authorization.
          */
-        get: operations["UsersController_getContext"];
+        get: operations["Users_getContext"];
         put?: never;
         post?: never;
         delete?: never;
@@ -35,7 +35,7 @@ export interface paths {
          * Lista użytkowników (tylko administrator)
          * @description Strona użytkowników wraz z liczbą zapisanych treningów. Wyszukiwanie (`search`), sortowanie (`sort`, `order`) i paginacja (`page`, `limit`) odbywają się w bazie. Przy remisie kolejność wyznacza id.
          */
-        get: operations["UsersController_listUsers"];
+        get: operations["Users_listUsers"];
         put?: never;
         post?: never;
         delete?: never;
@@ -57,7 +57,7 @@ export interface paths {
          * Zarejestruj nowe konto
          * @description Tworzy nowego użytkownika o roli USER i od razu zwraca token JWT (bez konieczności osobnego logowania).
          */
-        post: operations["UsersController_signUp"];
+        post: operations["Users_signUp"];
         delete?: never;
         options?: never;
         head?: never;
@@ -77,7 +77,7 @@ export interface paths {
          * Zaloguj się
          * @description Weryfikuje e-mail i hasło, zwraca token JWT używany do autoryzacji kolejnych żądań.
          */
-        post: operations["UsersController_signIn"];
+        post: operations["Users_signIn"];
         delete?: never;
         options?: never;
         head?: never;
@@ -98,14 +98,14 @@ export interface paths {
          * Usuń użytkownika (tylko administrator)
          * @description Trwale usuwa konto użytkownika o podanym id wraz z jego treningami, szablonami, planami i wpisami w planerze. Wymaga roli ADMIN. Administrator nie może usunąć własnego konta (403).
          */
-        delete: operations["UsersController_removeUser"];
+        delete: operations["Users_removeUser"];
         options?: never;
         head?: never;
         /**
          * Zaktualizuj dane użytkownika
          * @description Użytkownik może zaktualizować wyłącznie własny profil (e-mail, hasło). Zmiana pola `role` dozwolona jest tylko dla administratora - w przeciwnym razie zwracany jest błąd 403. Administrator nie może odebrać roli samemu sobie (403), więc w systemie zawsze zostaje co najmniej jeden administrator.
          */
-        patch: operations["UsersController_updateUser"];
+        patch: operations["Users_updateUser"];
         trace?: never;
     };
     "/exercise": {
@@ -119,13 +119,13 @@ export interface paths {
          * Pobierz katalog ćwiczeń
          * @description Zwraca wszystkie ćwiczenia dostępne w systemie, opcjonalnie przefiltrowane po grupie mięśniowej.
          */
-        get: operations["ExerciseController_findAll"];
+        get: operations["Exercise_findAll"];
         put?: never;
         /**
          * Dodaj nowe ćwiczenie (tylko administrator)
          * @description Tworzy nowe ćwiczenie w globalnym katalogu i od razu prosi AI (Gemini) o jego zamienniki.
          */
-        post: operations["ExerciseController_createExercise"];
+        post: operations["Exercise_createExercise"];
         delete?: never;
         options?: never;
         head?: never;
@@ -140,21 +140,21 @@ export interface paths {
             cookie?: never;
         };
         /** Pobierz ćwiczenie po id */
-        get: operations["ExerciseController_findOne"];
+        get: operations["Exercise_findOne"];
         put?: never;
         post?: never;
         /**
          * Usuń ćwiczenie (tylko administrator)
          * @description Usuwa ćwiczenie z katalogu. Ćwiczenia użytego w treningu lub szablonie nie da się usunąć (409), żeby nie skasować historii - zmień wtedy jego nazwę.
          */
-        delete: operations["ExerciseController_removeExercise"];
+        delete: operations["Exercise_removeExercise"];
         options?: never;
         head?: never;
         /**
          * Zaktualizuj ćwiczenie (tylko administrator)
          * @description Aktualizuje nazwę i/lub grupę mięśniową. Jeśli zmieniono nazwę lub grupę, AI dobiera zamienniki od nowa (przy błędzie Gemini substitutesGeneratedAt zostaje null).
          */
-        patch: operations["ExerciseController_updateExercise"];
+        patch: operations["Exercise_updateExercise"];
         trace?: never;
     };
     "/exercise/{id}/substitutes": {
@@ -168,7 +168,7 @@ export interface paths {
          * Zamienniki ćwiczenia
          * @description Do 5 ćwiczeń z katalogu, które AI (Gemini) uznało za dobre zamienniki: ten sam wzorzec ruchu i te same główne mięśnie. Każdy z krótkim uzasadnieniem, od najlepszego. Pusta lista: AI nie znalazło zamiennika albo jeszcze nie dobierało (patrz `substitutesGeneratedAt`).
          */
-        get: operations["ExerciseController_findSubstitutes"];
+        get: operations["Exercise_findSubstitutes"];
         put?: never;
         post?: never;
         delete?: never;
@@ -190,7 +190,7 @@ export interface paths {
          * Dobierz zamienniki dla katalogu (tylko administrator)
          * @description Po kolei prosi AI o zamienniki dla ćwiczeń, które ich jeszcze nie mają, a z `all=true` dla wszystkich (np. po dodaniu nowych ćwiczeń, które mogą być zamiennikami starych). Błąd jednego ćwiczenia nie przerywa pozostałych.
          */
-        post: operations["ExerciseController_generateAllSubstitutes"];
+        post: operations["Exercise_generateAllSubstitutes"];
         delete?: never;
         options?: never;
         head?: never;
@@ -210,7 +210,7 @@ export interface paths {
          * Dobierz zamienniki ćwiczenia od nowa (tylko administrator)
          * @description AI wybiera zamienniki z aktualnego katalogu; wynik zastępuje poprzednią listę.
          */
-        post: operations["ExerciseController_generateSubstitutes"];
+        post: operations["Exercise_generateSubstitutes"];
         delete?: never;
         options?: never;
         head?: never;
@@ -231,7 +231,7 @@ export interface paths {
          * Odrzuć zamiennik (tylko administrator)
          * @description Usuwa jeden zamiennik wybrany przez AI, gdy administrator się z nim nie zgadza.
          */
-        delete: operations["ExerciseController_removeSubstitute"];
+        delete: operations["Exercise_removeSubstitute"];
         options?: never;
         head?: never;
         patch?: never;
@@ -248,7 +248,7 @@ export interface paths {
          * Sprawdź, gdzie ćwiczenie jest używane (tylko administrator)
          * @description Liczba treningów i szablonów zawierających ćwiczenie. Usunąć można tylko ćwiczenie nieużywane.
          */
-        get: operations["ExerciseController_usage"];
+        get: operations["Exercise_usage"];
         put?: never;
         post?: never;
         delete?: never;
@@ -268,13 +268,13 @@ export interface paths {
          * Pobierz treningi użytkownika
          * @description Zwraca listę treningów zalogowanego użytkownika, posortowaną malejąco po dacie. Opcjonalnie filtruje po zakresie dat.
          */
-        get: operations["WorkoutController_findAllWorkoutsForUser"];
+        get: operations["Workout_findAllWorkoutsForUser"];
         put?: never;
         /**
          * Utwórz nowy trening
          * @description Zakłada pusty trening (bez ćwiczeń) na wskazany dzień. Ćwiczenia i serie dodaje się osobnymi endpointami.
          */
-        post: operations["WorkoutController_createWorkout"];
+        post: operations["Workout_createWorkout"];
         delete?: never;
         options?: never;
         head?: never;
@@ -292,21 +292,21 @@ export interface paths {
          * Pobierz szczegóły treningu
          * @description Zwraca trening wraz z listą ćwiczeń i seriami.
          */
-        get: operations["WorkoutController_findOneForUser"];
+        get: operations["Workout_findOneForUser"];
         put?: never;
         post?: never;
         /**
          * Usuń trening
          * @description Usuwa trening wraz ze wszystkimi jego ćwiczeniami i seriami (kaskadowo). Jeśli trening pochodził z planera, wpis wraca do statusu PLANNED.
          */
-        delete: operations["WorkoutController_remove"];
+        delete: operations["Workout_remove"];
         options?: never;
         head?: never;
         /**
          * Zaktualizuj trening
          * @description Aktualizuje datę i/lub notatki treningu.
          */
-        patch: operations["WorkoutController_update"];
+        patch: operations["Workout_update"];
         trace?: never;
     };
     "/workout/{id}/duplicate": {
@@ -322,7 +322,7 @@ export interface paths {
          * Zduplikuj trening
          * @description Tworzy kopię treningu (z dzisiejszą datą) wraz z tymi samymi ćwiczeniami i seriami, ale z resetem statusu "completed" na false.
          */
-        post: operations["WorkoutController_duplicateWorkout"];
+        post: operations["Workout_duplicateWorkout"];
         delete?: never;
         options?: never;
         head?: never;
@@ -342,7 +342,7 @@ export interface paths {
          * Zakończ trening
          * @description Ustawia finishedAt (jeśli jeszcze nie ustawione) i oznacza powiązany zaplanowany trening jako COMPLETED. Operacja idempotentna.
          */
-        post: operations["WorkoutController_finish"];
+        post: operations["Workout_finish"];
         delete?: never;
         options?: never;
         head?: never;
@@ -362,7 +362,7 @@ export interface paths {
          * Przerwij trening
          * @description Przerywa trening w trakcie: usuwa go wraz z ćwiczeniami i seriami, a powiązany zaplanowany trening wraca do statusu PLANNED, więc można go rozpocząć od nowa. Zakończonego treningu nie można przerwać (409).
          */
-        post: operations["WorkoutController_cancel"];
+        post: operations["Workout_cancel"];
         delete?: never;
         options?: never;
         head?: never;
@@ -382,7 +382,7 @@ export interface paths {
          * Dodaj ćwiczenie do treningu
          * @description Dołącza ćwiczenie z globalnego katalogu do wskazanego treningu.
          */
-        post: operations["WorkoutController_addExercise"];
+        post: operations["Workout_addExercise"];
         delete?: never;
         options?: never;
         head?: never;
@@ -403,14 +403,14 @@ export interface paths {
          * Usuń ćwiczenie z treningu
          * @description Usuwa ćwiczenie wraz ze wszystkimi jego seriami (kaskadowo).
          */
-        delete: operations["WorkoutController_removeExercise"];
+        delete: operations["Workout_removeExercise"];
         options?: never;
         head?: never;
         /**
          * Zaktualizuj ćwiczenie w treningu
          * @description Pozwala zmienić kolejność ćwiczenia w ramach treningu.
          */
-        patch: operations["WorkoutController_updateExercise"];
+        patch: operations["Workout_updateExercise"];
         trace?: never;
     };
     "/workout/{workoutId}/exercise/{weId}/set": {
@@ -426,7 +426,7 @@ export interface paths {
          * Dodaj serię do ćwiczenia
          * @description Rejestruje wykonaną (lub zaplanowaną) serię dla danego ćwiczenia w treningu.
          */
-        post: operations["WorkoutController_addSet"];
+        post: operations["Workout_addSet"];
         delete?: never;
         options?: never;
         head?: never;
@@ -447,14 +447,14 @@ export interface paths {
          * Usuń serię
          * @description Usuwa pojedynczą serię z ćwiczenia.
          */
-        delete: operations["WorkoutController_removeSet"];
+        delete: operations["Workout_removeSet"];
         options?: never;
         head?: never;
         /**
          * Zaktualizuj serię
          * @description Aktualizuje dowolne pole serii (ciężar, powtórzenia, status ukończenia itd.).
          */
-        patch: operations["WorkoutController_updateSet"];
+        patch: operations["Workout_updateSet"];
         trace?: never;
     };
     "/stats/exercise/{exerciseId}/progress": {
@@ -468,7 +468,7 @@ export interface paths {
          * Postęp w danym ćwiczeniu w czasie
          * @description Zwraca chronologiczną listę punktów postępu (ciężar, objętość, szacowany 1RM) dla wskazanego ćwiczenia, opcjonalnie w zadanym zakresie dat.
          */
-        get: operations["StatsController_getExerciseProgress"];
+        get: operations["Stats_getExerciseProgress"];
         put?: never;
         post?: never;
         delete?: never;
@@ -488,7 +488,7 @@ export interface paths {
          * Rekordy życiowe dla danego ćwiczenia
          * @description Zwraca najlepszy ciężar, najlepszą objętość w pojedynczej serii oraz najlepszy szacowany ciężar maksymalny (1RM) dla wskazanego ćwiczenia, liczone na podstawie ukończonych serii.
          */
-        get: operations["StatsController_getPersonalRecords"];
+        get: operations["Stats_getPersonalRecords"];
         put?: never;
         post?: never;
         delete?: never;
@@ -508,7 +508,7 @@ export interface paths {
          * Rekordy życiowe dla wszystkich ćwiczeń
          * @description Zwraca rekordy życiowe (jak wyżej) dla każdego ćwiczenia, w którym użytkownik ma choć jedną ukończoną serię.
          */
-        get: operations["StatsController_getAllPersonalRecords"];
+        get: operations["Stats_getAllPersonalRecords"];
         put?: never;
         post?: never;
         delete?: never;
@@ -528,7 +528,7 @@ export interface paths {
          * Rozkład objętości treningowej wg grup mięśniowych
          * @description Zwraca liczbę ukończonych serii i całkowitą objętość (ciężar x powtórzenia) dla każdej trenowanej grupy mięśniowej, opcjonalnie w zadanym zakresie dat.
          */
-        get: operations["StatsController_getMuscleGroupDistribution"];
+        get: operations["Stats_getMuscleGroupDistribution"];
         put?: never;
         post?: never;
         delete?: never;
@@ -546,9 +546,9 @@ export interface paths {
         };
         /**
          * Częstotliwość treningów (heatmapa)
-         * @description Zwraca gęstą listę dni (bez dziur) z liczbą treningów w danym dniu - gotową pod heatmapę w stylu GitHub contributions. Domyślnie ostatnie 365 dni.
+         * @description Zwraca gęstą listę dni (bez dziur) z liczbą treningów w danym dniu oraz liczbą pominiętych lub przegapionych treningów z planu (`missed`) - gotową pod heatmapę w stylu GitHub contributions. Domyślnie ostatnie 365 dni.
          */
-        get: operations["StatsController_getWorkoutFrequency"];
+        get: operations["Stats_getWorkoutFrequency"];
         put?: never;
         post?: never;
         delete?: never;
@@ -568,7 +568,7 @@ export interface paths {
          * Aktualna passa treningowa
          * @description Zwraca liczbę kolejnych dni (licząc wstecz od dziś lub wczoraj) z co najmniej jednym treningiem.
          */
-        get: operations["StatsController_getCurrentStreak"];
+        get: operations["Stats_getCurrentStreak"];
         put?: never;
         post?: never;
         delete?: never;
@@ -588,7 +588,7 @@ export interface paths {
          * Podsumowanie aktywności użytkownika
          * @description Zwraca zbiorcze statystyki: liczbę treningów, serii, łączną objętość, średnią liczbę serii na trening, najczęściej trenowaną grupę mięśniową i aktualną passę.
          */
-        get: operations["StatsController_getSummary"];
+        get: operations["Stats_getSummary"];
         put?: never;
         post?: never;
         delete?: never;
@@ -608,7 +608,7 @@ export interface paths {
          * Rekordy powtórzeń dla danego ćwiczenia
          * @description Dla 1, 3, 5, 8, 10 i 12 powtórzeń zwraca największy ciężar z ukończonej serii o co najmniej tylu powtórzeniach (seria 100 kg × 8 jest też rekordem 5RM). Brak serii - pola null.
          */
-        get: operations["StatsController_getRepRecords"];
+        get: operations["Stats_getRepRecords"];
         put?: never;
         post?: never;
         delete?: never;
@@ -628,7 +628,7 @@ export interface paths {
          * Realizacja planu treningowego
          * @description Zlicza zaplanowane treningi w zakresie: zrealizowane, pominięte, przegapione (zaplanowane w przeszłości i nierozpoczęte) oraz nadchodzące. `rate` to udział zrealizowanych wśród tych, które już powinny się odbyć (null, gdy takich nie ma).
          */
-        get: operations["StatsController_getAdherence"];
+        get: operations["Stats_getAdherence"];
         put?: never;
         post?: never;
         delete?: never;
@@ -648,7 +648,7 @@ export interface paths {
          * Treningi, serie i objętość tydzień po tygodniu
          * @description Zwraca gęstą listę tygodni (pon–niedz.) z liczbą treningów, ukończonych serii i objętością. Bez `from` - od tygodnia pierwszego treningu.
          */
-        get: operations["StatsController_getWeeklyStats"];
+        get: operations["Stats_getWeeklyStats"];
         put?: never;
         post?: never;
         delete?: never;
@@ -668,7 +668,7 @@ export interface paths {
          * Rozkład serii wg zakresu powtórzeń
          * @description Liczba ukończonych serii w zakresach: STRENGTH (1–5), HYPERTROPHY (6–12), ENDURANCE (13+).
          */
-        get: operations["StatsController_getRepRanges"];
+        get: operations["Stats_getRepRanges"];
         put?: never;
         post?: never;
         delete?: never;
@@ -688,7 +688,7 @@ export interface paths {
          * Ćwiczenia bez postępu
          * @description Ćwiczenia trenowane w ostatnich 21 dniach, w których najlepszy szacowany 1RM pochodzi sprzed ponad 42 dni, a od tamtej pory były co najmniej 3 sesje. Najdłuższy zastój pierwszy.
          */
-        get: operations["StatsController_getStagnation"];
+        get: operations["Stats_getStagnation"];
         put?: never;
         post?: never;
         delete?: never;
@@ -705,13 +705,13 @@ export interface paths {
             cookie?: never;
         };
         /** Pobierz wszystkie szablony użytkownika */
-        get: operations["TemplateController_findAll"];
+        get: operations["Template_findAll"];
         put?: never;
         /**
          * Utwórz szablon treningowy
          * @description Tworzy pusty szablon (bez ćwiczeń), opcjonalnie przypisany do planu.
          */
-        post: operations["TemplateController_create"];
+        post: operations["Template_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -726,18 +726,18 @@ export interface paths {
             cookie?: never;
         };
         /** Pobierz szczegóły szablonu wraz z ćwiczeniami */
-        get: operations["TemplateController_findOne"];
+        get: operations["Template_findOne"];
         put?: never;
         post?: never;
         /**
          * Usuń szablon
          * @description Usuwa szablon wraz ze wszystkimi jego ćwiczeniami (kaskadowo).
          */
-        delete: operations["TemplateController_remove"];
+        delete: operations["Template_remove"];
         options?: never;
         head?: never;
         /** Zaktualizuj szablon (nazwa, notatki) */
-        patch: operations["TemplateController_update"];
+        patch: operations["Template_update"];
         trace?: never;
     };
     "/template/{templateId}/exercise": {
@@ -753,7 +753,7 @@ export interface paths {
          * Dodaj ćwiczenie do szablonu
          * @description Dołącza ćwiczenie z globalnego katalogu wraz z docelowymi seriami/powtórzeniami/ciężarem.
          */
-        post: operations["TemplateController_addExercise"];
+        post: operations["Template_addExercise"];
         delete?: never;
         options?: never;
         head?: never;
@@ -771,11 +771,11 @@ export interface paths {
         put?: never;
         post?: never;
         /** Usuń ćwiczenie z szablonu */
-        delete: operations["TemplateController_removeExercise"];
+        delete: operations["Template_removeExercise"];
         options?: never;
         head?: never;
         /** Zaktualizuj ćwiczenie w szablonie */
-        patch: operations["TemplateController_updateExercise"];
+        patch: operations["Template_updateExercise"];
         trace?: never;
     };
     "/plan": {
@@ -786,13 +786,13 @@ export interface paths {
             cookie?: never;
         };
         /** Pobierz wszystkie plany użytkownika */
-        get: operations["PlanController_findAll"];
+        get: operations["Plan_findAll"];
         put?: never;
         /**
          * Utwórz plan treningowy
          * @description Plan grupuje wiele szablonów treningowych (np. plan tygodniowy złożony z dni Push/Pull/Legs).
          */
-        post: operations["PlanController_create"];
+        post: operations["Plan_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -807,18 +807,18 @@ export interface paths {
             cookie?: never;
         };
         /** Pobierz szczegóły planu wraz z szablonami */
-        get: operations["PlanController_findOne"];
+        get: operations["Plan_findOne"];
         put?: never;
         post?: never;
         /**
          * Usuń plan
          * @description Usuwa plan. Przypisane szablony są kaskadowo usuwane wraz z planem.
          */
-        delete: operations["PlanController_remove"];
+        delete: operations["Plan_remove"];
         options?: never;
         head?: never;
         /** Zaktualizuj plan (nazwa, notatki) */
-        patch: operations["PlanController_update"];
+        patch: operations["Plan_update"];
         trace?: never;
     };
     "/planner/scheduled": {
@@ -832,13 +832,13 @@ export interface paths {
          * Pobierz zaplanowane treningi
          * @description Zwraca zaplanowane treningi użytkownika, opcjonalnie przefiltrowane po zakresie dat, posortowane rosnąco po dacie.
          */
-        get: operations["PlannerController_findAll"];
+        get: operations["Planner_findAll"];
         put?: never;
         /**
          * Zaplanuj pojedynczy trening
          * @description Umieszcza w kalendarzu jeden trening na podstawie wskazanego szablonu i daty.
          */
-        post: operations["PlannerController_create"];
+        post: operations["Planner_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -858,7 +858,7 @@ export interface paths {
          * Wygeneruj harmonogram na zakres dat
          * @description Rozkłada wskazane szablony na dni tygodnia w podanym zakresie dat (np. Push -> poniedziałek, Pull -> środa, Legs -> piątek). Dni, dla których w danym zakresie już istnieje zaplanowany trening, są pomijane - operacja jest bezpieczna do wielokrotnego wywołania.
          */
-        post: operations["PlannerController_generate"];
+        post: operations["Planner_generate"];
         delete?: never;
         options?: never;
         head?: never;
@@ -876,7 +876,7 @@ export interface paths {
          * Pobierz dzisiejsze treningi
          * @description Zwraca treningi zaplanowane na dzisiaj wraz z pełnymi danymi szablonu i ćwiczeń.
          */
-        get: operations["PlannerController_findToday"];
+        get: operations["Planner_findToday"];
         put?: never;
         post?: never;
         delete?: never;
@@ -896,14 +896,14 @@ export interface paths {
         put?: never;
         post?: never;
         /** Usuń zaplanowany trening */
-        delete: operations["PlannerController_remove"];
+        delete: operations["Planner_remove"];
         options?: never;
         head?: never;
         /**
          * Zaktualizuj zaplanowany trening
          * @description Pozwala zmienić datę i/lub status (PLANNED, IN_PROGRESS, COMPLETED, SKIPPED).
          */
-        patch: operations["PlannerController_update"];
+        patch: operations["Planner_update"];
         trace?: never;
     };
     "/planner/scheduled/{id}/start": {
@@ -919,7 +919,7 @@ export interface paths {
          * Rozpocznij zaplanowany trening
          * @description Tworzy rzeczywisty trening (Workout) na podstawie szablonu przypisanego do zaplanowanej pozycji, wypełniając serie wartościami docelowymi z szablonu, a następnie oznacza pozycję w kalendarzu jako IN_PROGRESS. Status COMPLETED ustawia POST /workout/{id}/finish.
          */
-        post: operations["PlannerController_start"];
+        post: operations["Planner_start"];
         delete?: never;
         options?: never;
         head?: never;
@@ -939,7 +939,7 @@ export interface paths {
          * Wygeneruj plan treningowy przy pomocy AI
          * @description Na podstawie celu treningowego, liczby dni w tygodniu i opcjonalnych ograniczeń, model Gemini układa plan treningowy. Automatycznie tworzy nowy WorkoutPlan oraz po jednym WorkoutTemplate na każdy dzień treningowy, wypełniony ćwiczeniami wyłącznie z istniejącego katalogu ćwiczeń.
          */
-        post: operations["AiController_generatePlan"];
+        post: operations["Ai_generatePlan"];
         delete?: never;
         options?: never;
         head?: never;
@@ -959,7 +959,7 @@ export interface paths {
          * Rozpoznaj trening z opisu tekstowego (AI)
          * @description Analizuje swobodny opis treningu w języku naturalnym za pomocą modelu Gemini, rozpoznaje wykonane ćwiczenia i serie (dopasowując je do istniejącego katalogu ćwiczeń) i dopisuje je do wskazanego, istniejącego treningu jako ukończone serie.
          */
-        post: operations["AiController_parseWorkout"];
+        post: operations["Ai_parseWorkout"];
         delete?: never;
         options?: never;
         head?: never;
@@ -999,18 +999,33 @@ export interface components {
             role: "USER" | "ADMIN";
         };
         UnauthorizedErrorDto: {
-            /** @example 2026-09-23T17:45:12.345Z */
-            timestamp: string;
-            /** @example /workout */
-            path: string;
-            /** @example GET */
-            method: string;
-            /** @example 401 */
+            /**
+             * @description Kod statusu HTTP
+             * @example 401
+             */
             statusCode: number;
-            /** @example Unauthorized */
-            error: string;
-            /** @example Token is wrong */
-            message: Record<string, never>;
+            /**
+             * @description Stały kod błędu. Frontend tłumaczy komunikat na podstawie tego pola, a nie pola message
+             * @example MISSING_TOKEN
+             */
+            code?: string;
+            /**
+             * @description Komunikat błędu po angielsku. Dla błędów walidacji (400) jest to tablica komunikatów, po jednym na każde niepoprawne pole
+             * @example Missing authorization token
+             */
+            message: string | string[];
+            /**
+             * @description Wartości wstawiane do przetłumaczonego komunikatu
+             * @example {}
+             */
+            params?: {
+                [key: string]: string | number;
+            };
+            /**
+             * @description Nazwa błędu HTTP (zwracana przez wbudowane wyjątki Nest)
+             * @example Unauthorized
+             */
+            error?: string;
         };
         AdminUserDto: {
             /**
@@ -1070,37 +1085,62 @@ export interface components {
             pageCount: number;
         };
         BadRequestErrorDto: {
-            /** @example 2026-09-23T17:45:12.345Z */
-            timestamp: string;
-            /** @example /auth/signup */
-            path: string;
-            /** @example POST */
-            method: string;
-            /** @example 400 */
-            statusCode: number;
-            /** @example Bad Request */
-            error: string;
             /**
+             * @description Kod statusu HTTP
+             * @example 400
+             */
+            statusCode: number;
+            /** @description Dla tego statusu zwykle nieobecny (wbudowany wyjątek Nest) */
+            code?: string;
+            /**
+             * @description Komunikat błędu po angielsku. Dla błędów walidacji (400) jest to tablica komunikatów, po jednym na każde niepoprawne pole
              * @example [
              *       "email must be an email",
              *       "password must be longer than or equal to 8 characters"
              *     ]
              */
-            message: Record<string, never>;
+            message: string | string[];
+            /**
+             * @description Wartości wstawiane do przetłumaczonego komunikatu
+             * @example {}
+             */
+            params?: {
+                [key: string]: string | number;
+            };
+            /**
+             * @description Nazwa błędu HTTP (zwracana przez wbudowane wyjątki Nest)
+             * @example Bad Request
+             */
+            error?: string;
         };
         ForbiddenErrorDto: {
-            /** @example 2026-09-23T17:45:12.345Z */
-            timestamp: string;
-            /** @example /auth/5 */
-            path: string;
-            /** @example PATCH */
-            method: string;
-            /** @example 403 */
+            /**
+             * @description Kod statusu HTTP
+             * @example 403
+             */
             statusCode: number;
-            /** @example Forbidden */
-            error: string;
-            /** @example Action not allowed */
-            message: Record<string, never>;
+            /**
+             * @description Stały kod błędu. Frontend tłumaczy komunikat na podstawie tego pola, a nie pola message
+             * @example ACTION_NOT_ALLOWED
+             */
+            code?: string;
+            /**
+             * @description Komunikat błędu po angielsku. Dla błędów walidacji (400) jest to tablica komunikatów, po jednym na każde niepoprawne pole
+             * @example Action not allowed
+             */
+            message: string | string[];
+            /**
+             * @description Wartości wstawiane do przetłumaczonego komunikatu
+             * @example {}
+             */
+            params?: {
+                [key: string]: string | number;
+            };
+            /**
+             * @description Nazwa błędu HTTP (zwracana przez wbudowane wyjątki Nest)
+             * @example Forbidden
+             */
+            error?: string;
         };
         CreateUserDto: {
             /**
@@ -1175,18 +1215,33 @@ export interface components {
             password: string;
         };
         NotFoundErrorDto: {
-            /** @example 2026-09-23T17:45:12.345Z */
-            timestamp: string;
-            /** @example /workout/999 */
-            path: string;
-            /** @example GET */
-            method: string;
-            /** @example 404 */
+            /**
+             * @description Kod statusu HTTP
+             * @example 404
+             */
             statusCode: number;
-            /** @example Not Found */
-            error: string;
-            /** @example Resource not found */
-            message: Record<string, never>;
+            /**
+             * @description Stały kod błędu. Frontend tłumaczy komunikat na podstawie tego pola, a nie pola message
+             * @example WORKOUT_NOT_FOUND
+             */
+            code?: string;
+            /**
+             * @description Komunikat błędu po angielsku. Dla błędów walidacji (400) jest to tablica komunikatów, po jednym na każde niepoprawne pole
+             * @example Workout not found
+             */
+            message: string | string[];
+            /**
+             * @description Wartości wstawiane do przetłumaczonego komunikatu
+             * @example {}
+             */
+            params?: {
+                [key: string]: string | number;
+            };
+            /**
+             * @description Nazwa błędu HTTP (zwracana przez wbudowane wyjątki Nest)
+             * @example Not Found
+             */
+            error?: string;
         };
         UpdateUserDto: {
             /**
@@ -1335,34 +1390,34 @@ export interface components {
              */
             failed: string[];
         };
-        ErrorResponseDto: {
-            /**
-             * @description Znacznik czasu wystąpienia błędu (ISO 8601)
-             * @example 2026-09-23T17:45:12.345Z
-             */
-            timestamp: string;
-            /**
-             * @description Ścieżka żądania, na której wystąpił błąd
-             * @example /workout/123
-             */
-            path: string;
-            /**
-             * @description Metoda HTTP żądania
-             * @example GET
-             */
-            method: string;
+        BadGatewayErrorDto: {
             /**
              * @description Kod statusu HTTP
-             * @example 404
+             * @example 502
              */
             statusCode: number;
             /**
-             * @description Nazwa błędu HTTP
-             * @example Not Found
+             * @description Stały kod błędu. Frontend tłumaczy komunikat na podstawie tego pola, a nie pola message
+             * @example AI_UNAVAILABLE
              */
-            error: string;
-            /** @description Komunikat błędu. Dla błędów walidacji (400) jest to tablica komunikatów - po jednym na każde niepoprawne pole. */
+            code?: string;
+            /**
+             * @description Komunikat błędu po angielsku. Dla błędów walidacji (400) jest to tablica komunikatów, po jednym na każde niepoprawne pole
+             * @example AI could not pick substitutes, try again later
+             */
             message: string | string[];
+            /**
+             * @description Wartości wstawiane do przetłumaczonego komunikatu
+             * @example {}
+             */
+            params?: {
+                [key: string]: string | number;
+            };
+            /**
+             * @description Nazwa błędu HTTP (zwracana przez wbudowane wyjątki Nest)
+             * @example Bad Gateway
+             */
+            error?: string;
         };
         CreateExerciseDto: {
             /**
@@ -1376,6 +1431,35 @@ export interface components {
              * @enum {string}
              */
             muscleGroup: "CHEST" | "BACK" | "SHOULDERS" | "BICEPS" | "TRICEPS" | "LEGS" | "GLUTES" | "ABS" | "FULL_BODY" | "CARDIO";
+        };
+        ConflictErrorDto: {
+            /**
+             * @description Kod statusu HTTP
+             * @example 409
+             */
+            statusCode: number;
+            /**
+             * @description Stały kod błędu. Frontend tłumaczy komunikat na podstawie tego pola, a nie pola message
+             * @example EXERCISE_NAME_TAKEN
+             */
+            code?: string;
+            /**
+             * @description Komunikat błędu po angielsku. Dla błędów walidacji (400) jest to tablica komunikatów, po jednym na każde niepoprawne pole
+             * @example Exercise with this name already exists
+             */
+            message: string | string[];
+            /**
+             * @description Wartości wstawiane do przetłumaczonego komunikatu
+             * @example {}
+             */
+            params?: {
+                [key: string]: string | number;
+            };
+            /**
+             * @description Nazwa błędu HTTP (zwracana przez wbudowane wyjątki Nest)
+             * @example Conflict
+             */
+            error?: string;
         };
         UpdateExerciseDto: {
             /**
@@ -1413,20 +1497,6 @@ export interface components {
              * @example 2026-09-23
              */
             date?: string;
-        };
-        ConflictErrorDto: {
-            /** @example 2026-09-23T17:45:12.345Z */
-            timestamp: string;
-            /** @example /auth/signup */
-            path: string;
-            /** @example POST */
-            method: string;
-            /** @example 409 */
-            statusCode: number;
-            /** @example Conflict */
-            error: string;
-            /** @example User already exists */
-            message: Record<string, never>;
         };
         AddExerciseToWorkoutDto: {
             /**
@@ -1845,7 +1915,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    UsersController_getContext: {
+    Users_getContext: {
         parameters: {
             query?: never;
             header?: never;
@@ -1874,7 +1944,7 @@ export interface operations {
             };
         };
     };
-    UsersController_listUsers: {
+    Users_listUsers: {
         parameters: {
             query?: {
                 /** @description Fraza szukana w imieniu, nazwisku, pełnym imieniu i nazwisku oraz e-mailu (bez względu na wielkość liter) */
@@ -1932,7 +2002,7 @@ export interface operations {
             };
         };
     };
-    UsersController_signUp: {
+    Users_signUp: {
         parameters: {
             query?: never;
             header?: never;
@@ -1965,7 +2035,7 @@ export interface operations {
             };
         };
     };
-    UsersController_signIn: {
+    Users_signIn: {
         parameters: {
             query?: never;
             header?: never;
@@ -1998,7 +2068,7 @@ export interface operations {
             };
         };
     };
-    UsersController_removeUser: {
+    Users_removeUser: {
         parameters: {
             query?: never;
             header?: never;
@@ -2048,7 +2118,7 @@ export interface operations {
             };
         };
     };
-    UsersController_updateUser: {
+    Users_updateUser: {
         parameters: {
             query?: never;
             header?: never;
@@ -2102,7 +2172,7 @@ export interface operations {
             };
         };
     };
-    ExerciseController_findAll: {
+    Exercise_findAll: {
         parameters: {
             query?: {
                 /** @description Filtruj po grupie mięśniowej */
@@ -2134,7 +2204,7 @@ export interface operations {
             };
         };
     };
-    ExerciseController_createExercise: {
+    Exercise_createExercise: {
         parameters: {
             query?: never;
             header?: never;
@@ -2161,7 +2231,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["BadRequestErrorDto"];
+                };
             };
             /** @description Brak tokenu lub token nieprawidłowy */
             401: {
@@ -2187,16 +2259,17 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponseDto"];
+                    "application/json": components["schemas"]["ConflictErrorDto"];
                 };
             };
         };
     };
-    ExerciseController_findOne: {
+    Exercise_findOne: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator ćwiczenia */
                 id: number;
             };
             cookie?: never;
@@ -2232,11 +2305,12 @@ export interface operations {
             };
         };
     };
-    ExerciseController_removeExercise: {
+    Exercise_removeExercise: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator ćwiczenia */
                 id: number;
             };
             cookie?: never;
@@ -2285,16 +2359,17 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponseDto"];
+                    "application/json": components["schemas"]["ConflictErrorDto"];
                 };
             };
         };
     };
-    ExerciseController_updateExercise: {
+    Exercise_updateExercise: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator ćwiczenia */
                 id: number;
             };
             cookie?: never;
@@ -2347,16 +2422,17 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponseDto"];
+                    "application/json": components["schemas"]["ConflictErrorDto"];
                 };
             };
         };
     };
-    ExerciseController_findSubstitutes: {
+    Exercise_findSubstitutes: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator ćwiczenia */
                 id: number;
             };
             cookie?: never;
@@ -2392,7 +2468,7 @@ export interface operations {
             };
         };
     };
-    ExerciseController_generateAllSubstitutes: {
+    Exercise_generateAllSubstitutes: {
         parameters: {
             query?: {
                 /** @description true: dobierz od nowa dla całego katalogu */
@@ -2433,11 +2509,12 @@ export interface operations {
             };
         };
     };
-    ExerciseController_generateSubstitutes: {
+    Exercise_generateSubstitutes: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator ćwiczenia */
                 id: number;
             };
             cookie?: never;
@@ -2486,17 +2563,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponseDto"];
+                    "application/json": components["schemas"]["BadGatewayErrorDto"];
                 };
             };
         };
     };
-    ExerciseController_removeSubstitute: {
+    Exercise_removeSubstitute: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator ćwiczenia */
                 id: number;
+                /** @description Identyfikator zamiennika */
                 substituteId: number;
             };
             cookie?: never;
@@ -2541,11 +2620,12 @@ export interface operations {
             };
         };
     };
-    ExerciseController_usage: {
+    Exercise_usage: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator ćwiczenia */
                 id: number;
             };
             cookie?: never;
@@ -2590,7 +2670,7 @@ export interface operations {
             };
         };
     };
-    WorkoutController_findAllWorkoutsForUser: {
+    Workout_findAllWorkoutsForUser: {
         parameters: {
             query?: {
                 /** @description Data początkowa zakresu (włącznie, YYYY-MM-DD) */
@@ -2624,7 +2704,7 @@ export interface operations {
             };
         };
     };
-    WorkoutController_createWorkout: {
+    Workout_createWorkout: {
         parameters: {
             query?: never;
             header?: never;
@@ -2651,7 +2731,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["BadRequestErrorDto"];
+                };
             };
             /** @description Brak tokenu lub token nieprawidłowy */
             401: {
@@ -2664,7 +2746,7 @@ export interface operations {
             };
         };
     };
-    WorkoutController_findOneForUser: {
+    Workout_findOneForUser: {
         parameters: {
             query?: never;
             header?: never;
@@ -2705,7 +2787,7 @@ export interface operations {
             };
         };
     };
-    WorkoutController_remove: {
+    Workout_remove: {
         parameters: {
             query?: never;
             header?: never;
@@ -2746,7 +2828,7 @@ export interface operations {
             };
         };
     };
-    WorkoutController_update: {
+    Workout_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -2791,7 +2873,7 @@ export interface operations {
             };
         };
     };
-    WorkoutController_duplicateWorkout: {
+    Workout_duplicateWorkout: {
         parameters: {
             query?: never;
             header?: never;
@@ -2832,7 +2914,7 @@ export interface operations {
             };
         };
     };
-    WorkoutController_finish: {
+    Workout_finish: {
         parameters: {
             query?: never;
             header?: never;
@@ -2873,7 +2955,7 @@ export interface operations {
             };
         };
     };
-    WorkoutController_cancel: {
+    Workout_cancel: {
         parameters: {
             query?: never;
             header?: never;
@@ -2923,7 +3005,7 @@ export interface operations {
             };
         };
     };
-    WorkoutController_addExercise: {
+    Workout_addExercise: {
         parameters: {
             query?: never;
             header?: never;
@@ -2968,7 +3050,7 @@ export interface operations {
             };
         };
     };
-    WorkoutController_removeExercise: {
+    Workout_removeExercise: {
         parameters: {
             query?: never;
             header?: never;
@@ -3011,7 +3093,7 @@ export interface operations {
             };
         };
     };
-    WorkoutController_updateExercise: {
+    Workout_updateExercise: {
         parameters: {
             query?: never;
             header?: never;
@@ -3058,7 +3140,7 @@ export interface operations {
             };
         };
     };
-    WorkoutController_addSet: {
+    Workout_addSet: {
         parameters: {
             query?: never;
             header?: never;
@@ -3105,7 +3187,7 @@ export interface operations {
             };
         };
     };
-    WorkoutController_removeSet: {
+    Workout_removeSet: {
         parameters: {
             query?: never;
             header?: never;
@@ -3150,7 +3232,7 @@ export interface operations {
             };
         };
     };
-    WorkoutController_updateSet: {
+    Workout_updateSet: {
         parameters: {
             query?: never;
             header?: never;
@@ -3199,7 +3281,7 @@ export interface operations {
             };
         };
     };
-    StatsController_getExerciseProgress: {
+    Stats_getExerciseProgress: {
         parameters: {
             query?: {
                 /** @description Data początkowa zakresu (włącznie, YYYY-MM-DD) */
@@ -3209,6 +3291,7 @@ export interface operations {
             };
             header?: never;
             path: {
+                /** @description Identyfikator ćwiczenia */
                 exerciseId: number;
             };
             cookie?: never;
@@ -3235,11 +3318,12 @@ export interface operations {
             };
         };
     };
-    StatsController_getPersonalRecords: {
+    Stats_getPersonalRecords: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator ćwiczenia */
                 exerciseId: number;
             };
             cookie?: never;
@@ -3275,7 +3359,7 @@ export interface operations {
             };
         };
     };
-    StatsController_getAllPersonalRecords: {
+    Stats_getAllPersonalRecords: {
         parameters: {
             query?: never;
             header?: never;
@@ -3304,7 +3388,7 @@ export interface operations {
             };
         };
     };
-    StatsController_getMuscleGroupDistribution: {
+    Stats_getMuscleGroupDistribution: {
         parameters: {
             query?: {
                 /** @description Data początkowa zakresu (włącznie, YYYY-MM-DD) */
@@ -3338,7 +3422,7 @@ export interface operations {
             };
         };
     };
-    StatsController_getWorkoutFrequency: {
+    Stats_getWorkoutFrequency: {
         parameters: {
             query?: {
                 /** @description Data początkowa zakresu (włącznie, YYYY-MM-DD) */
@@ -3372,7 +3456,7 @@ export interface operations {
             };
         };
     };
-    StatsController_getCurrentStreak: {
+    Stats_getCurrentStreak: {
         parameters: {
             query?: never;
             header?: never;
@@ -3401,7 +3485,7 @@ export interface operations {
             };
         };
     };
-    StatsController_getSummary: {
+    Stats_getSummary: {
         parameters: {
             query?: {
                 /** @description Data początkowa zakresu (włącznie, YYYY-MM-DD) */
@@ -3435,11 +3519,12 @@ export interface operations {
             };
         };
     };
-    StatsController_getRepRecords: {
+    Stats_getRepRecords: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator ćwiczenia */
                 exerciseId: number;
             };
             cookie?: never;
@@ -3466,7 +3551,7 @@ export interface operations {
             };
         };
     };
-    StatsController_getAdherence: {
+    Stats_getAdherence: {
         parameters: {
             query?: {
                 /** @description Data początkowa zakresu (włącznie, YYYY-MM-DD) */
@@ -3500,7 +3585,7 @@ export interface operations {
             };
         };
     };
-    StatsController_getWeeklyStats: {
+    Stats_getWeeklyStats: {
         parameters: {
             query?: {
                 /** @description Data początkowa zakresu (włącznie, YYYY-MM-DD) */
@@ -3534,7 +3619,7 @@ export interface operations {
             };
         };
     };
-    StatsController_getRepRanges: {
+    Stats_getRepRanges: {
         parameters: {
             query?: {
                 /** @description Data początkowa zakresu (włącznie, YYYY-MM-DD) */
@@ -3568,7 +3653,7 @@ export interface operations {
             };
         };
     };
-    StatsController_getStagnation: {
+    Stats_getStagnation: {
         parameters: {
             query?: never;
             header?: never;
@@ -3597,7 +3682,7 @@ export interface operations {
             };
         };
     };
-    TemplateController_findAll: {
+    Template_findAll: {
         parameters: {
             query?: never;
             header?: never;
@@ -3626,7 +3711,7 @@ export interface operations {
             };
         };
     };
-    TemplateController_create: {
+    Template_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3653,7 +3738,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["BadRequestErrorDto"];
+                };
             };
             /** @description Brak tokenu lub token nieprawidłowy */
             401: {
@@ -3666,11 +3753,12 @@ export interface operations {
             };
         };
     };
-    TemplateController_findOne: {
+    Template_findOne: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator szablonu */
                 id: number;
             };
             cookie?: never;
@@ -3706,11 +3794,12 @@ export interface operations {
             };
         };
     };
-    TemplateController_remove: {
+    Template_remove: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator szablonu */
                 id: number;
             };
             cookie?: never;
@@ -3746,11 +3835,12 @@ export interface operations {
             };
         };
     };
-    TemplateController_update: {
+    Template_update: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator szablonu */
                 id: number;
             };
             cookie?: never;
@@ -3790,11 +3880,12 @@ export interface operations {
             };
         };
     };
-    TemplateController_addExercise: {
+    Template_addExercise: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator szablonu */
                 templateId: number;
             };
             cookie?: never;
@@ -3834,11 +3925,12 @@ export interface operations {
             };
         };
     };
-    TemplateController_removeExercise: {
+    Template_removeExercise: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator szablonu */
                 templateId: number;
                 /** @description Identyfikator wpisu ćwiczenia w szablonie */
                 teId: number;
@@ -3876,11 +3968,12 @@ export interface operations {
             };
         };
     };
-    TemplateController_updateExercise: {
+    Template_updateExercise: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator szablonu */
                 templateId: number;
                 /** @description Identyfikator wpisu ćwiczenia w szablonie */
                 teId: number;
@@ -3922,7 +4015,7 @@ export interface operations {
             };
         };
     };
-    PlanController_findAll: {
+    Plan_findAll: {
         parameters: {
             query?: never;
             header?: never;
@@ -3951,7 +4044,7 @@ export interface operations {
             };
         };
     };
-    PlanController_create: {
+    Plan_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3978,7 +4071,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["BadRequestErrorDto"];
+                };
             };
             /** @description Brak tokenu lub token nieprawidłowy */
             401: {
@@ -3991,11 +4086,12 @@ export interface operations {
             };
         };
     };
-    PlanController_findOne: {
+    Plan_findOne: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator planu */
                 id: number;
             };
             cookie?: never;
@@ -4031,11 +4127,12 @@ export interface operations {
             };
         };
     };
-    PlanController_remove: {
+    Plan_remove: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator planu */
                 id: number;
             };
             cookie?: never;
@@ -4071,11 +4168,12 @@ export interface operations {
             };
         };
     };
-    PlanController_update: {
+    Plan_update: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator planu */
                 id: number;
             };
             cookie?: never;
@@ -4115,7 +4213,7 @@ export interface operations {
             };
         };
     };
-    PlannerController_findAll: {
+    Planner_findAll: {
         parameters: {
             query?: {
                 /** @description Data początkowa zakresu (włącznie, YYYY-MM-DD) */
@@ -4149,7 +4247,7 @@ export interface operations {
             };
         };
     };
-    PlannerController_create: {
+    Planner_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -4191,7 +4289,7 @@ export interface operations {
             };
         };
     };
-    PlannerController_generate: {
+    Planner_generate: {
         parameters: {
             query?: never;
             header?: never;
@@ -4233,7 +4331,7 @@ export interface operations {
             };
         };
     };
-    PlannerController_findToday: {
+    Planner_findToday: {
         parameters: {
             query?: {
                 /** @description Dzisiejsza data w strefie użytkownika (YYYY-MM-DD). Domyślnie bieżący dzień w UTC. */
@@ -4265,11 +4363,12 @@ export interface operations {
             };
         };
     };
-    PlannerController_remove: {
+    Planner_remove: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator zaplanowanego treningu */
                 id: number;
             };
             cookie?: never;
@@ -4305,11 +4404,12 @@ export interface operations {
             };
         };
     };
-    PlannerController_update: {
+    Planner_update: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator zaplanowanego treningu */
                 id: number;
             };
             cookie?: never;
@@ -4349,11 +4449,12 @@ export interface operations {
             };
         };
     };
-    PlannerController_start: {
+    Planner_start: {
         parameters: {
             query?: never;
             header?: never;
             path: {
+                /** @description Identyfikator zaplanowanego treningu */
                 id: number;
             };
             cookie?: never;
@@ -4389,7 +4490,7 @@ export interface operations {
             };
         };
     };
-    AiController_generatePlan: {
+    Ai_generatePlan: {
         parameters: {
             query?: never;
             header?: never;
@@ -4416,7 +4517,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["BadRequestErrorDto"];
+                };
             };
             /** @description Brak tokenu lub token nieprawidłowy */
             401: {
@@ -4436,7 +4539,7 @@ export interface operations {
             };
         };
     };
-    AiController_parseWorkout: {
+    Ai_parseWorkout: {
         parameters: {
             query?: never;
             header?: never;

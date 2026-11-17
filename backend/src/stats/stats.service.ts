@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
+import { errorBody } from 'src/common/error-body';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ExerciseSet } from 'src/workout/exercise-set.entity';
 import { WorkoutExercise } from 'src/workout/workout-exercise.entity';
@@ -78,7 +79,7 @@ export class StatsService {
     });
 
     if (!sets.length) {
-      throw new NotFoundException('No completed sets found for this exercise');
+      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'NO_COMPLETED_SETS', 'No completed sets found for this exercise'));
     }
 
     return computePersonalRecords(sets);
