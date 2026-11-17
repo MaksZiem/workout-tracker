@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3001",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start -p 3001",
     "lint": "eslint",
-    "gen:api": "openapi-typescript http://localhost:3000/api/docs-json -o lib/api/schema.d.ts",
+    "gen:api": "openapi-typescript http://localhost:3001/api/docs-json -o lib/api/schema.d.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

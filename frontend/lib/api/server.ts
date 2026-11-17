@@ -6,7 +6,7 @@ import { SESSION_COOKIE } from "@/lib/auth/constants";
 import type { ApiPaths } from "./paths";
 
 export function backendUrl(): string {
-  return process.env.BACKEND_URL ?? "http://localhost:3000";
+  return process.env.BACKEND_URL ?? "http://localhost:3001";
 }
 
 /**
