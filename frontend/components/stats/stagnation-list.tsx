@@ -7,7 +7,6 @@ import { displayDate } from "@/lib/planner/dates";
 import { roundKg } from "@/lib/stats/model";
 import { statsHref, type StatsRange } from "@/lib/stats/range";
 
-/** Ćwiczenia bez nowego szacowanego 1RM od ponad 6 tygodni, mimo regularnych sesji. */
 export async function StagnationList({ exercises, range }: { exercises: StagnantExercise[]; range: StatsRange }) {
   const t = await getTranslations("pages.stats.stagnation");
   const format = await getFormatter();

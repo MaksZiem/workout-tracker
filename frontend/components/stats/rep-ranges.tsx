@@ -7,7 +7,6 @@ const SHADE: Record<RepRange, string> = {
   ENDURANCE: "bg-foreground/20",
 };
 
-/** Udział serii w zakresach 1–5, 6–12 i 13+ powtórzeń: jeden dzielony pasek z legendą. */
 export async function RepRanges({ ranges }: { ranges: RepRangeStats[] }) {
   const t = await getTranslations("pages.stats.repRanges");
   const format = await getFormatter();

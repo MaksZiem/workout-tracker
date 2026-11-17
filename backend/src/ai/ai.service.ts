@@ -13,7 +13,6 @@ import { WorkoutService } from 'src/workout/workout.service';
 import { ParseWorkoutDto } from './dtos/parse-workout.dto';
 import { parsedWorkoutSchema } from './schemas/parsed-workout.schema';
 
-// Nazwa planu i język odpowiedzi AI zależą od języka interfejsu użytkownika.
 const GOAL_NAMES: Record<PlanLanguage, Record<TrainingGoal, string>> = {
   pl: {
     [TrainingGoal.STRENGTH]: 'Siła',

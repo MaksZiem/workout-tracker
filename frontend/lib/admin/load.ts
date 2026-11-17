@@ -6,12 +6,10 @@ import { MUSCLE_GROUPS, type AdminUsersPage, type MuscleGroup } from "@/lib/api/
 import type { UserListQuery } from "./users-query";
 import { settle, type Section } from "@/lib/stats/model";
 
-/** `substitutesPicked`: AI już dobierało zamienniki (nawet jeśli żadnego nie znalazło). */
 export type AdminExercise = { id: number; name: string; muscleGroup: MuscleGroup; substitutesPicked: boolean };
 
 export type CatalogHealth = { total: number; missing: number };
 
-/** Cały katalog w kolejności grup z enuma, alfabetycznie w grupie (jak w /exercises). */
 export async function loadAdminCatalog(): Promise<AdminExercise[]> {
   const api = await serverApi();
   const exercises = await unwrap(api.GET("/exercise"));
@@ -26,7 +24,6 @@ export async function loadAdminCatalog(): Promise<AdminExercise[]> {
     .sort((a, b) => order(a.muscleGroup) - order(b.muscleGroup) || a.name.localeCompare(b.name, "pl"));
 }
 
-/** Przegląd panelu: stan katalogu i strona listy kont. Każda sekcja może zawieść osobno. */
 export async function loadAdminOverview(
   query: UserListQuery,
 ): Promise<{ catalog: Section<CatalogHealth>; users: Section<AdminUsersPage> }> {

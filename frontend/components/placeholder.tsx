@@ -1,9 +1,5 @@
 import { getTranslations } from "next-intl/server";
 
-/**
- * Tymczasowa zawartość ekranu: mówi, co tu powstanie i z jakich endpointów
- * będzie korzystać. Do usunięcia, gdy ekran dostanie prawdziwą implementację.
- */
 export async function Placeholder({ endpoints }: { endpoints: string[] }) {
   const t = await getTranslations("common");
 

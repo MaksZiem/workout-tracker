@@ -6,12 +6,6 @@ import { InfoTip } from "@/components/ui/info-tip";
 import { estimatedOneRepMax as epley } from "@/lib/log/model";
 import { roundKg } from "@/lib/stats/model";
 
-/**
- * Wyjaśnienie szacowanego 1RM. Z serią (`set`) pokazuje rachunek właśnie tej liczby:
- * „80 kg × 8: 80 × (1 + 8 ÷ 30) = 101,3 kg” i ewentualne zaokrąglenie do 0,5 kg,
- * pod spodem ogólne objaśnienie wzoru Epleya. Bez serii: samo objaśnienie.
- * `trigger` zamienia ikonkę „?” na podkreśloną wartość.
- */
 export function E1rmTip({
   set,
   trigger,
@@ -19,7 +13,6 @@ export function E1rmTip({
 }: {
   set?: { weight: number; reps: number } | null;
   trigger?: ReactNode;
-  /** Czy obok jest wartość zaokrąglona do 0,5 kg (wtedy dopisujemy, skąd różnica). */
   rounded?: boolean;
 }) {
   const t = useTranslations("tips.e1rm");
@@ -35,7 +28,6 @@ export function E1rmTip({
 
   return (
     <InfoTip label={known ? t("calcLabel") : t("label")} trigger={trigger}>
-      {/* Każdy t.rich numeruje swoje <p> od p0: osobne fragmenty, żeby klucze się nie zderzały. */}
       {known ? <Fragment key="yours">{t.rich("yours", { ...rich, weight: kg(set.weight), reps: set.reps, value: kg(exact) })}</Fragment> : null}
       {known && rounded && shown !== exact ? <Fragment key="rounded">{t.rich("rounded", { ...rich, shown: kg(shown) })}</Fragment> : null}
       <Fragment key="body">{t.rich("body", rich)}</Fragment>

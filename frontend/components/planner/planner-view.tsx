@@ -41,7 +41,6 @@ export function PlannerView({ view, anchor, from, to, today, entries: serverEntr
   const visible = view === "month" ? planner.entries.filter((e) => e.date.startsWith(month)) : planner.entries;
   const done = visible.filter((e) => e.status === "COMPLETED").length;
   const countable = visible.filter((e) => e.status !== "SKIPPED").length;
-  // Plany, według których są treningi w widocznym zakresie (w kolejności dat).
   const activePlans = [...new Map(visible.flatMap((e) => (e.plan ? [[e.plan.id, e.plan] as const] : []))).values()];
 
   const rangeLabel =
@@ -59,7 +58,6 @@ export function PlannerView({ view, anchor, from, to, today, entries: serverEntr
         <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t("title")}</h1>
-            {/* Stała wysokość, żeby pasek narzędzi nie skakał między stanami. */}
             <p className="mt-1 flex h-5 min-w-0 items-center gap-x-2 text-sm text-muted tabular-nums">
               {activePlans.length ? (
                 <span className="flex min-w-0 items-center gap-1.5 truncate">

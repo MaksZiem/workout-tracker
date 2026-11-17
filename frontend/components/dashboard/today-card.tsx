@@ -8,11 +8,6 @@ import { startEmpty, startScheduled, type StartState } from "@/lib/log/actions";
 import type { TodayItem } from "@/lib/dashboard/load";
 import { displayDate } from "@/lib/planner/dates";
 
-/**
- * Karta „Dziś”: jedna odpowiedź na pytanie, co dziś robię, i jedno niebieskie działanie.
- * Kolejność: trening w toku → zaplanowane → zrobione. Tylko pierwszy wiersz z akcją jest niebieski.
- * Pusty dzień: „Dziś wolne”, a bez niczego w planerze od dziś „Trening bez planu”.
- */
 export function TodayCard({
   items,
   today,
@@ -28,7 +23,6 @@ export function TodayCard({
   const primary = items.findIndex((i) => i.kind !== "done");
 
   return (
-    // Tytuł karty to nazwa treningu; „Dziś” jest tylko w nazwie dostępnej sekcji.
     <section aria-label={t("label")} className="overflow-hidden rounded-xl border border-border bg-surface">
       {items.length === 0 ? (
         offPlan ? <OffPlan /> : <RestDay />
@@ -64,7 +58,6 @@ function Title({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** Skąd jest trening: „zaplanowany na dziś” i/lub plan, według którego jest robiony. */
 function Origin({ plan, scheduled = false }: { plan: { id: number; name: string } | null; scheduled?: boolean }) {
   const t = useTranslations("pages.dashboard.today");
   if (!plan && !scheduled) return null;
@@ -80,7 +73,6 @@ function Origin({ plan, scheduled = false }: { plan: { id: number; name: string 
       {plan ? (
         <span className="flex min-w-0 items-center gap-1.5 text-muted">
           {scheduled ? null : <ClipboardList className="size-3.5 shrink-0" strokeWidth={2} aria-hidden />}
-          {/* Samodzielnie („Według planu …”) z wielkiej litery; po „Zaplanowany na dziś ·” z małej. */}
           <span className={`shrink-0 ${scheduled ? "" : "first-letter:uppercase"}`}>{t("fromPlan")}</span>
           <Link href={`/plans/${plan.id}`} className="truncate font-medium text-foreground underline-offset-2 hover:underline">
             {plan.name}
@@ -169,7 +161,6 @@ function InProgressRow({
       body={
         <>
           <Title>{item.title ?? t("untitled")}</Title>
-          {/* Ten sam znacznik „W trakcie” co w planerze. */}
           <p className="mt-1.5 flex items-center gap-1.5 text-[13px] tabular-nums">
             <CircleDot className="size-3.5 shrink-0" strokeWidth={2.25} aria-hidden />
             <span className="font-medium">{status}</span>
@@ -254,7 +245,6 @@ function RestDay() {
           </>
         }
         action={
-          // Telefon: przycisk najpierw, pod nim cichy link wyrównany do tekstu.
           <div className="flex flex-col-reverse items-start gap-1 sm:flex-row sm:items-center sm:gap-2">
             <Link href="/planner" className="-ml-3 flex h-11 items-center rounded-lg px-3 text-sm font-medium text-accent hover:bg-accent-surface sm:ml-0">
               {t("toPlanner")}
@@ -272,7 +262,6 @@ function RestDay() {
   );
 }
 
-/** Nic w planerze od dziś: trening z ręki jest tu główną akcją, szablon i plan to alternatywy. */
 function OffPlan() {
   const t = useTranslations("pages.dashboard.today");
   const [state, action, pending] = useActionState<StartState>(startEmpty, {});

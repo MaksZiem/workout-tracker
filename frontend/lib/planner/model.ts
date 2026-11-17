@@ -6,7 +6,6 @@ export type PlannerEntry = {
   status: ScheduledWorkoutStatus;
   templateId: number | null;
   templateName: string | null;
-  /** Plan, do którego należy szablon (wpis dodany z szablonu spoza planu: null). */
   plan: PlanOption | null;
   exerciseCount: number;
   muscleGroups: MuscleGroup[];
@@ -22,10 +21,8 @@ export type TemplateOption = {
 
 export type PlanOption = { id: number; name: string };
 
-/** Status widoczny w UI: backendowy albo wyliczony „zaległy”. */
 export type DisplayStatus = ScheduledWorkoutStatus | "OVERDUE";
 
-/** Kolor kropki statusu (miesiąc w planerze, pasek tygodnia na pulpicie). */
 export const STATUS_DOT: Record<DisplayStatus, string> = {
   PLANNED: "bg-muted",
   IN_PROGRESS: "bg-foreground",
@@ -38,7 +35,6 @@ export function displayStatus(entry: PlannerEntry, today: string): DisplayStatus
   return entry.status === "PLANNED" && entry.date < today ? "OVERDUE" : entry.status;
 }
 
-/** Domyślne rozłożenie N szablonów na dni tygodnia (0 = poniedziałek). */
 export function defaultSpread(count: number): number[] {
   const presets: Record<number, number[]> = {
     1: [0],

@@ -6,11 +6,6 @@ import { localDate } from "@/lib/log/model";
 
 export type ParseState = { error?: "empty" | "ai" | "nothing" | "failed"; text?: string };
 
-/**
- * Skrót AI z pulpitu: tworzy dzisiejszy trening, Gemini dopisuje rozpoznane ćwiczenia,
- * a użytkownik trafia do /log, żeby wynik przejrzeć i poprawić. Gdy AI zawiedzie
- * albo nic nie rozpozna, pusty trening jest usuwany, a tekst wraca do pola.
- */
 export async function parseToWorkout(_prev: ParseState, formData: FormData): Promise<ParseState> {
   const text = String(formData.get("text") ?? "").trim();
   if (!text) return { error: "empty" };

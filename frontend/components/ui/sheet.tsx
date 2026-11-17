@@ -3,10 +3,6 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { X } from "lucide-react";
 
-/**
- * Arkusz na natywnym <dialog>: na telefonie wysuwa się od dołu, na desktopie
- * jest wyśrodkowanym oknem. Fokus, Escape i tło obsługuje przeglądarka.
- */
 export function Sheet({
   open,
   onClose,
@@ -22,7 +18,6 @@ export function Sheet({
   closeLabel: string;
   children: ReactNode;
   footer?: ReactNode;
-  /** W trakcie nieprzerywalnej operacji: Escape, tło i X nie zamykają arkusza. */
   locked?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);

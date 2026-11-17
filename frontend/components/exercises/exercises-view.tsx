@@ -12,7 +12,6 @@ import { SegmentedLinks } from "@/components/stats/segmented-links";
 import { E1rmTip } from "@/components/ui/e1rm-tip";
 import { SearchField } from "./search-field";
 
-/** Katalog: wyszukiwarka na miejscu, filtr grupy w URL, twoje wyniki przy każdym ćwiczeniu. */
 export function ExercisesView({
   items,
   group,
@@ -128,7 +127,6 @@ function ExerciseRow({ exercise, showMark }: { exercise: CatalogExercise; showMa
         ) : mark ? (
           <span className="shrink-0 text-[13px] text-muted">{t("bodyweight")}</span>
         ) : (
-          // Telefon: krótki znacznik, żeby nazwy mieściły się w jednej linii.
           <span className="shrink-0 text-[13px] text-muted">
             <span className="sm:hidden" aria-hidden>
               —

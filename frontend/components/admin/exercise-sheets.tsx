@@ -13,7 +13,6 @@ import { Sheet } from "@/components/ui/sheet";
 
 type ShowToast = (toast: Omit<Toast, "id">) => void;
 
-/** Dodawanie i edycja ćwiczenia: nazwa i grupa mięśniowa. Zamienniki dobiera AI po zapisie. */
 export function ExerciseSheet({
   exercise,
   defaultGroup,
@@ -120,7 +119,6 @@ export function ExerciseSheet({
 
         <fieldset>
           <legend className="text-sm font-medium">{t("group")}</legend>
-          {/* Segmented control zawinięty do dwóch kolumn, jak cel w arkuszu AI. */}
           <div className="mt-2 grid grid-cols-2 gap-1 rounded-lg bg-surface-muted p-1">
             {MUSCLE_GROUPS.map((g) => (
               <label
@@ -153,10 +151,6 @@ type Review =
   | { state: "ready"; items: ExerciseSubstitute[]; picked: boolean }
   | { state: "error" };
 
-/**
- * Przegląd zamienników od AI w edycji ćwiczenia: admin odrzuca te, z którymi się nie zgadza,
- * albo prosi o nowy dobór. Działa od razu, niezależnie od zapisu formularza powyżej.
- */
 function SubstitutesReview({ exercise, locked }: { exercise: AdminExercise; locked: boolean }) {
   const t = useTranslations("pages.adminExercises.sheet");
   const router = useRouter();
@@ -189,7 +183,6 @@ function SubstitutesReview({ exercise, locked }: { exercise: AdminExercise; lock
               }),
             );
       setReview({ state: "ready", items, picked: true });
-      // Znacznik „Zamienniki niedobrane” i licznik w panelu zależą od tego stanu.
       router.refresh();
     } catch {
       setFailed(true);
@@ -262,10 +255,6 @@ function SubstitutesReview({ exercise, locked }: { exercise: AdminExercise; lock
 
 type Usage = { state: "loading" } | { state: "ready"; usage: ExerciseUsage } | { state: "error" };
 
-/**
- * Usuwanie z wyprzedzeniem: arkusz najpierw sprawdza, gdzie ćwiczenie jest używane.
- * Używanego nie da się usunąć (historia zostaje), więc zamiast czerwonego przycisku jest „Zmień nazwę”.
- */
 export function DeleteExerciseSheet({
   exercise,
   onClose,
@@ -307,7 +296,6 @@ export function DeleteExerciseSheet({
     } catch (err) {
       setPending(false);
       if (err instanceof ApiError && err.code === "EXERCISE_IN_USE") {
-        // Ktoś zdążył użyć ćwiczenia: pokaż aktualne liczniki zamiast błędu.
         const fresh = await clientApi.GET("/exercise/{id}/usage", { params: { path: { id: exercise.id } } }).catch(() => null);
         setUsage(fresh?.data ? { state: "ready", usage: fresh.data } : { state: "error" });
         return;
@@ -371,7 +359,6 @@ export function DeleteExerciseSheet({
       open
       onClose={onClose}
       locked={pending}
-      // Dopóki nie wiadomo, czy da się usunąć, tytuł tylko nazywa ćwiczenie.
       title={
         usage.state !== "ready"
           ? exercise.name

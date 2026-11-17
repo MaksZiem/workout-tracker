@@ -7,13 +7,10 @@ import { addDays, weekStart } from "@/lib/planner/dates";
 import type { PlannerEntry } from "@/lib/planner/model";
 import { settle, weeklyStreak } from "@/lib/stats/model";
 
-/** Ile dni wstecz szukamy niezakończonego treningu do „Kontynuuj”. */
 const RESUME_DAYS = 2;
 const RECENT_WORKOUTS = 5;
 const FRESH_RECORD_DAYS = 30;
-/** Horyzont „zaplanowałeś coś” dla listy Na start. */
 const SCHEDULE_HORIZON_DAYS = 56;
-/** Jak daleko wstecz liczymy passę treningów z planu. */
 const PLAN_STREAK_DAYS = 365;
 
 type PlanRef = { id: number; name: string };
@@ -52,13 +49,11 @@ export type TodayItem =
       volume: number;
     };
 
-/** Podsumowanie bieżącego tygodnia i najbliższy zaplanowany trening po dzisiejszym dniu. */
 export type WeekSummary = {
   workouts: number;
   sets: number;
   volume: number;
   next: { date: string; title: string | null } | null;
-  /** Dni z zakończonym treningem, który nie pochodzi z planera. */
   offPlan: Set<string>;
 };
 
@@ -78,7 +73,6 @@ export type FreshRecord = {
   kind: "e1rm" | "maxWeight";
   value: number;
   date: string;
-  /** Seria rekordu e1RM (do rachunku w dymku). */
   set: { weight: number; reps: number } | null;
 };
 
@@ -98,7 +92,6 @@ function unique<T>(values: (T | null | undefined)[]): T[] {
   return [...new Set(values.filter((v): v is T => v !== undefined && v !== null))];
 }
 
-/** Dane pulpitu. Każda sekcja wczytuje się niezależnie. */
 export async function loadDashboard(today: string) {
   const api = await serverApi();
   const monday = weekStart(today);
@@ -110,7 +103,6 @@ export async function loadDashboard(today: string) {
     settle(
       unwrap(
         api.GET("/planner/scheduled", {
-          // Od roku wstecz: passa treningów z planu. Tydzień i „następny” filtrują dalej same.
           params: { query: { from: addDays(today, -PLAN_STREAK_DAYS), to: addDays(today, SCHEDULE_HORIZON_DAYS) } },
         }),
       ),
@@ -120,7 +112,6 @@ export async function loadDashboard(today: string) {
     settle(unwrap(api.GET("/plan"))),
   ]);
 
-  // Szczegóły (ćwiczenia i serie): ostatnie treningi + niezakończone z ostatnich dni.
   const list = workouts.ok ? workouts.data : [];
   const resumeFrom = addDays(today, -RESUME_DAYS);
   const detailIds = unique([
@@ -139,13 +130,10 @@ export async function loadDashboard(today: string) {
   return {
     today: todayPlan.ok && workouts.ok ? { ok: true as const, data: todayItems(today, todayPlan.data, list, details) } : { ok: false as const },
     week: scheduled.ok ? { ok: true as const, data: weekEntries(scheduled.data, monday, sunday) } : { ok: false as const },
-    // Nic zaplanowanego od dziś: użytkownik trenuje bez planu (karta „Dziś” proponuje trening z ręki).
     offPlan: scheduled.ok ? !scheduled.data.some((s) => s.status === "PLANNED" && s.date >= today) : false,
     weekSummary: weekSummary(today, monday, sunday, list, scheduled.ok ? scheduled.data : []),
-    // Zielony dzień = zakończony trening; rozpoczęty jeszcze nie jest „zrobiony”.
     weekTrained: new Set(list.filter((w) => w.finishedAt && w.date >= monday && w.date <= sunday).map((w) => w.date)),
     streak: frequency.ok ? weeklyStreak(frequency.data, today) : null,
-    // Rok dni pod mapę aktywności (z pominiętymi treningami z planu).
     activity: frequency,
     planStreak: scheduled.ok ? planStreak(scheduled.data, today) : null,
     recent: workouts.ok
@@ -166,7 +154,6 @@ function todayItems(
   list: { id: number; date: string; finishedAt?: string | null }[],
   details: Map<number, WorkoutDetail>,
 ): TodayItem[] {
-  // Nazwa szablonu dla treningu uruchomionego z planera.
   const titleByWorkout = new Map<number, string>();
   const planByWorkout = new Map<number, PlanRef | null>();
   for (const item of plan) {
@@ -246,11 +233,6 @@ function weekEntries(
     }));
 }
 
-/**
- * Ile ostatnich zaplanowanych treningów z rzędu zostało wykonanych. Przerywa ją pominięty,
- * przegapiony (zaplanowany w przeszłości) albo niedokończony trening; dzisiejszy, jeszcze
- * niezrobiony wpis passy nie przerywa.
- */
 function planStreak(scheduled: ScheduledWorkout[], today: string) {
   const past = scheduled
     .filter((s) => s.date <= today)
@@ -271,7 +253,6 @@ function weekSummary(
   list: WorkoutDetail[],
   scheduled: ScheduledWorkout[],
 ): WeekSummary {
-  // Lista /workout ma już ćwiczenia i serie, więc tydzień liczymy bez dociągania szczegółów.
   const finished = list.filter((w) => w.finishedAt && w.date >= monday && w.date <= sunday);
   const fromPlanner = new Set(scheduled.flatMap((s) => (s.workout?.id ? [s.workout.id] : [])));
   const next = scheduled.find((s) => s.status === "PLANNED" && s.date > today);
@@ -288,7 +269,6 @@ function recentWorkouts(
   list: { id: number; date: string; finishedAt?: string | null }[],
   details: Map<number, WorkoutDetail>,
 ): RecentWorkout[] {
-  // Tylko zakończone: niezakończony trening jest już w karcie „Dziś”.
   return list
     .filter((w) => w.finishedAt)
     .slice(0, RECENT_WORKOUTS)
@@ -306,14 +286,12 @@ function recentWorkouts(
         exercises: exercises.map((we) => we.exercise.name),
         doneSets: setsOf(w).filter((s) => s.completed).length,
         volume: volumeOf(w),
-        // Czas ma sens tylko dla treningu zapisywanego na żywo (nie dopisanego po fakcie).
         minutes: minutes !== null && minutes > 0 && minutes < 6 * 60 ? minutes : null,
         inProgress: !w.finishedAt,
       };
     });
 }
 
-/** Rekordy pobite w ostatnich 30 dniach, najświeższe na górze. */
 function freshRecords(records: ExercisePersonalRecords[], today: string): FreshRecord[] {
   const since = addDays(today, -(FRESH_RECORD_DAYS - 1));
   return records

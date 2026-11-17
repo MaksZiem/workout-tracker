@@ -5,12 +5,10 @@ import { ApiError, errorCode, unwrap } from "@/lib/api/errors";
 import { MUSCLE_GROUPS, type ExercisePersonalRecords, type MuscleGroup } from "@/lib/api/extra-types";
 import { settle, type Section } from "@/lib/stats/model";
 
-/** Twój wynik w ćwiczeniu na liście: najlepszy szacowany 1RM i dzień, w którym padł. */
 export type ExerciseMark = { e1rm: number; date: string; set: { weight: number; reps: number } };
 
 export type CatalogExercise = { id: number; name: string; muscleGroup: MuscleGroup; mark: ExerciseMark | null };
 
-/** Zamiennik dobrany przez AI, z uzasadnieniem i twoim wynikiem w nim. */
 export type SubstituteItem = { id: number; name: string; reason: string; mark: ExerciseMark | null };
 
 function marksOf(records: ExercisePersonalRecords[]) {
@@ -23,10 +21,6 @@ function marksOf(records: ExercisePersonalRecords[]) {
   );
 }
 
-/**
- * Katalog z twoimi rekordami (jedno zapytanie o wszystkie). Brak rekordów
- * nie blokuje katalogu: sekcja pokazuje wtedy błąd tylko przy wynikach.
- */
 export async function loadCatalog() {
   const api = await serverApi();
   const [exercises, records] = await Promise.all([
@@ -41,10 +35,8 @@ export async function loadCatalog() {
   return { items, recordsOk: records.ok };
 }
 
-/** Zamienniki: `pending`, gdy AI jeszcze ich nie dobierało (pusta lista znaczy wtedy „nie wiadomo”, a nie „brak”). */
 export type SubstitutesSection = { ok: true; data: SubstituteItem[] } | { ok: false; reason: "pending" | "error" };
 
-/** Karta ćwiczenia; `null`, gdy nie istnieje. */
 export async function loadExerciseCard(id: number) {
   const api = await serverApi();
   const exercise = await api.GET("/exercise/{id}", { params: { path: { id } } });

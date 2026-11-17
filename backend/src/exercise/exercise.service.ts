@@ -52,11 +52,9 @@ export class ExerciseService {
       (dto.muscleGroup !== undefined && dto.muscleGroup !== exercise.muscleGroup)
     assignDefined(exercise, dto)
     const saved = await this.repo.save(exercise)
-    // Nowa nazwa albo grupa to może być inne ćwiczenie: zamienniki dobieramy od nowa.
     return changed ? this.tryGenerateSubstitutes(saved, { resetOnFailure: true }) : saved
   }
 
-  /** Ile treningów i szablonów używa ćwiczenia (usunąć można tylko nieużywane). */
   async usage(id: number) {
     const exercise = await this.findOne(id)
     if (!exercise) {
@@ -85,13 +83,11 @@ export class ExerciseService {
     }
     const { workoutCount, templateCount } = await this.usage(id)
     if (workoutCount || templateCount) {
-      // Usunięcie skasowałoby historię użytkowników: zamiast tego można zmienić nazwę.
       throw new ConflictException(errorBody(HttpStatus.CONFLICT, 'EXERCISE_IN_USE', `Exercise is used in ${workoutCount} workout(s) and ${templateCount} template(s)`, { workoutCount, templateCount }))
     }
     return this.repo.remove(exercise)
   }
 
-  /** Zamienniki dobrane przez AI, od najlepszego, z uzasadnieniem. */
   async findSubstitutes(id: number) {
     const exercise = await this.findOne(id)
     if (!exercise) {
@@ -104,11 +100,6 @@ export class ExerciseService {
     return rows.map((r) => ({ exercise: r.substitute, reason: r.reason }))
   }
 
-  /**
-   * Gemini wybiera z katalogu ćwiczenia, które naprawdę zastąpią dane ćwiczenie
-   * (ten sam wzorzec ruchu i główne mięśnie), i uzasadnia każdy wybór. Wynik zastępuje
-   * poprzednią listę.
-   */
   async generateSubstitutes(id: number) {
     const exercise = await this.findOne(id)
     if (!exercise) {
@@ -119,11 +110,6 @@ export class ExerciseService {
     return this.findSubstitutes(id)
   }
 
-  /**
-   * Dobiera zamienniki dla ćwiczeń, które ich jeszcze nie mają (albo dla wszystkich, np. po
-   * rozbudowie katalogu). Jedno zapytanie do Gemini obsługuje całą paczkę ćwiczeń, bo darmowy
-   * limit to kilka zapytań na minutę; po przejściowym błędzie (limit, przeciążenie) paczka czeka i próbuje raz jeszcze.
-   */
   async generateAllSubstitutes(onlyMissing: boolean) {
     const catalog = await this.repo.find({ order: { id: 'ASC' } })
     const targets = onlyMissing ? catalog.filter((e) => !e.substitutesGeneratedAt) : catalog
@@ -140,7 +126,6 @@ export class ExerciseService {
         continue
       }
       for (const exercise of batch) {
-        // Ćwiczenie pominięte w odpowiedzi też jest „dobrane”: AI nie znalazło zamiennika.
         await this.saveSubstitutes(exercise.id, picked.get(exercise.id) ?? [])
         updated++
       }
@@ -148,7 +133,6 @@ export class ExerciseService {
     return { updated, failed }
   }
 
-  /** Administrator odrzuca zamiennik, z którym się nie zgadza. */
   async removeSubstitute(id: number, substituteId: number) {
     const result = await this.substitutes.delete({ exercise: { id }, substitute: { id: substituteId } })
     if (!result.affected) {
@@ -157,9 +141,6 @@ export class ExerciseService {
     return this.findSubstitutes(id)
   }
 
-  // Awaria Gemini nie blokuje zapisu ćwiczenia: zamienniki można dobrać później z panelu admina.
-  // Po zmianie nazwy lub grupy stare zamienniki mogą już nie pasować, więc przy awarii znikają,
-  // a ćwiczenie wraca do stanu „niedobrane” (substitutesGeneratedAt = null).
   private async tryGenerateSubstitutes(exercise: Exercise, options = { resetOnFailure: false }) {
     try {
       await this.generateSubstitutes(exercise.id)
@@ -174,7 +155,6 @@ export class ExerciseService {
     return (await this.findOne(exercise.id)) ?? exercise
   }
 
-  /** Jedno zapytanie do Gemini o zamienniki dla kilku ćwiczeń naraz; zwraca tylko poprawne id z katalogu. */
   private async pickSubstitutes(targets: Exercise[], catalog: Exercise[], options = { retryOnTransient: false }) {
     const prompt = this.substitutesPrompt(targets, catalog)
     let answer: { results: { exerciseId: number; substitutes: PickedSubstitute[] }[] }
@@ -245,7 +225,6 @@ Katalog (id | nazwa | grupa):
 ${catalog.map(line).join('\n')}`
   }
 
-  // Nazwy są unikalne bez względu na wielkość liter („Przysiad” i „przysiad” to to samo ćwiczenie).
   private async assertNameFree(name: string, exceptId?: number) {
     const query = this.repo
       .createQueryBuilder('e')
@@ -259,7 +238,6 @@ ${catalog.map(line).join('\n')}`
   }
 }
 
-/** Ile ćwiczeń idzie w jednym zapytaniu do Gemini przy dobieraniu hurtem. */
 const SUBSTITUTES_BATCH = 20
 
 type PickedSubstitute = { exerciseId: number; reason: string }
@@ -268,10 +246,6 @@ function errorMessage(error: unknown) {
   return error instanceof Error ? error.message : String(error)
 }
 
-/**
- * Ile odczekać przed ponowieniem po przejściowym błędzie Gemini: 429 (limit zapytań, czas z "retryDelay",
- * najwyżej minuta) albo 503 (model chwilowo przeciążony). null dla pozostałych błędów.
- */
 function transientRetryDelay(error: unknown): number | null {
   const message = errorMessage(error)
   if (message.includes('"code":503')) return 5000

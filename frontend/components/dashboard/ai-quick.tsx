@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { Sparkles } from "lucide-react";
 import { parseToWorkout, type ParseState } from "@/lib/dashboard/actions";
 
-/** Skrót AI: opis tekstem → dzisiejszy trening do przejrzenia w /log. */
 export function AiQuick() {
   const t = useTranslations("pages.dashboard.ai");
   const [state, action, pending] = useActionState<ParseState, FormData>(parseToWorkout, {});

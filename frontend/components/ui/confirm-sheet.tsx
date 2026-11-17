@@ -3,7 +3,6 @@
 import { useTranslations } from "next-intl";
 import { Sheet } from "./sheet";
 
-/** Potwierdzenie nieodwracalnej akcji: tytuł, uczciwy opis skutków, czerwony przycisk. */
 export function ConfirmSheet({
   open,
   title,

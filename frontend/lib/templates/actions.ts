@@ -6,11 +6,6 @@ import { localDate } from "@/lib/log/model";
 import type { StartState } from "@/lib/log/actions";
 import { todayState } from "./model";
 
-/**
- * Trening z szablonu od razu. Backend startuje tylko wpisy z planera, więc:
- * trening w toku → kontynuacja; dzisiejszy zaplanowany wpis → start;
- * inaczej nowy wpis na dziś i start. Nieudany start usuwa wpis, który tu powstał.
- */
 export async function startTemplate(_prev: StartState, formData: FormData): Promise<StartState> {
   const templateId = Number(formData.get("templateId"));
   if (!Number.isInteger(templateId) || templateId <= 0) return { error: true };
@@ -50,7 +45,6 @@ export async function startTemplate(_prev: StartState, formData: FormData): Prom
 
 export type ScheduleState = { error?: boolean; scheduled?: string };
 
-/** Szablon na wybrany dzień w planerze. */
 export async function scheduleTemplate(_prev: ScheduleState, formData: FormData): Promise<ScheduleState> {
   const templateId = Number(formData.get("templateId"));
   const date = String(formData.get("date") ?? "");

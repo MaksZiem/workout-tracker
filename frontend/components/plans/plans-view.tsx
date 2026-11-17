@@ -14,7 +14,6 @@ import { Sheet } from "@/components/ui/sheet";
 const MIN_DAYS = 1;
 const MAX_DAYS = 7;
 
-/** Lista planów: nowy plan (niebieski) albo wygenerowany przez AI (drugorzędny). */
 export function PlansView({ plans }: { plans: PlanSummary[] }) {
   const t = useTranslations("pages.plans");
   const [creating, setCreating] = useState(false);
@@ -174,7 +173,6 @@ function AiPlanSheet({ open, onClose }: { open: boolean; onClose: () => void }) 
       );
       router.push(`/plans/${result.plan.id}?ai=1`);
     } catch {
-      // Formularz zostaje wypełniony, żeby można było spróbować ponownie.
       setError(true);
       setPending(false);
     }
@@ -211,7 +209,6 @@ function AiPlanSheet({ open, onClose }: { open: boolean; onClose: () => void }) 
 
         <fieldset>
           <legend className="text-sm font-medium">{t("goal")}</legend>
-          {/* Segmented control jak w planerze i statystykach, zawinięty do 2×2. */}
           <div className="mt-2 grid grid-cols-2 gap-1 rounded-lg bg-surface-muted p-1">
             {TRAINING_GOALS.map((g) => (
               <label

@@ -20,10 +20,6 @@ function toSummary(template: WorkoutTemplate, running: Set<number>): TemplateSum
   };
 }
 
-/**
- * Wszystkie szablony użytkownika: najpierw pojedyncze treningi, potem dni
- * każdego planu (plany od najnowszego, dni w kolejności dodania, jak w planie).
- */
 export async function loadTemplates(): Promise<TemplateGroup[]> {
   const api = await serverApi();
   const [templates, { data: today }] = await Promise.all([
@@ -54,13 +50,11 @@ export async function loadTemplates(): Promise<TemplateGroup[]> {
   return [{ plan: null, templates: standalone.map(summary) }, ...planGroups];
 }
 
-/** Szablon do edycji z planem i dzisiejszym wpisem w planerze; `null`, gdy nie istnieje. */
 export async function loadTemplate(id: number): Promise<TemplateDetail | null> {
   const api = await serverApi();
   const { data: template } = await api.GET("/template/{id}", { params: { path: { id } } });
   if (!template) return null;
 
-  // Brak danych z planera nie blokuje edycji: przycisk po prostu zaczyna od nowa.
   const { data: today } = await api.GET("/planner/today", { params: { query: { date: localDate() } } });
 
   return {

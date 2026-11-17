@@ -12,7 +12,7 @@ import type { PlannerApi } from "./use-planner";
 type Props = {
   from: string;
   to: string;
-  month: string; // YYYY-MM
+  month: string;
   today: string;
   entries: PlannerEntry[];
   planner: PlannerApi;
@@ -20,12 +20,6 @@ type Props = {
   onMove: (entry: PlannerEntry) => void;
 };
 
-
-/**
- * Miesiąc: siatka pełnych tygodni. Na desktopie komórki pokazują nazwy
- * szablonów, na telefonie kropki statusów. Wybrany dzień rozwija się pod siatką
- * z pełnymi kartami i akcjami.
- */
 export function MonthBoard({ from, to, month, today, entries, planner, onAdd, onMove }: Props) {
   const format = useFormatter();
   const t = useTranslations("pages.planner");
@@ -54,7 +48,6 @@ export function MonthBoard({ from, to, month, today, entries, planner, onAdd, on
             </span>
           ))}
         </div>
-        {/* Linie siatki: 1px przerwy na tle koloru krawędzi. */}
         <div className="grid grid-cols-7 gap-px bg-border">
           {days.map((date) => {
             const inMonth = date.startsWith(month);
@@ -91,14 +84,12 @@ export function MonthBoard({ from, to, month, today, entries, planner, onAdd, on
                   {Number(date.slice(8))}
                 </span>
 
-                {/* Telefon: kropki statusów */}
                 <span className="flex flex-wrap justify-center gap-1 md:hidden" aria-hidden>
                   {dayEntries.slice(0, 3).map((e) => (
                     <span key={e.id} className={`size-1.5 rounded-full ${DOT[displayStatus(e, today)]}`} />
                   ))}
                 </span>
 
-                {/* Desktop: nazwy szablonów */}
                 <span className={`hidden min-w-0 flex-col gap-0.5 md:flex ${inMonth ? "" : "opacity-50"}`} aria-hidden>
                   {dayEntries.slice(0, 2).map((e) => {
                     const status = displayStatus(e, today);
@@ -111,7 +102,6 @@ export function MonthBoard({ from, to, month, today, entries, planner, onAdd, on
                         }`}
                       >
                         <span className={`mt-[5px] size-1.5 shrink-0 rounded-full ${DOT[status]}`} />
-                        {/* Jeden wpis w dniu: do dwóch linii, żeby nazwa szablonu była czytelna. */}
                         <span className={`min-w-0 flex-1 break-words ${dayEntries.length === 1 ? "line-clamp-2" : "line-clamp-1"}`}>
                           {e.templateName ?? t("entry.noTemplate")}
                         </span>

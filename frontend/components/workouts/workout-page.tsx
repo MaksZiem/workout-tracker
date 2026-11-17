@@ -18,12 +18,9 @@ import { ExerciseRecordsSheet } from "@/components/stats/exercise-records-sheet"
 import { E1rmTip } from "@/components/ui/e1rm-tip";
 import { CancelWorkoutSheet } from "@/components/log/cancel-sheet";
 
-// Wspólna siatka nagłówka i serii: # | kg | powt. | status. Telefon: status przy prawej krawędzi;
-// od `sm` status stoi tuż za powtórzeniami, żeby czytał się razem z serią.
 const SET_GRID =
   "grid grid-cols-[2.25rem_4.5rem_4.5rem_minmax(0,1fr)] items-center gap-x-3 sm:grid-cols-[2.25rem_5.5rem_5.5rem_7rem_minmax(0,1fr)]";
 
-/** Arkusz sesji: dane treningu do czytania; zmiany serii w loggerze, jedna akcja: powtórz. */
 export function WorkoutPage({ workout }: { workout: WorkoutDetail }) {
   const t = useTranslations("pages.workoutDetail");
   const tUndo = useTranslations("pages.log.toast");
@@ -161,7 +158,6 @@ export function WorkoutPage({ workout }: { workout: WorkoutDetail }) {
             triggerClassName="grid size-11 place-items-center rounded-lg border border-border text-muted hover:bg-surface-muted hover:text-foreground"
             actions={[
               { label: t("changeDate"), onSelect: () => setRedating(true) },
-              // W trakcie: przerwanie (wpis w planerze wraca do „zaplanowanych”); zakończony: usunięcie.
               inProgress
                 ? { label: t("cancelWorkout"), tone: "danger", onSelect: () => setCancelling(true) }
                 : { label: t("delete"), tone: "danger", onSelect: () => setConfirming(true) },
@@ -280,7 +276,6 @@ function ExerciseSection({ exercise }: { exercise: DetailExercise }) {
               <li key={set.id} className={`${SET_GRID} min-h-12 px-4 py-1.5 sm:px-5 ${set.completed ? "" : "text-muted"}`}>
                 <span className="grid place-items-center">
                   {set.records.length ? (
-                    // Rekord e1RM: medal otwiera rachunek wzoru Epleya dla tej serii.
                     set.records.includes("e1rm") ? (
                       <E1rmTip set={set} rounded={false} trigger={<Medal label={recordLabel(set.records)} number={set.number} />} />
                     ) : (

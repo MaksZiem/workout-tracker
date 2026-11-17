@@ -15,7 +15,6 @@ import { ToastView, useToast } from "@/components/ui/toast";
 import { InlineText } from "./inline-text";
 import { TemplateEditor } from "./template-editor";
 
-/** Szczegół planu: nazwa i notatka na miejscu, dni treningowe jako edytory szablonów. */
 export function PlanEditor({ plan: initial, fromAi }: { plan: PlanDetail; fromAi: boolean }) {
   const t = useTranslations("pages.planDetail");
   const tUndo = useTranslations("pages.log.toast");
@@ -174,7 +173,6 @@ export function PlanEditor({ plan: initial, fromAi }: { plan: PlanDetail; fromAi
           <div className="rounded-xl border border-border bg-surface p-5">
             <p className="text-[17px] font-semibold">{t("emptyTitle")}</p>
             <p className="mt-1 text-sm text-muted">{t("emptyBody")}</p>
-            {/* Pusty plan: dodanie dnia to jedyna sensowna akcja, więc to ona jest niebieska. */}
             <button
               type="button"
               onClick={addDay}

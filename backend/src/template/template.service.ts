@@ -69,8 +69,6 @@ export class TemplateService {
     return this.repo.save(template);
   }
 
-  // Jak przy usuwaniu planu: nadchodzące nierozpoczęte treningi z tego
-  // szablonu znikają razem z nim, przeszłe zostają w historii.
   async remove(userId: number, id: number) {
     const template = await this.findOwned(userId, id);
     const today = new Date().toISOString().slice(0, 10);

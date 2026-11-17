@@ -2,18 +2,12 @@ import { NextResponse, type NextRequest } from "next/server";
 import { backendUrl } from "@/lib/api/server";
 import { SESSION_COOKIE } from "@/lib/auth/constants";
 
-// Proxy BFF: przeglądarka woła /api/backend/<ścieżka>, a my przekazujemy
-// zapytanie do NestJS z tokenem z httpOnly cookie. Dzięki temu backend nie
-// potrzebuje CORS dla frontendu, a JWT nie trafia do JavaScriptu.
-
 const FORWARDED_REQUEST_HEADERS = ["content-type", "accept", "accept-language"];
 const FORWARDED_RESPONSE_HEADERS = ["content-type", "content-length"];
 
 async function forward(request: NextRequest, ctx: RouteContext<"/api/backend/[...path]">) {
   const { path } = await ctx.params;
 
-  // Logowanie i rejestracja idą przez Server Actions (lib/auth/actions.ts),
-  // żeby token nigdy nie wrócił do przeglądarki w treści odpowiedzi.
   if (path[0] === "auth" && (path[1] === "signin" || path[1] === "signup")) {
     return NextResponse.json(
       { statusCode: 404, error: "Not Found", message: "Use the sign-in form" },
@@ -60,8 +54,6 @@ async function forward(request: NextRequest, ctx: RouteContext<"/api/backend/[..
     headers: responseHeaders,
   });
 
-  // Token wygasł albo użytkownik został usunięty: czyścimy sesję,
-  // a następna nawigacja trafi przez proxy.ts na /login.
   if (upstream.status === 401 && token) {
     response.cookies.delete(SESSION_COOKIE);
   }

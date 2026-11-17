@@ -9,10 +9,6 @@ import { Sheet } from "@/components/ui/sheet";
 type Picked = { id: number; name: string; muscleGroup: MuscleGroup };
 type State = { kind: "loading" } | { kind: "ready"; items: ExerciseSubstitute[] } | { kind: "unavailable" } | { kind: "error" };
 
-/**
- * Zamiana ćwiczenia na zamiennik dobrany przez AI (ten sam ruch i mięśnie), z uzasadnieniem.
- * Gdy zamienników brak albo jeszcze ich nie dobrano, prowadzi do pełnego katalogu.
- */
 export function SwapExerciseSheet({
   exercise,
   taken,
@@ -21,7 +17,6 @@ export function SwapExerciseSheet({
   onBrowse,
 }: {
   exercise: { exerciseId: number; name: string } | null;
-  /** Ćwiczenia już obecne w tym dniu: zamiana na nie dałaby duplikat. */
   taken: Set<number>;
   onClose: () => void;
   onPick: (picked: Picked) => void;
@@ -31,7 +26,6 @@ export function SwapExerciseSheet({
   const tNav = useTranslations("nav");
   const tCommon = useTranslations("common");
   const [attempt, setAttempt] = useState(0);
-  // Wynik przypisany do (ćwiczenie, próba): inny klucz = wciąż się wczytuje.
   const [result, setResult] = useState<{ key: string; state: State } | null>(null);
   const exerciseId = exercise?.exerciseId;
   const key = `${exerciseId}:${attempt}`;
@@ -45,7 +39,6 @@ export function SwapExerciseSheet({
     Promise.all([clientApi.GET("/exercise/{id}", path), clientApi.GET("/exercise/{id}/substitutes", path)])
       .then(([own, substitutes]) => {
         if (!own.data || !substitutes.data) return done({ kind: "error" });
-        // Pusta lista bez daty dobierania: AI jeszcze nie dobierało, a nie „brak zamienników”.
         if (!own.data.substitutesGeneratedAt && substitutes.data.length === 0) return done({ kind: "unavailable" });
         done({ kind: "ready", items: substitutes.data });
       })

@@ -4,10 +4,6 @@ import { serverApi } from "@/lib/api/server";
 import { unwrap } from "@/lib/api/errors";
 import { toEditorTemplate, type EditorTemplate, type PlanSummary } from "./model";
 
-/**
- * Lista planów. GET /plan nie zwraca szablonów, więc szczegóły każdego planu
- * pobieramy równolegle (planów jest zwykle kilka).
- */
 export async function loadPlans(): Promise<PlanSummary[]> {
   const api = await serverApi();
   const plans = await unwrap(api.GET("/plan"));
@@ -30,7 +26,6 @@ export async function loadPlans(): Promise<PlanSummary[]> {
 
 export type PlanDetail = { id: number; name: string; notes: string; templates: EditorTemplate[] };
 
-/** Plan z szablonami do edycji; `null`, gdy nie istnieje. */
 export async function loadPlan(id: number): Promise<PlanDetail | null> {
   const api = await serverApi();
   const { data: plan } = await api.GET("/plan/{id}", { params: { path: { id } } });
@@ -39,7 +34,6 @@ export async function loadPlan(id: number): Promise<PlanDetail | null> {
     id: plan.id,
     name: plan.name,
     notes: plan.notes ?? "",
-    // Dni treningowe w kolejności dodania.
     templates: [...(plan.templates ?? [])].sort((a, b) => a.id - b.id).map(toEditorTemplate),
   };
 }

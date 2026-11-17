@@ -20,7 +20,6 @@ type State = { status: "loading" } | { status: "error" } | { status: "ready"; da
 async function loadRecords(exerciseId: number): Promise<Loaded> {
   const path = { params: { path: { exerciseId } } };
   const [records, repRecords] = await Promise.all([
-    // 404 oznacza „brak ukończonych serii”, nie błąd.
     unwrap(clientApi.GET("/stats/exercise/{exerciseId}/records", path)).catch((error) => {
       if (error instanceof ApiError && error.code === "NO_COMPLETED_SETS") return null;
       throw error;
@@ -30,10 +29,6 @@ async function loadRecords(exerciseId: number): Promise<Loaded> {
   return { records, repRecords };
 }
 
-/**
- * Rekordy ćwiczenia w arkuszu otwieranym z menu ćwiczenia. Montuj tylko na czas
- * otwarcia: dane pobierają się przy montowaniu.
- */
 export function ExerciseRecordsSheet({ exercise, onClose }: { exercise: { id: number; name: string }; onClose: () => void }) {
   const t = useTranslations("pages.statsExercise");
   const tNav = useTranslations("nav");

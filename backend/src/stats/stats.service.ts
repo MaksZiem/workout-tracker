@@ -147,10 +147,6 @@ export class StatsService {
     }));
   }
 
-  // Zwraca gęstą listę dni (bez dziur) w danym zakresie - domyślnie ostatnie
-  // 365 dni - gotową pod heatmapę w stylu GitHub contributions.
-  // `missed` to liczba treningów z planu pominiętych albo przegapionych
-  // (zaplanowanych w przeszłości i nierozpoczętych) danego dnia.
   async getWorkoutFrequency(userId: number, from?: string, to?: string) {
     const rangeTo = to ?? today();
     const rangeFrom = from ?? addDays(rangeTo, -364);
@@ -286,7 +282,6 @@ export class StatsService {
     );
   }
 
-  /** Ukończone serie użytkownika spłaszczone do `SetRow`. */
   private async completedSets(
     userId: number,
     from?: string,

@@ -39,7 +39,6 @@ export class WorkoutService {
     private exerciseService: ExerciseService,
   ) {}
 
-  // Kończy trening (idempotentnie) i oznacza powiązany wpis w planerze jako wykonany.
   async finish(userId: number, id: number) {
     const workout = await this.repo.findOne({
       where: { id, user: { id: userId } },
@@ -74,7 +73,6 @@ export class WorkoutService {
       where.date = LessThanOrEqual(filters.to);
     }
 
-    // Lista z ćwiczeniami i seriami; z ćwiczenia tylko pola potrzebne liście.
     return this.repo.find({
       where,
       relations: ['exercises', 'exercises.exercise', 'exercises.sets'],
@@ -120,8 +118,6 @@ export class WorkoutService {
     if (!workout) {
       throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_NOT_FOUND', 'Workout not found'));
     }
-    // Trening z planera: wpis wraca do „zaplanowanych”, żeby dało się go rozpocząć
-    // od nowa (inaczej zostałby „w trakcie”/„wykonany” bez żadnego treningu).
     await this.scheduledRepo.update(
       {
         workout: { id },
@@ -133,7 +129,6 @@ export class WorkoutService {
     return this.repo.remove(workout);
   }
 
-  // Przerywa trening w trakcie: usuwa go razem z seriami i cofa wpis w planerze.
   async cancel(userId: number, id: number) {
     const workout = await this.repo.findOne({
       where: { id, user: { id: userId } },
@@ -160,7 +155,6 @@ export class WorkoutService {
     const duplicate = this.repo.create({
       date: new Date().toISOString().slice(0, 10),
       notes: workout.notes,
-      // Relacja `user` nie jest wczytywana powyżej, więc właściciela bierzemy z żądania.
       user: { id: userId } as User,
       exercises: workout.exercises.map((we) =>
         this.workoutExerciseRepo.create({

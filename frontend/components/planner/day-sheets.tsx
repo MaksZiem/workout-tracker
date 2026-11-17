@@ -9,7 +9,6 @@ import { Sheet } from "@/components/ui/sheet";
 import { displayDate, isIsoDate } from "@/lib/planner/dates";
 import type { PlannerEntry, TemplateOption } from "@/lib/planner/model";
 
-/** Dodanie pojedynczego szablonu na wybrany dzień. */
 export function AddSheet({
   date,
   onClose,
@@ -85,7 +84,6 @@ export function AddSheet({
   );
 }
 
-/** Przeniesienie wpisu na inną datę. */
 export function MoveSheet({
   entry,
   onClose,

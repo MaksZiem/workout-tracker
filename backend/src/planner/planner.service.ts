@@ -42,8 +42,6 @@ export class PlannerService {
     return this.repo.save(scheduled);
   }
 
-  // Rozkłada wskazane szablony na dni tygodnia w zadanym zakresie dat,
-  // np. Push -> poniedziałek, Pull -> środa, Legs -> piątek.
   async generate(user: User, dto: GenerateScheduleDto) {
     const templates = new Map<number, WorkoutTemplate>();
     for (const assignment of dto.assignments) {
@@ -105,14 +103,11 @@ export class PlannerService {
 
     return this.repo.find({
       where,
-      // template.plan: UI pokazuje, według jakiego planu jest trening.
       relations: ['template', 'template.plan', 'workout'],
       order: { date: 'ASC' },
     });
   }
 
-  // `date` pozwala klientowi podać własny „dzisiaj” (strefa użytkownika);
-  // bez niego liczymy dzień w UTC.
   findToday(userId: number, date?: string) {
     const today = date ?? new Date().toISOString().slice(0, 10);
     return this.repo.find({
@@ -143,7 +138,6 @@ export class PlannerService {
     return this.repo.remove(scheduled);
   }
 
-  // Tworzy realny Workout z serii wypełnionymi wartościami docelowymi z szablonu.
   async start(userId: number, id: number) {
     const scheduled = await this.findOwned(userId, id);
     if (!scheduled.template) {

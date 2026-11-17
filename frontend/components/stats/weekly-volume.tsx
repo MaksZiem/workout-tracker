@@ -8,15 +8,9 @@ import { niceScale, yPosition } from "@/lib/stats/chart";
 import { WEEKLY_BASELINE, weeklyChange } from "@/lib/stats/model";
 import { StatsTip } from "./stats-tip";
 
-/** Najwięcej tygodni na wykresie: przy „całym czasie” pokazujemy ostatni rok. */
 const MAX_WEEKS = 52;
-/** Tyle etykiet osi X mieści się bez nachodzenia (także na telefonie). */
 const MAX_X_LABELS = 6;
 
-/**
- * Objętość tydzień po tygodniu. Odczyt nad wykresem pokazuje ostatni pełny tydzień,
- * a po najechaniu/dotknięciu (lub strzałkach) tydzień pod kursorem.
- */
 export function WeeklyVolume({ weeks, today }: { weeks: WeeklyStats[]; today: string }) {
   const t = useTranslations("pages.stats.weekly");
   const format = useFormatter();
@@ -32,7 +26,6 @@ export function WeeklyVolume({ weeks, today }: { weeks: WeeklyStats[]; today: st
   const complete = shown.filter((w) => w.weekStart < current);
   const average = complete.length ? complete.reduce((sum, w) => sum + w.volume, 0) / complete.length : null;
   const change = weeklyChange(weeks, today);
-  // Bez aktywnego tygodnia: ostatni pełny (bieżący zwykle jest niepełny i mylący).
   const fallback = change ? shown.findIndex((w) => w.weekStart === change.week.weekStart) : -1;
   const shownIndex = active ?? (fallback >= 0 ? fallback : shown.findLastIndex((w) => w.weekStart < current));
   const week = shown[Math.max(shownIndex, 0)];
@@ -76,7 +69,6 @@ export function WeeklyVolume({ weeks, today }: { weeks: WeeklyStats[]; today: st
 
   return (
     <div className="rounded-xl border border-border bg-surface p-4 sm:p-5">
-      {/* Odczyt: stała wysokość, żeby wykres nie skakał przy zmianie tygodnia. */}
       <div className="min-h-[6.75rem]">
         <p className="text-[13px] text-muted tabular-nums">
           {active === null ? `${t("lastWeek")} · ${weekRange(week)}` : weekRange(week, true)}
@@ -95,7 +87,6 @@ export function WeeklyVolume({ weeks, today }: { weeks: WeeklyStats[]; today: st
       </div>
 
       <div className="relative mt-4 h-48 sm:h-60">
-        {/* Obszar rysowania: miejsce na oś Y z lewej i oś X na dole. */}
         <div className="absolute top-2 right-1 bottom-7 left-11">
           {ticks.map((tick) => (
             <div
@@ -122,7 +113,6 @@ export function WeeklyVolume({ weeks, today }: { weeks: WeeklyStats[]; today: st
                     className={`block w-full rounded-t-[3px] transition-colors duration-100 ${tone} ${
                       isActive && active !== null ? "outline-2 outline-offset-1 outline-foreground/60" : ""
                     }`}
-                    // Tydzień bez treningu: cienka kreska zamiast pustego miejsca.
                     style={{ height: w.volume > 0 ? `${Math.max(yPosition(w.volume, 0, hi) * 100, 1.5)}%` : "1px" }}
                   />
                 </span>
@@ -142,7 +132,6 @@ export function WeeklyVolume({ weeks, today }: { weeks: WeeklyStats[]; today: st
             </div>
           ) : null}
 
-          {/* Warstwa interakcji: wskaźnik i klawiatura. */}
           <div
             role="slider"
             tabIndex={0}
@@ -193,10 +182,6 @@ export function WeeklyVolume({ weeks, today }: { weeks: WeeklyStats[]; today: st
   );
 }
 
-/**
- * Etykiety osi X. Krótki zakres: daty tygodni co kilka słupków (zawsze z ostatnim).
- * Długi zakres: początki miesięcy, z rokiem przy pierwszej etykiecie i przy styczniu.
- */
 function axisLabels(
   weeks: WeeklyStats[],
   month: (iso: string, withYear: boolean) => string,
@@ -210,14 +195,12 @@ function axisLabels(
     return indices.map((index) => ({ index, text: day(weeks[index].weekStart) }));
   }
 
-  // Tydzień, w którym zaczyna się miesiąc (jego niedziela wypada już w nowym miesiącu).
   const starts: number[] = [];
   weeks.forEach((w, i) => {
     const sunday = addDays(w.weekStart, 6);
     if (i === 0 || sunday.slice(0, 7) !== addDays(weeks[i - 1].weekStart, 6).slice(0, 7)) starts.push(i);
   });
   const step = Math.ceil(starts.length / MAX_X_LABELS);
-  // Pierwsza etykieta tylko, gdy nie nachodzi na następną.
   const picked = starts.filter((_, k) => k % step === 0).filter((index, k, all) => k > 0 || all.length < 2 || all[1] - index >= 3);
   return picked.map((index, k) => {
     const iso = addDays(weeks[index].weekStart, 6);

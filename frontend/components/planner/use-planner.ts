@@ -17,11 +17,6 @@ export type PlannerMessages = {
   removed: string;
 };
 
-/**
- * Stan planera: dane z serwera + optymistyczne zmiany (status, data) i ukryte
- * wpisy czekające na usunięcie (cofnięcie przez 5 s). Po każdej zapisanej
- * zmianie odświeżamy dane serwera (router.refresh).
- */
 export function usePlanner(serverEntries: PlannerEntry[], messages: PlannerMessages) {
   const router = useRouter();
   const [, startTransition] = useTransition();

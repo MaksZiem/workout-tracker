@@ -8,10 +8,6 @@ import { linePath, nearestIndex, niceScale, xPositions, yPosition } from "@/lib/
 
 export type ChartPoint = { date: string; value: number; detail: string };
 
-/**
- * Wykres postępu ćwiczenia. Odczyt nad wykresem pokazuje ostatnią sesję,
- * a po najechaniu (wskaźnik) lub strzałkach (klawiatura) sesję pod celownikiem.
- */
 export function LineChart({
   points,
   recordIndex,
@@ -20,7 +16,6 @@ export function LineChart({
 }: {
   points: ChartPoint[];
   recordIndex: number | null;
-  /** Zmiana w okresie, gotowa do wyświetlenia (albo null przy jednej sesji). */
   change: string;
   labels: { latest: string; record: string; chart: string };
 }) {
@@ -34,7 +29,6 @@ export function LineChart({
   const shown = active ?? last;
   const point = points[shown];
 
-  // To samo zaokrąglenie (0,5 kg) co w liście sesji i na kartach.
   const kg = (v: number) => format.number(Math.round(v * 2) / 2, { maximumFractionDigits: 1 });
   const longDate = (iso: string) =>
     format.dateTime(displayDate(iso), { weekday: "short", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
@@ -55,7 +49,6 @@ export function LineChart({
     setActive(next);
   };
 
-  // Etykiety osi X: pierwsza, środkowa i ostatnia sesja (bez powtórzeń).
   const xLabels = [...new Set([0, Math.round(last / 2), last])].filter((i) => points.length > 1 || i === 0);
 
   return (
@@ -78,7 +71,6 @@ export function LineChart({
       </div>
 
       <div className="relative mt-4 h-56 sm:h-72">
-        {/* Obszar rysowania: miejsce na etykiety osi Y z lewej i osi X na dole. */}
         <div className="absolute inset-y-2 right-2 bottom-7 left-12">
           {ticks.map((tick) => (
             <div
@@ -127,7 +119,6 @@ export function LineChart({
             );
           })}
 
-          {/* Warstwa interakcji: wskaźnik i klawiatura. */}
           <div
             role="slider"
             tabIndex={0}

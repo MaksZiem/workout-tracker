@@ -6,12 +6,10 @@ type Steps = { workout: boolean; plan: boolean; schedule: boolean };
 
 const HREF: Record<keyof Steps, string> = { workout: "/log", plan: "/plans", schedule: "/planner" };
 
-/** Lista „Na start” dla nowego konta. Kroki odhaczają się same na podstawie danych. */
 export async function Onboarding({ steps }: { steps: Steps }) {
   const t = await getTranslations("pages.dashboard.onboarding");
   const keys = Object.keys(HREF) as (keyof Steps)[];
   const done = keys.filter((k) => steps[k]).length;
-  // Pierwszy nieodhaczony krok prowadzi; reszta czeka.
   const next = keys.find((k) => !steps[k]);
 
   return (
@@ -37,7 +35,6 @@ export async function Onboarding({ steps }: { steps: Steps }) {
               <span className="min-w-0 flex-1">
                 <span className={`block text-[15px] font-medium ${isDone ? "text-muted line-through decoration-1" : ""}`}>{t(`${key}.title`)}</span>
                 {!isDone ? <span className="block text-[13px] text-muted">{t(`${key}.body`)}</span> : null}
-                {/* Telefon: akcja pod opisem, żeby tekst nie ściskał się obok przycisku. */}
                 {key === next ? (
                   <Link
                     href={HREF[key]}
@@ -47,7 +44,6 @@ export async function Onboarding({ steps }: { steps: Steps }) {
                   </Link>
                 ) : null}
               </span>
-              {/* Akcję ma tylko następny krok; pozostałe czekają na swoją kolej. */}
               {key === next ? (
                 <Link
                   href={HREF[key]}

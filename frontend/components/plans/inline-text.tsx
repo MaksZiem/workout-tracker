@@ -2,11 +2,6 @@
 
 import { useState } from "react";
 
-/**
- * Tekst edytowalny na miejscu: wygląda jak nagłówek, na fokus pokazuje pole.
- * Zapis po Enter lub opuszczeniu pola; Escape przywraca poprzednią wartość.
- * Rodzic podaje `key` zależny od wartości, żeby zewnętrzna zmiana odświeżyła szkic.
- */
 export function InlineText({
   value,
   label,
@@ -54,7 +49,6 @@ export function InlineText({
       onKeyDown={(e) => {
         if (e.key === "Escape") setDraft(value);
       }}
-      // Pole rośnie z tekstem (field-sizing), bez przewijania w środku.
       style={{ fieldSizing: "content" } as React.CSSProperties}
     />
   ) : (

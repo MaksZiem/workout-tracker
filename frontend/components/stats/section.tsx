@@ -14,7 +14,6 @@ export function StatsSection({
   id: string;
   title: string;
   hint?: ReactNode;
-  /** Wyjaśnienie sekcji (np. <StatsTip />) obok tytułu. */
   tip?: ReactNode;
   aside?: ReactNode;
   children: ReactNode;
@@ -39,7 +38,6 @@ export function StatsSection({
   );
 }
 
-/** Błąd jednej sekcji: reszta strony działa dalej. */
 export async function SectionError({ retryHref }: { retryHref: string }) {
   const t = await getTranslations("pages.stats");
   return (

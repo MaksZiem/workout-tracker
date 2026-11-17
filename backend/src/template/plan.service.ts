@@ -55,9 +55,6 @@ export class PlanService {
     return this.repo.save(plan);
   }
 
-  // Usuwa też nadchodzące (od dziś) nierozpoczęte treningi z planu - inaczej
-  // zostałyby jako sieroty bez szablonu i z czasem liczyły się jako opuszczone.
-  // Przeszłe wpisy zostają, żeby historia na heatmapie była uczciwa.
   async remove(userId: number, id: number) {
     const plan = await this.findOwned(userId, id);
     const today = new Date().toISOString().slice(0, 10);

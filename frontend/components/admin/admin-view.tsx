@@ -16,7 +16,6 @@ import { UsersSection } from "./users-section";
 
 type ShowToast = (toast: Omit<Toast, "id">) => void;
 
-/** Panel admina: stan katalogu (zamienniki od AI) i konta użytkowników. Bez niebieskiego przycisku. */
 export function AdminView({
   catalog,
   users,
@@ -100,7 +99,6 @@ function AdminSection({
   );
 }
 
-/** Błąd jednej sekcji: reszta panelu działa dalej. */
 function LoadError() {
   const t = useTranslations("pages.stats");
   const router = useRouter();
@@ -114,10 +112,6 @@ function LoadError() {
   );
 }
 
-/**
- * Stan zamienników w katalogu. Gdy części brakuje, jeden przycisk dobiera brakujące; gdy są wszystkie,
- * ten sam przycisk dobiera od nowa cały katalog (nowe ćwiczenia mogą być zamiennikami starszych).
- */
 function CatalogPanel({ health, onToast }: { health: CatalogHealth; onToast: ShowToast }) {
   const t = useTranslations("pages.admin.catalog");
   const router = useRouter();
@@ -142,7 +136,6 @@ function CatalogPanel({ health, onToast }: { health: CatalogHealth; onToast: Sho
     } catch {
       setFailed(true);
     } finally {
-      // Dobieranie zapisuje paczkami, więc część mogła się udać: liczniki odświeżamy zawsze.
       setPending(false);
       router.refresh();
     }

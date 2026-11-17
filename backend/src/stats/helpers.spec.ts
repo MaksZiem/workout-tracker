@@ -20,9 +20,9 @@ const row = (date: string, weight: number, reps: number, workoutId = 0): SetRow 
 
 describe('weekStart', () => {
   it('zwraca poniedziałek tygodnia', () => {
-    expect(weekStart('2026-09-28')).toBe('2026-09-28'); // poniedziałek
+    expect(weekStart('2026-09-28')).toBe('2026-09-28');
     expect(weekStart('2026-09-30')).toBe('2026-09-28');
-    expect(weekStart('2026-10-04')).toBe('2026-09-28'); // niedziela
+    expect(weekStart('2026-10-04')).toBe('2026-09-28');
   });
 });
 

@@ -51,7 +51,6 @@ export default async function ExerciseStatsPage(props: Props) {
     format.number(roundKg(v), { maximumFractionDigits: 1, signDisplay: signed ? "exceptZero" : "auto" });
   const date = (iso: string) => format.dateTime(displayDate(iso), { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
 
-  // Serie sesji zwięźle: kolejne serie z tym samym ciężarem łączone („80 kg × 8, 8, 6”).
   const setsText = (s: Session) => {
     const groups: { weight: number; reps: number[] }[] = [];
     for (const set of s.sets) {
@@ -66,7 +65,6 @@ export default async function ExerciseStatsPage(props: Props) {
   const recordDate: Record<StatsMetric, string | null> = {
     e1rm: records?.bestEstimatedOneRepMaxDate ?? null,
     top: records?.maxWeightDate ?? null,
-    // Rekord objętości w backendzie dotyczy jednej serii, nie sesji, więc na wykresie objętości go nie zaznaczamy.
     volume: null,
   };
   const recordDates = new Set(records ? [records.bestEstimatedOneRepMaxDate, records.maxWeightDate, records.bestVolumeDate] : []);
@@ -131,7 +129,6 @@ export default async function ExerciseStatsPage(props: Props) {
                 const recordIndex = recordDate[metric] ? sessions.findLastIndex((s) => s.date === recordDate[metric]) : -1;
                 return (
                   <LineChart
-                    // Nowa miara lub zakres = świeży stan celownika.
                     key={`${metric}-${range}`}
                     points={sessions.map((s, i) => ({ date: s.date, value: values[i], detail: setsText(s) }))}
                     recordIndex={recordIndex >= 0 ? recordIndex : null}
@@ -153,7 +150,6 @@ export default async function ExerciseStatsPage(props: Props) {
             )}
           </StatsSection>
 
-          {/* Bez serii z ciężarem rekordy powtórzeń byłyby samymi kreskami. */}
           {!data.repRecords.ok ? (
             <StatsSection id="rep-records" title={t("repRecords.title")} hint={t("repRecords.hint")} tip={<StatsTip tip="repRecords" />}>
               <SectionError retryHref={self} />
@@ -199,7 +195,6 @@ export default async function ExerciseStatsPage(props: Props) {
   );
 }
 
-/** Trzy rekordy w jednym pasku rozdzielonym liniami, bez osobnych kafelków. */
 function SessionList({
   sessions,
   metric,
@@ -308,7 +303,6 @@ function SessionList({
   );
 }
 
-/** Seria sesji z najwyższym szacowanym 1RM (z niej backend liczy e1RM sesji). */
 function bestSet(s: Session) {
   return s.sets.reduce<Session["sets"][number] | null>(
     (best, set) => (!best || estimatedOneRepMax(set.weight, set.reps) > estimatedOneRepMax(best.weight, best.reps) ? set : best),

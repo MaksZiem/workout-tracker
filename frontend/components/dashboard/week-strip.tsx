@@ -5,13 +5,6 @@ import type { WeekSummary } from "@/lib/dashboard/load";
 import { addDays, daysBetween, displayDate, weekStart } from "@/lib/planner/dates";
 import { displayStatus, STATUS_DOT, type PlannerEntry } from "@/lib/planner/model";
 
-/**
- * Tydzień pon–niedz. z planera. Zielone tło: tego dnia zakończono trening.
- * Czerwone tło: plan z minionego dnia wciąż czeka (zaległy), a treningu tego dnia nie było.
- * Od sm w dniu widać nazwy treningów (kropka w kolorze statusu planera, „Poza planem”
- * dla treningu zapisanego bez planera), na telefonie same kropki. Pod spodem
- * podsumowanie tygodnia i najbliższy zaplanowany trening.
- */
 export async function WeekStrip({
   entries,
   trained,
@@ -52,7 +45,6 @@ export async function WeekStrip({
 
   return (
     <section aria-labelledby="week" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
-      {/* Tytuł i link w jednym wierszu także na telefonie; podsumowanie zawija się pod spód. */}
       <div className="mb-3 grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-4">
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
           <h2 id="week" className="text-[17px] font-semibold">
@@ -77,7 +69,6 @@ export async function WeekStrip({
           const isToday = date === today;
           const didTrain = trained.has(date);
           const offPlan = summary.offPlan.has(date);
-          // Zakończony trening wygrywa: dzień z wykonaną pracą nie świeci się na czerwono.
           const overdue = !didTrain && dayEntries.some((e) => displayStatus(e, today) === "OVERDUE");
           const labels = [
             ...dayEntries.map((e) => {
@@ -121,14 +112,12 @@ export async function WeekStrip({
                   {Number(date.slice(8))}
                 </span>
 
-                {/* Telefon: kropki. */}
                 <span className="mt-auto flex h-1.5 gap-1 sm:hidden" aria-hidden>
                   {labels.slice(0, 3).map((l) => (
                     <span key={l.key} className={`size-1.5 rounded-full ${l.dot}`} />
                   ))}
                 </span>
 
-                {/* Od sm: nazwy treningów ze statusem. */}
                 <span className="hidden w-full min-w-0 flex-col gap-1 pt-0.5 sm:flex" aria-hidden>
                   {labels.slice(0, 2).map((l) => (
                     <span key={l.key} className="flex min-w-0 flex-col items-center text-center">
@@ -149,7 +138,6 @@ export async function WeekStrip({
         })}
       </ol>
 
-      {/* Podsumowanie tygodnia: to, co zrobione, i co dalej. */}
       <dl className="mt-4 grid grid-cols-3 gap-x-4 gap-y-3 border-t border-border pt-3 sm:flex sm:gap-0">
         {stats.map((item, i) => (
           <div key={item.label} className={`min-w-0 sm:px-5 ${i === 0 ? "sm:pl-0" : "sm:border-l sm:border-border"}`}>

@@ -14,14 +14,12 @@ import { DeleteExerciseSheet, ExerciseSheet } from "./exercise-sheets";
 
 type SheetState = { kind: "add" } | { kind: "edit"; exercise: AdminExercise } | { kind: "delete"; exercise: AdminExercise } | null;
 
-/** Edytor katalogu: ten sam układ co /exercises, ale wiersze otwierają edycję. Jedyny niebieski to „Dodaj ćwiczenie”. */
 export function AdminExercisesView({ items, group }: { items: AdminExercise[]; group: MuscleGroup | null }) {
   const t = useTranslations("pages.adminExercises");
   const tGroup = useTranslations("enums.muscleGroup");
   const tAdmin = useTranslations("pages.admin");
   const [query, setQuery] = useState("");
   const [sheet, setSheet] = useState<SheetState>(null);
-  // Nowy klucz przy każdym otwarciu: arkusz startuje z czystym formularzem.
   const [sheetKey, setSheetKey] = useState(0);
   const { toast, show, dismiss } = useToast();
 
@@ -112,7 +110,6 @@ export function AdminExercisesView({ items, group }: { items: AdminExercise[]; g
                     </h2>
                     <span className="text-[13px] text-muted tabular-nums">{t("count", { count: rows.length })}</span>
                   </div>
-                  {/* Bez overflow-hidden: menu ⋯ ostatniego wiersza wychodzi poza panel. */}
                   <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
                     {rows.map((exercise) => (
                       <li key={exercise.id} className="group/row flex items-center">

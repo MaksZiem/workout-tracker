@@ -17,11 +17,6 @@ const capitalize = (value: string) => value.charAt(0).toLocaleUpperCase() + valu
 const MIN_WEEKS = 1;
 const MAX_WEEKS = 12;
 
-/**
- * Generowanie harmonogramu z planu: szablony planu → dni tygodnia → liczba tygodni.
- * Podgląd liczy to samo co backend (POST /planner/generate pomija daty,
- * które mają już jakikolwiek wpis), więc liczba przed zapisem jest prawdziwa.
- */
 export function GenerateSheet({
   open,
   onClose,
@@ -52,7 +47,6 @@ export function GenerateSheet({
   const from = today;
   const to = addDays(weekStart(today), 7 * weeks - 1);
 
-  // Szablony wybranego planu.
   useEffect(() => {
     if (!open || planId === null) return;
     let cancelled = false;
@@ -69,7 +63,6 @@ export function GenerateSheet({
     };
   }, [open, planId]);
 
-  // Zajęte daty w zakresie (do podglądu).
   useEffect(() => {
     if (!open) return;
     let cancelled = false;

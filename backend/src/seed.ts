@@ -56,10 +56,6 @@ async function seed() {
   console.log(`Utworzono użytkownika: ${SEED_EMAIL} (rola: ADMIN)`);
 
   console.log('Tworzę katalog ćwiczeń...');
-  // Wstawiamy bezpośrednio przez repozytorium (z pominięciem ExerciseService),
-  // żeby seedowanie nie odpytywało Gemini o zamienniki każdego ćwiczenia.
-  // Zamienniki dobierzesz jednym POST /exercise/substitutes/generate
-  // (w panelu admina: „Dobierz zamienniki”).
   const exerciseSeeds: { name: string; muscleGroup: MuscleGroup }[] = [
     { name: 'Wyciskanie sztangi na ławce płaskiej', muscleGroup: MuscleGroup.CHEST },
     { name: 'Rozpiętki z hantlami', muscleGroup: MuscleGroup.CHEST },
@@ -111,8 +107,6 @@ async function seed() {
   console.log('Tworzę historię treningów (ostatnie ~3 tygodnie)...');
   const today = new Date();
   let workoutsCreated = 0;
-  // 9 sesji wstecz, co 2 dni, naprzemiennie Push/Pull/Legs. Ciężar rośnie
-  // z każdym kolejnym tygodniem, żeby na wykresach postępu było coś widać.
   for (let sessionsAgo = 8; sessionsAgo >= 0; sessionsAgo--) {
     const date = new Date(today);
     date.setDate(date.getDate() - sessionsAgo * 2);
@@ -121,8 +115,6 @@ async function seed() {
     const routine = routines[sessionsAgo % routines.length];
     const weekIndex = Math.floor((8 - sessionsAgo) / 3);
 
-    // Historyczny trening jest zakończony: bez finishedAt UI pokazywałby go jako „W trakcie”.
-    // Start 18:00, koniec po 55-70 min, żeby w historii był też czas trwania.
     const startedAt = new Date(`${dateStr}T18:00:00`);
     const finishedAt = new Date(startedAt.getTime() + (55 + (sessionsAgo % 4) * 5) * 60_000);
 
@@ -195,8 +187,8 @@ async function seed() {
     from,
     to,
     assignments: [
-      { templateId: createdTemplates[0].id, dayOfWeek: 1 }, // poniedziałek
-      { templateId: createdTemplates[1].id, dayOfWeek: 3 }, // środa
+      { templateId: createdTemplates[0].id, dayOfWeek: 1 },
+      { templateId: createdTemplates[1].id, dayOfWeek: 3 },
       { templateId: createdTemplates[2].id, dayOfWeek: 5 }, // piątek
     ],
   });

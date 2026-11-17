@@ -5,10 +5,6 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ConfirmSheet } from "@/components/ui/confirm-sheet";
 
-/**
- * Potwierdzenie przerwania treningu w trakcie. Po sukcesie wraca na pulpit,
- * gdzie zaplanowany trening znów czeka na „Rozpocznij”.
- */
 export function CancelWorkoutSheet({
   open,
   sets,
@@ -17,7 +13,6 @@ export function CancelWorkoutSheet({
   onError,
 }: {
   open: boolean;
-  /** Liczba serii, które znikną razem z treningiem. */
   sets: number;
   onClose: () => void;
   onCancel: () => Promise<unknown>;

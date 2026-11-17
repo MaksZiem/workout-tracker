@@ -28,10 +28,6 @@ export class UsersService {
     return this.repo.findOneBy({id})
   }
 
-  /**
-   * Strona listy użytkowników z liczbą treningów (dla panelu administratora):
-   * wyszukiwanie po imieniu, nazwisku i e-mailu, sortowanie i paginacja w bazie.
-   */
   async findPage(filters: FindUsersDto) {
     const limit = Number(filters.limit ?? 20)
     const sort = filters.sort ?? 'name'
@@ -40,7 +36,6 @@ export class UsersService {
 
     const where = (qb: SelectQueryBuilder<User>) => {
       if (search) {
-        // % i _ z frazy traktujemy dosłownie, nie jako wzorzec ILIKE.
         const q = `%${search.replace(/[\\%_]/g, (c) => `\\${c}`)}%`
         qb.where(
           "(u.name ILIKE :q OR u.surname ILIKE :q OR u.email ILIKE :q OR (u.name || ' ' || u.surname) ILIKE :q)",
@@ -70,10 +65,8 @@ export class UsersService {
     }
     byField[sort].forEach((expr, i) => (i ? query.addOrderBy(expr, order) : query.orderBy(expr, order)))
     if (sort === 'role' || sort === 'workoutCount') {
-      // Remis (ta sama rola, tyle samo treningów) rozstrzyga alfabet, jak na liście domyślnej.
       byField.name.forEach((expr) => query.addOrderBy(expr, 'ASC'))
     }
-    // Stała kolejność przy pozostałych remisach, żeby wiersze nie skakały między stronami.
     query.addOrderBy('u.id', 'ASC')
 
     const rows = await query

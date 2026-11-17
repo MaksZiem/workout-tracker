@@ -6,7 +6,6 @@ export type Toast = { id: number; message: string; tone: "default" | "pr" | "err
 
 const DURATION = 5000;
 
-/** Jeden komunikat naraz, nad dolną nawigacją na telefonie. */
 export function ToastView({ toast, onDismiss, undoLabel }: { toast: Toast | null; onDismiss: () => void; undoLabel: string }) {
   useEffect(() => {
     if (!toast) return;
@@ -51,7 +50,6 @@ export function ToastView({ toast, onDismiss, undoLabel }: { toast: Toast | null
   );
 }
 
-/** Stan jednego komunikatu dla ekranu (ten sam wzorzec co w planerze). */
 export function useToast() {
   const [toast, setToast] = useState<Toast | null>(null);
   const seq = useRef(0);

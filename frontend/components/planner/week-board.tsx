@@ -8,7 +8,6 @@ import { EntryCard } from "./entry-card";
 import type { PlannerApi } from "./use-planner";
 
 type Props = {
-  /** Czy w widocznym zakresie jest cokolwiek zaplanowane (inaczej nie piszemy „Odpoczynek”). */
   hasEntries: boolean;
   from: string;
   to: string;
@@ -19,10 +18,6 @@ type Props = {
   onMove: (entry: PlannerEntry) => void;
 };
 
-/**
- * Tydzień: od xl 7 kolumn (planowanie przy biurku), poniżej pionowa lista dni.
- * Oba układy to te same dane i te same karty.
- */
 export function WeekBoard({ hasEntries, from, to, today, entries, planner, onAdd, onMove }: Props) {
   const t = useTranslations("pages.planner.day");
   const days = daysBetween(from, to);
@@ -30,7 +25,6 @@ export function WeekBoard({ hasEntries, from, to, today, entries, planner, onAdd
 
   return (
     <>
-      {/* Jedna ramka z liniami między dniami: kolumny mają równą wysokość, a „+” zawsze na dole w jednym rzędzie. */}
       <ol className="hidden grid-cols-7 divide-x divide-border overflow-hidden rounded-xl border border-border xl:grid">
         {days.map((date) => {
           const dayEntries = byDate.get(date) ?? [];
@@ -52,7 +46,6 @@ export function WeekBoard({ hasEntries, from, to, today, entries, planner, onAdd
       <ol className="flex flex-col divide-y divide-border xl:hidden">
         {days.map((date) => {
           const dayEntries = byDate.get(date) ?? [];
-          // Pusty dzień na telefonie: jedna linia, żeby cały tydzień mieścił się na ekranie.
           if (!dayEntries.length) {
             return (
               <li key={date} className="flex items-center gap-4 py-1.5 first:pt-0">
@@ -129,7 +122,7 @@ function DayHeader({
             ? isToday
               ? "mt-0.5 grid size-8 place-items-center rounded-full bg-accent text-sm font-semibold text-accent-foreground"
               : "text-xl font-semibold"
-            : // Kolumna: każda data w tym samym polu 28px, żeby dziś nie rozpychało nagłówka.
+            :
               `grid size-7 place-items-center rounded-full text-sm font-semibold ${isToday ? "bg-accent text-accent-foreground" : ""}`
         }`}
         aria-label={isToday ? `${t("today")}, ${day} ${month}` : undefined}
@@ -151,9 +144,7 @@ function AddButton({
   date: string;
   onAdd: (date: string) => void;
   rest?: boolean;
-  /** W wierszu (telefon, pusty dzień) wypełnia szerokość obok nagłówka dnia. */
   inline?: boolean;
-  /** Kolumna tygodnia (desktop): pełna szerokość, przyklejony do dołu kolumny. */
   column?: boolean;
 }) {
   const t = useTranslations("pages.planner.day");

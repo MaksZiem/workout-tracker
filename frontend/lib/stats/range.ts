@@ -10,7 +10,6 @@ export function parseRange(value: unknown): StatsRange {
   return STATS_RANGES.includes(value as StatsRange) ? (value as StatsRange) : DEFAULT_RANGE;
 }
 
-/** Granice zakresu (włącznie). „Cały czas” nie ma dolnej granicy. */
 export function rangeBounds(range: StatsRange, today: string): { from?: string; to: string } {
   if (range === "all") return { to: today };
   return { from: addDays(today, -(RANGE_DAYS[range] - 1)), to: today };
@@ -27,7 +26,6 @@ export function parseMetric(value: unknown): StatsMetric {
   return STATS_METRICS.includes(value as StatsMetric) ? (value as StatsMetric) : "e1rm";
 }
 
-/** Adres z zachowaniem zakresu (domyślny zakres nie trafia do URL). */
 export function statsHref(path: string, params: { range?: StatsRange; metric?: StatsMetric }) {
   const search = new URLSearchParams();
   if (params.range && params.range !== DEFAULT_RANGE) search.set("range", params.range);

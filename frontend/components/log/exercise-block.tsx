@@ -61,7 +61,6 @@ export function ExerciseBlock({ exercise, log, activeSetKey, onFocusSet }: Props
         />
       </div>
 
-      {/* Montowany dopiero po otwarciu: rekordy pobierają się na żądanie, nie dla każdego ćwiczenia. */}
       {showRecords ? <ExerciseRecordsSheet exercise={exercise.exercise} onClose={() => setShowRecords(false)} /> : null}
 
       <p className="mt-1.5 text-[13px] text-muted tabular-nums">{previousLine}</p>

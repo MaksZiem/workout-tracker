@@ -8,15 +8,12 @@ import { settle, sessionsOf, toMainExercise, weeklyStreak, type MainExercise } f
 import { rangeBounds, type StatsRange } from "./range";
 
 const MAIN_EXERCISES = 4;
-/** Górny limit zapytań o postęp przy wyborze głównych ćwiczeń. */
 const MAX_PROGRESS_REQUESTS = 40;
 
-/** Dane przeglądu /stats. Każda sekcja wczytuje się niezależnie. */
 export async function loadOverview(range: StatsRange, today: string) {
   const api = await serverApi();
   const bounds = rangeBounds(range, today);
   const query = { from: bounds.from, to: bounds.to };
-  // Mapa aktywności przy „całym czasie” pokazuje ostatni rok.
   const activityFrom = bounds.from ?? addDays(today, -364);
 
   const [summary, muscleGroups, frequency, records, catalog, lastYear, adherence, weekly, repRanges, stagnation] = await Promise.all([
@@ -25,11 +22,8 @@ export async function loadOverview(range: StatsRange, today: string) {
     settle(unwrap(api.GET("/stats/frequency", { params: { query: { from: activityFrom, to: bounds.to } } }))),
     settle(unwrap(api.GET("/stats/records"))),
     settle(unwrap(api.GET("/exercise"))),
-    // Passa liczona zawsze z ostatniego roku, niezależnie od wybranego zakresu.
     settle(unwrap(api.GET("/stats/frequency", { params: { query: { from: addDays(today, -364), to: today } } }))),
     settle(unwrap(api.GET("/stats/adherence", { params: { query } }))),
-    // Od poniedziałku, żeby pierwszy słupek był pełnym tygodniem. Bez dolnej granicy
-    // backend liczy od tygodnia pierwszego treningu.
     settle(
       unwrap(
         api.GET("/stats/weekly", {
@@ -38,7 +32,6 @@ export async function loadOverview(range: StatsRange, today: string) {
       ),
     ),
     settle(unwrap(api.GET("/stats/rep-ranges", { params: { query } }))),
-    // Zastój to stan „na dziś”, niezależny od zakresu.
     settle(unwrap(api.GET("/stats/stagnation"))),
   ]);
 
@@ -85,9 +78,7 @@ async function loadMainExercises(
 
   return candidates
     .map((record, i) => ({ record, sessions: sessionsOf(progress[i]) }))
-    // Bez ćwiczeń bez ciężaru: szacowane 1RM równe zero nic nie mówi o postępie.
     .filter(({ sessions }) => sessions.some((s) => s.estimatedOneRepMax > 0))
-    // Najczęściej trenowane w zakresie; remis rozstrzyga świeższa sesja.
     .sort((a, b) => b.sessions.length - a.sessions.length || b.sessions.at(-1)!.date.localeCompare(a.sessions.at(-1)!.date))
     .slice(0, MAIN_EXERCISES)
     .map(({ record, sessions }) =>
@@ -101,7 +92,6 @@ async function loadMainExercises(
     );
 }
 
-/** Dane szczegółu ćwiczenia. `null`, gdy ćwiczenie nie istnieje. */
 export async function loadExercise(exerciseId: number, range: StatsRange, today: string) {
   const api = await serverApi();
   const bounds = rangeBounds(range, today);
@@ -120,7 +110,6 @@ export async function loadExercise(exerciseId: number, range: StatsRange, today:
         }),
       ),
     ),
-    // Czy ćwiczenie ma jakąkolwiek historię (odróżnia „nigdy” od „nie w tym okresie”).
     settle(unwrap(api.GET("/stats/exercise/{exerciseId}/progress", { params: { path: { exerciseId } } }))),
     loadRecords(api, exerciseId),
     settle(unwrap(api.GET("/stats/exercise/{exerciseId}/rep-records", { params: { path: { exerciseId } } }))),
@@ -136,7 +125,6 @@ export async function loadExercise(exerciseId: number, range: StatsRange, today:
   };
 }
 
-/** Rekordy ćwiczenia; 404 z backendu oznacza „brak ukończonych serii”, nie błąd. */
 async function loadRecords(api: Awaited<ReturnType<typeof serverApi>>, exerciseId: number) {
   try {
     const records = await unwrap(api.GET("/stats/exercise/{exerciseId}/records", { params: { path: { exerciseId } } }));

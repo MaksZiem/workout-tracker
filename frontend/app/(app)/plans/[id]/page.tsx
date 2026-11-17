@@ -26,6 +26,5 @@ export default async function PlanPage(props: Props) {
   if (!plan) notFound();
   const { ai } = await props.searchParams;
 
-  // key: po odświeżeniu danych z serwera stan edytora zaczyna od nowa.
   return <PlanEditor key={plan.id} plan={plan} fromAi={ai === "1"} />;
 }

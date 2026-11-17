@@ -37,8 +37,6 @@ export function WorkoutLogger({ workout }: { workout: LogWorkout }) {
   const [focusedSetKey, setFocusedSetKey] = useState<string | null>(null);
   const totals = workoutTotals(log.exercises);
 
-  // Aktywna seria: ta, którą użytkownik ostatnio dotknął (jeśli nie jest zrobiona),
-  // w przeciwnym razie pierwsza nieodhaczona seria w kolejności ćwiczeń.
   const activeSetKey = useMemo(() => {
     const all = log.exercises.flatMap((ex) => ex.sets);
     const focused = all.find((s) => s.key === focusedSetKey);
@@ -186,7 +184,6 @@ function Elapsed({ createdAt, label }: { createdAt: string; label: string }) {
   const now = useNow({ updateInterval: 1000 });
   const seconds = Math.max(0, Math.floor((now.getTime() - new Date(createdAt).getTime()) / 1000));
 
-  // Licznik ma sens tylko dla treningu, który trwa (utworzony niedawno).
   if (seconds > ELAPSED_LIMIT) return null;
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);

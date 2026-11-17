@@ -2,7 +2,6 @@ import type { ExercisePersonalRecords, MuscleGroup, Workout } from "@/lib/api/ex
 import { estimatedOneRepMax as epley } from "@/lib/log/model";
 import { addDays, weekStart } from "@/lib/planner/dates";
 
-/** Czas ma sens tylko dla treningu zapisywanego na żywo (nie dopisanego po fakcie). */
 const MAX_MINUTES = 6 * 60;
 
 export function minutesOf(w: Pick<Workout, "createdAt" | "finishedAt">) {
@@ -27,15 +26,11 @@ export type HistoryRow = {
   volume: number;
   minutes: number | null;
   inProgress: boolean;
-  /** Szablon, z którego trening powstał w planerze (trening zapisany „z ręki”: null). */
   templateName: string | null;
-  /** Plan, według którego był ten trening (przez zaplanowany wpis i jego szablon). */
   plan: { id: number; name: string } | null;
-  /** Czy tego dnia padł rekord w którymś z ćwiczeń treningu. */
   record: boolean;
 };
 
-/** Skąd trening się wziął: planer (szablon, plan) i rekordy ćwiczeń. */
 export type RowContext = {
   scheduled: Map<number, { templateName: string | null; plan: { id: number; name: string } | null }>;
   records: ExercisePersonalRecords[];
@@ -59,7 +54,6 @@ export function toRow(w: Workout, ctx?: RowContext): HistoryRow {
     inProgress: !w.finishedAt,
     templateName: source?.templateName ?? null,
     plan: source?.plan ?? null,
-    // Rekord z datą treningu w jednym z jego ćwiczeń (jak medale w szczegółach treningu).
     record: (ctx?.records ?? []).some(
       (r) =>
         ids.has(r.exerciseId) &&
@@ -68,7 +62,6 @@ export function toRow(w: Workout, ctx?: RowContext): HistoryRow {
   };
 }
 
-/** Tygodnie (od poniedziałku), najnowsze na górze; w tygodniu treningi od najnowszego. */
 export function toWeeks(rows: HistoryRow[]): HistoryWeek[] {
   const weeks = new Map<string, HistoryRow[]>();
   for (const row of [...rows].sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id)) {
@@ -95,7 +88,6 @@ export type DetailSet = {
   weight: number;
   reps: number;
   completed: boolean;
-  /** Rekordy, które padły właśnie w tej serii (tylko gdy data rekordu = data treningu). */
   records: RecordKind[];
 };
 
@@ -122,15 +114,8 @@ export type WorkoutDetail = {
   volume: number;
 };
 
-
-/** Wartości porównujemy z tolerancją: backend liczy je z liczb zmiennoprzecinkowych. */
 const same = (a: number, b: number) => Math.abs(a - b) < 1e-6;
 
-/**
- * Serie z rekordami: medal dostaje najlepsza ukończona seria treningu tylko wtedy,
- * gdy rekord padł tego dnia i jej wynik jest równy wartości rekordu (jak w backendzie:
- * ciężar, ciężar × powtórzenia, e1RM wzorem Epleya).
- */
 export function toDetail(w: Workout, records: ExercisePersonalRecords[]): WorkoutDetail {
   const byExercise = new Map(records.map((r) => [r.exerciseId, r]));
   const exercises = [...(w.exercises ?? [])]

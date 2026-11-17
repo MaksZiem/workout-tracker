@@ -66,13 +66,11 @@ export function computePersonalRecords(sets: ExerciseSet[]) {
     bestVolumeDate: bestVolumeSet.workoutExercise.workout.date,
     bestEstimatedOneRepMax: bestOneRepMax,
     bestEstimatedOneRepMaxDate: bestOneRepMaxSet.workoutExercise.workout.date,
-    // Seria, z której policzono e1RM: UI pokazuje na niej rachunek wzoru Epleya.
     bestEstimatedOneRepMaxWeight: Number(bestOneRepMaxSet.weight),
     bestEstimatedOneRepMaxReps: bestOneRepMaxSet.reps,
   };
 }
 
-/** Poniedziałek tygodnia (pon–niedz.), do którego należy data. */
 export function weekStart(dateString: string): string {
   const day = new Date(`${dateString}T00:00:00Z`).getUTCDay();
   return addDays(dateString, -((day + 6) % 7));
@@ -84,7 +82,6 @@ export function daysBetween(from: string, to: string): number {
   );
 }
 
-/** Ukończona seria spłaszczona do tego, czego potrzebują statystyki. */
 export type SetRow = {
   workoutId: number;
   date: string;
@@ -101,10 +98,6 @@ export type WeeklyStats = {
   volume: number;
 };
 
-/**
- * Gęsta lista tygodni od `from` do `to` (bez dziur). Bez `from` - od tygodnia
- * pierwszego treningu; bez żadnych treningów - pusta lista.
- */
 export function computeWeeklyStats(
   workoutDates: string[],
   sets: Pick<SetRow, 'date' | 'weight' | 'reps'>[],
@@ -141,7 +134,6 @@ export function repRangeOf(reps: number): RepRange {
   return 'ENDURANCE';
 }
 
-/** Liczba ukończonych serii w zakresach 1–5, 6–12 i 13+ powtórzeń. */
 export function computeRepRanges(sets: Pick<SetRow, 'reps'>[]) {
   const counts = new Map<RepRange, number>(REP_RANGES.map((r) => [r, 0]));
   for (const set of sets) {
@@ -157,10 +149,6 @@ export type RepRecord =
   | { reps: number; weight: number; actualReps: number; date: string }
   | { reps: number; weight: null; actualReps: null; date: null };
 
-/**
- * Rekord dla N powtórzeń: największy ciężar z serii o co najmniej N powtórzeniach
- * (seria 100 kg × 8 jest też rekordem 5RM). Przy remisie wygrywa wcześniejsza seria.
- */
 export function computeRepRecords(
   sets: Pick<SetRow, 'date' | 'weight' | 'reps'>[],
 ): RepRecord[] {
@@ -179,18 +167,14 @@ export function computeRepRecords(
   });
 }
 
-/** Ćwiczenie musi być trenowane w tym oknie, żeby zastój miał znaczenie. */
 export const STAGNATION_ACTIVE_DAYS = 21;
-/** Tyle dni bez nowego szacowanego 1RM uznajemy za zastój. */
 export const STAGNATION_DAYS = 42;
-/** Minimalna liczba sesji od rekordu - pojedyncza sesja to jeszcze nie zastój. */
 export const STAGNATION_MIN_SESSIONS = 3;
 
 export type StagnantExercise = {
   exerciseId: number;
   exerciseName: string;
   bestEstimatedOneRepMax: number;
-  /** Seria rekordu (ciężar × powtórzenia), z której policzono e1RM. */
   bestWeight: number;
   bestReps: number;
   bestDate: string;
@@ -199,7 +183,6 @@ export type StagnantExercise = {
   lastSessionDate: string;
 };
 
-/** Ćwiczenia, w których szacowany 1RM nie wzrósł od dłuższego czasu, najdłuższy zastój pierwszy. */
 export function computeStagnation(sets: SetRow[], today: string): StagnantExercise[] {
   const byExercise = new Map<number, SetRow[]>();
   for (const set of sets) {
@@ -211,7 +194,6 @@ export function computeStagnation(sets: SetRow[], today: string): StagnantExerci
 
   const result: StagnantExercise[] = [];
   for (const [exerciseId, exerciseSets] of byExercise) {
-    // Pierwsze osiągnięcie najlepszego wyniku: wyrównanie rekordu go nie odświeża.
     let best = exerciseSets[0];
     let bestValue = 0;
     for (const set of [...exerciseSets].sort((a, b) => a.date.localeCompare(b.date))) {
@@ -255,7 +237,6 @@ export type Adherence = {
   skipped: number;
   missed: number;
   upcoming: number;
-  /** Udział zrealizowanych wśród tych, które już powinny się odbyć; null, gdy takich nie ma. */
   rate: number | null;
 };
 

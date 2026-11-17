@@ -8,7 +8,6 @@ import { LocaleSwitcher } from "@/components/locale-switcher";
 import { NAV_GROUPS, isActive, visibleNavItems } from "./nav-items";
 import { UserMenu } from "./user-menu";
 
-/** Nawigacja desktopowa (od md w górę). Na telefonie zastępuje ją MobileNav. */
 export function Sidebar({ user }: { user: UserDto }) {
   const t = useTranslations("nav");
   const pathname = usePathname();

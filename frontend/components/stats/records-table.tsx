@@ -7,11 +7,6 @@ import { displayDate } from "@/lib/planner/dates";
 import { roundKg } from "@/lib/stats/model";
 import { inRange, statsHref, type StatsRange } from "@/lib/stats/range";
 
-/**
- * Rekordy wszystkich ćwiczeń z całej historii, najświeższe na górze.
- * Złoty znacznik tylko przy rekordzie pobitym w wybranym okresie.
- */
-
 const setOf = (r: ExercisePersonalRecords) => ({ weight: r.bestEstimatedOneRepMaxWeight, reps: r.bestEstimatedOneRepMaxReps });
 export async function RecordsTable({
   records,
@@ -27,9 +22,7 @@ export async function RecordsTable({
 
   if (!records.length) return <p className="rounded-xl border border-border bg-surface p-4 text-sm text-muted">{t("empty")}</p>;
 
-  // Ćwiczenia bez ciężaru (np. deska) mają rekordy równe zero: pokazujemy kreskę, nie „0 kg”.
   const kg = (v: number) => (v > 0 ? `${format.number(roundKg(v), { maximumFractionDigits: 1 })} kg` : "—");
-  // Rok tylko przy dacie spoza bieżącego roku: kolumna dat mieści się wtedy w węższym układzie.
   const date = (iso: string) =>
     format.dateTime(displayDate(iso), {
       day: "numeric",
@@ -52,7 +45,6 @@ export async function RecordsTable({
 
   return (
     <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-      {/* Desktop: tabela */}
       <table className="hidden w-full text-sm sm:table">
         <thead>
           <tr className="border-b border-border text-left text-[11px] font-semibold tracking-wide whitespace-nowrap text-muted uppercase">
@@ -87,7 +79,6 @@ export async function RecordsTable({
         </tbody>
       </table>
 
-      {/* Telefon: lista */}
       <ul className="divide-y divide-border sm:hidden">
         {rows.map((r) => (
           <li key={r.exerciseId}>

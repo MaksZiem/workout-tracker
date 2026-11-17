@@ -113,7 +113,6 @@ export class UsersController {
   @ApiForbiddenResponse({ description: 'Zalogowany użytkownik nie jest administratorem albo próbuje usunąć własne konto', type: ForbiddenErrorDto })
   @ApiNotFoundResponse({ description: 'Użytkownik o podanym id nie istnieje', type: NotFoundErrorDto })
   removeUser(@Param('id', ParseIntPipe) id: number, @CurrentUser() currentUser: User) {
-    // Własne konto usuwa się gdzie indziej; tu chroni przed odcięciem ostatniego administratora.
     if (currentUser.id === id) {
       throw new ForbiddenException(errorBody(HttpStatus.FORBIDDEN, 'ADMIN_CANNOT_DELETE_SELF', 'Admins cannot delete their own account'))
     }

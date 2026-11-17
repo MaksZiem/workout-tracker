@@ -3,7 +3,6 @@
 import { useTranslations } from "next-intl";
 import { Search, X } from "lucide-react";
 
-/** Wyszukiwarka katalogu (Graphite Muted 44px) z czyszczeniem; wspólna dla katalogu i panelu admina. */
 export function SearchField({ value, onChange, label }: { value: string; onChange: (value: string) => void; label: string }) {
   const t = useTranslations("pages.exercises");
   return (

@@ -31,7 +31,6 @@ export default async function StatsPage(props: PageProps<"/stats">) {
   const today = localDate();
   const data = await loadOverview(range, today);
   const self = statsHref("/stats", { range });
-  // Długość okresu w tygodniach do średniej serii na partię; „cały czas” liczony od pierwszego treningu.
   const periodStart = data.bounds.from ?? (data.weekly.ok ? data.weekly.data[0]?.weekStart : undefined) ?? today;
   const periodWeeks = Math.max(1, daysBetween(periodStart, today).length / 7);
 
@@ -87,7 +86,6 @@ export default async function StatsPage(props: PageProps<"/stats">) {
           </StatsSection>
 
           {range === "30d" || range === "90d" ? (
-            // Krótki zakres: mała mapa obok partii mięśniowych.
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
               {activity}
               {muscles(1)}
@@ -136,7 +134,6 @@ async function RangeSwitch({ range }: { range: StatsRange }) {
   );
 }
 
-/** Passa tygodniowa (cała historia) i dzienna seria z backendu jako dopisek. */
 async function StreakNote({ weeks, days }: { weeks: number | null; days: number | null }) {
   if (weeks === null) return null;
   const t = await getTranslations("pages.stats.streak");

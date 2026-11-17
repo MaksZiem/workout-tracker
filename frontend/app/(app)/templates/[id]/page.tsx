@@ -26,6 +26,5 @@ export default async function TemplateDetailPage(props: Props) {
   const detail = await loadTemplate(id);
   if (!detail) notFound();
 
-  // key: po odświeżeniu danych z serwera stan edytora zaczyna od nowa.
   return <TemplatePage key={detail.template.id} detail={detail} today={localDate()} />;
 }

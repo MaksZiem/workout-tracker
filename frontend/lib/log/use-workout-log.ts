@@ -17,10 +17,6 @@ import {
   type SyncStatus,
 } from "./model";
 
-// ---------------------------------------------------------------------------
-// Stan
-// ---------------------------------------------------------------------------
-
 type Action =
   | { type: "patchSet"; exKey: string; setKey: string; patch: Partial<LogSet> }
   | { type: "cascadeWeight"; exKey: string; fromSetKey: string; weight: number }
@@ -80,13 +76,9 @@ function reducer(state: LogExercise[], action: Action): LogExercise[] {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Synchronizacja: optymistycznie, kolejka per ćwiczenie, ponawianie przy braku sieci
-// ---------------------------------------------------------------------------
-
 function isTransient(error: unknown) {
   if (error instanceof ApiError) return error.status >= 500 || error.status === 408 || error.status === 429;
-  return true; // TypeError z fetch = brak sieci
+  return true;
 }
 
 function waitForRetry(attempt: number) {
@@ -129,7 +121,6 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
     stateRef.current = exercises;
   }, [exercises]);
 
-  /** klucz klienta → id w backendzie; aktualizowane synchronicznie po utworzeniu. */
   const ids = useRef(new Map<string, number>());
   useEffect(() => {
     for (const ex of initial.exercises) {
@@ -142,7 +133,6 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
   const timers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
   const retries = useRef(new Map<string, () => void>());
   const toastSeq = useRef(0);
-  /** Trening przerwany: kolejka nic już nie wysyła (trening zniknął z backendu). */
   const cancelled = useRef(false);
 
   const dismissToast = useCallback(() => setToast(null), []);
@@ -158,7 +148,6 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
   type Enqueue = (exKey: string, entityKey: string, op: () => Promise<void>, onStatus: (s: SyncStatus) => void) => Promise<void>;
   const enqueueRef = useRef<Enqueue | null>(null);
 
-  /** Dodaje operację na koniec kolejki ćwiczenia, z ponawianiem przy braku sieci. */
   const enqueue = useCallback<Enqueue>(
     (exKey: string, entityKey: string, op: () => Promise<void>, onStatus: (s: SyncStatus) => void) => {
       const run = async () => {
@@ -198,7 +187,6 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
   const setStatus = (exKey: string, setKey: string) => (status: SyncStatus) =>
     dispatch({ type: "patchSet", exKey, setKey, patch: { status } });
 
-  /** Zapisuje pełny bieżący stan serii (idempotentnie). */
   const saveSet = useCallback(
     (exKey: string, setKey: string) => {
       const timer = timers.current.get(setKey);
@@ -211,7 +199,7 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
           const set = findSet(exKey, setKey);
           const weId = ids.current.get(exKey);
           const setId = ids.current.get(setKey);
-          if (!set || !weId || !setId) return; // usunięta w międzyczasie
+          if (!set || !weId || !setId) return;
           await unwrap(
             clientApi.PATCH("/workout/{workoutId}/exercise/{weId}/set/{setId}", {
               params: { path: { workoutId, weId, setId } },
@@ -236,8 +224,6 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
     },
     [saveSet],
   );
-
-  // --- operacje na seriach -------------------------------------------------
 
   const updateWeight = useCallback(
     (exKey: string, setKey: string, weight: number) => {
@@ -382,8 +368,6 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
     [enqueue, messages.setRemoved, showToast, workoutId],
   );
 
-  // --- operacje na ćwiczeniach --------------------------------------------
-
   const loadHistory = useCallback(
     async (exKey: string, exerciseId: number) => {
       try {
@@ -475,7 +459,6 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
     [enqueue, messages.exerciseRemoved, showToast, workoutId],
   );
 
-  /** Wynik /ai/parse-workout: dopisuje ćwiczenia i serie, których jeszcze nie znamy. */
   const mergeParsed = useCallback(
     (workout: Workout) => {
       const knownIds = new Set(ids.current.values());
@@ -529,7 +512,6 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
     [loadHistory],
   );
 
-  /** Kończy trening: opcjonalnie usuwa nieodhaczone serie i czeka na kolejkę. */
   const flush = useCallback(
     async (removeUnchecked: boolean) => {
       for (const [setKey, timer] of timers.current) {
@@ -564,10 +546,6 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
     [enqueue, saveSet, workoutId],
   );
 
-  /**
-   * Przerywa trening: porzuca niewysłane zapisy i usuwa trening w backendzie
-   * (wpis w planerze wraca do „zaplanowanych”). Przy błędzie kolejka rusza dalej.
-   */
   const cancel = useCallback(async () => {
     cancelled.current = true;
     try {
@@ -580,7 +558,6 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
     }
   }, [workoutId]);
 
-  /** Oznacza trening jako zakończony bez czekania na kolejkę zapisów. */
   const finishNow = useCallback(async () => {
     await unwrap(clientApi.POST("/workout/{id}/finish", { params: { path: { id: workoutId } } }));
   }, [workoutId]);

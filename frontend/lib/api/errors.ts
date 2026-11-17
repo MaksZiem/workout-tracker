@@ -1,6 +1,5 @@
 export type ErrorParams = Record<string, string | number>;
 
-/** Format błędu zwracany przez backend: `code` i `params` służą do przetłumaczenia komunikatu. */
 export type BackendErrorBody = {
   statusCode: number;
   code?: string;
@@ -12,10 +11,8 @@ export type BackendErrorBody = {
 export class ApiError extends Error {
   readonly status: number;
   readonly error: string;
-  /** Stały kod błędu z backendu (np. `EXERCISE_NAME_TAKEN`); brak przy błędach walidacji. */
   readonly code: string | undefined;
   readonly params: ErrorParams;
-  /** Zawsze tablica: przy błędach walidacji (400) jeden komunikat na pole. */
   readonly messages: string[];
 
   constructor(
@@ -51,7 +48,6 @@ export class ApiError extends Error {
   }
 }
 
-/** Kod błędu z odpowiedzi backendu, także gdy nie została opakowana w ApiError. */
 export function errorCode(body: unknown): string | undefined {
   return isBackendErrorBody(body) ? body.code : undefined;
 }

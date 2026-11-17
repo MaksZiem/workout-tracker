@@ -1,11 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { CalendarCheck, Flame } from "lucide-react";
 
-/**
- * Passy na pulpicie (jak w Duolingo): tygodnie z rzędu z treningiem i zaplanowane treningi
- * wykonane bez opuszczenia. Pokazujemy tylko te, które trwają. Ogień gaśnie (szary),
- * gdy w tym tygodniu jeszcze nie było treningu, czyli passa jest do uratowania.
- */
 export async function Streaks({ weeks, plan, weekAtRisk }: { weeks: number | null; plan: number | null; weekAtRisk: boolean }) {
   const t = await getTranslations("pages.dashboard.streak");
   const items = [

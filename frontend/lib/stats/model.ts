@@ -2,7 +2,6 @@ import type { ExerciseProgressPoint, MuscleGroup, WeeklyStats } from "@/lib/api/
 import { addDays, weekStart } from "@/lib/planner/dates";
 import type { StatsMetric } from "./range";
 
-/** Sekcja, która mogła się nie wczytać: błąd jednej nie psuje całej strony. */
 export type Section<T> = { ok: true; data: T } | { ok: false };
 
 export async function settle<T>(promise: Promise<T>): Promise<Section<T>> {
@@ -13,7 +12,6 @@ export async function settle<T>(promise: Promise<T>): Promise<Section<T>> {
   }
 }
 
-/** Sesja ćwiczenia z przynajmniej jedną ukończoną serią. */
 export type Session = ExerciseProgressPoint;
 
 export function sessionsOf(points: ExerciseProgressPoint[]): Session[] {
@@ -34,11 +32,8 @@ export type MainExercise = {
   muscleGroup: MuscleGroup | null;
   sessions: number;
   points: TrendPoint[];
-  /** Ostatnia wartość szacowanego 1RM w zakresie. */
   current: number;
-  /** Różnica między ostatnią a pierwszą sesją w zakresie; null przy jednej sesji. */
   change: number | null;
-  /** Data rekordu szacowanego 1RM (z całej historii), jeśli wypada w zakresie. */
   recordDate: string | null;
 };
 
@@ -64,10 +59,6 @@ export function toMainExercise(
   };
 }
 
-/**
- * Passa w tygodniach: kolejne tygodnie (pon–niedz.) z co najmniej jednym treningiem.
- * Bieżący tydzień bez treningu jeszcze nie przerywa passy.
- */
 export function weeklyStreak(days: { date: string; count: number }[], today: string) {
   const trained = new Set<string>();
   for (const d of days) if (d.count > 0) trained.add(weekStart(d.date));
@@ -81,18 +72,12 @@ export function weeklyStreak(days: { date: string; count: number }[], today: str
   return streak;
 }
 
-/** Kilogramy do wyświetlenia: pół kilograma dokładności wystarcza. */
 export function roundKg(value: number) {
   return Math.round(value * 2) / 2;
 }
 
-/** Z iloma poprzednimi tygodniami porównujemy ostatni pełny tydzień. */
 export const WEEKLY_BASELINE = 4;
 
-/**
- * Ostatni pełny tydzień względem średniej z WEEKLY_BASELINE poprzednich.
- * null bez punktu odniesienia (za mało tygodni albo same zera).
- */
 export function weeklyChange(weeks: WeeklyStats[], today: string) {
   const complete = weeks.filter((w) => w.weekStart < weekStart(today));
   const last = complete.at(-1);

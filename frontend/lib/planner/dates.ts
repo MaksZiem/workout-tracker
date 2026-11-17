@@ -1,6 +1,3 @@
-// Operacje na datach YYYY-MM-DD (bez strefy czasowej; arytmetyka w UTC,
-// tak jak backend w planner.service.ts). Tydzień zaczyna się w poniedziałek.
-
 export type PlannerView = "week" | "month";
 
 const toDate = (iso: string) => new Date(`${iso}T00:00:00Z`);
@@ -16,12 +13,10 @@ export function addDays(iso: string, days: number) {
   return toIso(date);
 }
 
-/** 0 = poniedziałek … 6 = niedziela. */
 export function mondayIndex(iso: string) {
   return (toDate(iso).getUTCDay() + 6) % 7;
 }
 
-/** Zamiana indeksu od poniedziałku na dayOfWeek backendu (0 = niedziela). */
 export function toBackendDayOfWeek(mondayIdx: number) {
   return (mondayIdx + 1) % 7;
 }
@@ -50,7 +45,6 @@ export function daysBetween(from: string, to: string) {
   return days;
 }
 
-/** Zakres dni widoczny w danym widoku (miesiąc = pełne tygodnie siatki). */
 export function visibleRange(view: PlannerView, anchor: string) {
   if (view === "week") {
     const from = weekStart(anchor);
@@ -65,15 +59,10 @@ export function shiftAnchor(view: PlannerView, anchor: string, direction: -1 | 1
   return view === "week" ? addDays(weekStart(anchor), 7 * direction) : addMonths(anchor, direction);
 }
 
-/** Obiekt Date do formatowania (południe UTC, żeby strefa nie przesunęła dnia). */
 export function displayDate(iso: string) {
   return new Date(`${iso}T12:00:00Z`);
 }
 
-/**
- * Zakres dat z `dateTimeRange` z jednolitymi spacjami. ICU w Node (serwer) i w przeglądarce
- * wstawia wokół „–” różne spacje (cienka U+2009 vs zwykła), co psuje hydratację.
- */
 export function plainSpaces(text: string) {
   return text.replace(/\s/g, " ");
 }

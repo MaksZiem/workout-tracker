@@ -2,7 +2,6 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import type { StatsSummary } from "@/lib/api/extra-types";
 import { StatsTip, type TipKey } from "./stats-tip";
 
-/** Podsumowanie okresu jako jeden wiersz liczb, bez kafelków. */
 export async function SummaryLine({ summary }: { summary: StatsSummary }) {
   const t = await getTranslations("pages.stats.summary");
   const tGroup = await getTranslations("enums.muscleGroup");

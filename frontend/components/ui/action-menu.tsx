@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 export type MenuAction = { label: string; onSelect: () => void; tone?: "danger" };
 
-/** Mały rozwijany popover z akcjami. Zamyka się po kliknięciu obok i po Escape. */
 export function ActionMenu({
   label,
   trigger,

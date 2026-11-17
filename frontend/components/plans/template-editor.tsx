@@ -26,14 +26,8 @@ const COL: Record<TargetField, "sets" | "reps" | "weight" | "rest"> = {
   restSeconds: "rest",
 };
 
-// Wspólna siatka nagłówka i wierszy (desktop): ćwiczenie | serie | powt. | kg | przerwa | ↑↓ | ⋯
 const GRID = "sm:grid sm:grid-cols-[minmax(0,1fr)_4.5rem_4.5rem_5.5rem_5.5rem_5rem_2.75rem] sm:items-center sm:gap-2";
 
-/**
- * Edytor jednego szablonu (dnia treningowego): nazwa, tabela celów, kolejność.
- * Każde pole zapisuje się samo; błąd przywraca poprzednią wartość i pokazuje komunikat.
- * Używany w planie (dzień) i na /templates/[id] (strona: nazwę i usuwanie ma nagłówek strony).
- */
 export function TemplateEditor({
   template: initial,
   headingLevel = "h2",
@@ -59,7 +53,6 @@ export function TemplateEditor({
   const [saved, setSaved] = useState(false);
   const [picking, setPicking] = useState(false);
   const [swapping, setSwapping] = useState<EditorExercise | null>(null);
-  /** Zamiana z pełnego katalogu (gdy podobnych brak albo nie pasują). */
   const [swappingFromCatalog, setSwappingFromCatalog] = useState<EditorExercise | null>(null);
   const [confirming, setConfirming] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -71,7 +64,6 @@ export function TemplateEditor({
     onCountChange?.(count);
   }, [count, onCountChange]);
 
-  /** Wspólna obsługa zapisu: licznik „Zapisywanie…”, potem krótkie „Zapisano”. */
   const save = async (request: () => Promise<unknown>, rollback: () => void) => {
     setPending((n) => n + 1);
     setSaved(false);
@@ -109,7 +101,6 @@ export function TemplateEditor({
         unwrap(
           clientApi.PATCH("/template/{templateId}/exercise/{teId}", {
             params: { path: { templateId: template.id, teId: exercise.id } },
-            // null czyści pole (ciężar, przerwa); backend przypisuje każdą zdefiniowaną wartość.
             body: { [field]: value } as Record<TargetField, number>,
           }),
         ),
@@ -172,7 +163,6 @@ export function TemplateEditor({
     }, () => {});
   };
 
-  /** Zamiana ćwiczenia w miejscu: cele i kolejność zostają, wpis ma to samo id. */
   const swap = (exercise: EditorExercise, picked: { id: number; name: string; muscleGroup: string }, undoable = true) => {
     setSwapping(null);
     setSwappingFromCatalog(null);
@@ -221,7 +211,6 @@ export function TemplateEditor({
       showToast({
         message: t("removed", { name: exercise.name }),
         tone: "default",
-        // Cofnięcie dodaje ćwiczenie ponownie z tymi samymi celami i miejscem.
         undo: () => void add({ id: exercise.exerciseId, name: exercise.name, muscleGroup: exercise.muscleGroup }, exercise),
       });
     });
@@ -302,7 +291,6 @@ export function TemplateEditor({
                     <p className="text-[15px] leading-snug font-medium sm:truncate">{exercise.name}</p>
                     <p className="text-xs text-muted">{tGroup(exercise.muscleGroup)}</p>
                   </div>
-                  {/* Telefon: kolejność i menu obok nazwy. */}
                   <div className="flex shrink-0 items-center sm:hidden">
                     <MoveButtons index={index} count={template.exercises.length} name={exercise.name} onMove={move} />
                     <ExerciseMenu name={exercise.name} onSwap={() => setSwapping(exercise)} onRemove={() => remove(exercise)} />
@@ -339,7 +327,6 @@ export function TemplateEditor({
           type="button"
           onClick={() => setPicking(true)}
           className={
-            // Pusty szablon na własnej stronie: dodanie ćwiczenia to jedyna sensowna akcja, więc jest niebieska.
             variant === "page" && count === 0
               ? "flex h-11 items-center gap-2 rounded-lg bg-accent px-4 text-sm font-semibold text-accent-foreground hover:opacity-90"
               : "flex h-11 items-center gap-2 rounded-lg px-3 text-sm font-medium text-accent hover:bg-accent-surface"
@@ -428,7 +415,6 @@ function ExerciseMenu({ name, onSwap, onRemove }: { name: string; onSwap: () => 
   );
 }
 
-/** Pole celu: zapis po Enter lub wyjściu z pola; błędna wartość wraca do poprzedniej. */
 function TargetInput({
   field,
   value,

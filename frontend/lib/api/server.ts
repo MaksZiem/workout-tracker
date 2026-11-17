@@ -9,13 +9,6 @@ export function backendUrl(): string {
   return process.env.BACKEND_URL ?? "http://localhost:3001";
 }
 
-/**
- * Typowany klient backendu dla Server Components, Server Actions i Route Handlerów.
- * Dokleja token z cookie sesji, jeśli istnieje.
- *
- *   const api = await serverApi();
- *   const user = await unwrap(api.GET("/auth/context"));
- */
 export async function serverApi() {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   return createClient<ApiPaths>({

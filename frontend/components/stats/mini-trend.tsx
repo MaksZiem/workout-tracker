@@ -1,10 +1,6 @@
 import { linePath, niceScale, xPositions, yPosition } from "@/lib/stats/chart";
 import type { TrendPoint } from "@/lib/stats/model";
 
-/**
- * Mały wykres trendu na karcie ćwiczenia. Oś X to daty (przerwy są widoczne),
- * ostatnia sesja ma kropkę, rekord z całej historii ma złotą kropkę.
- */
 export function MiniTrend({ points, recordDate }: { points: TrendPoint[]; recordDate: string | null }) {
   const xs = xPositions(points.map((p) => p.date));
   const { lo, hi } = niceScale(points.map((p) => p.value), 2);

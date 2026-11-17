@@ -4,7 +4,6 @@ import { CalendarCheck } from "lucide-react";
 import type { Adherence } from "@/lib/api/extra-types";
 import { StatsTip } from "./stats-tip";
 
-/** Realizacja planu z kalendarza w jednym wierszu. Nic, gdy w okresie nic nie zaplanowano. */
 export async function AdherenceLine({ adherence }: { adherence: Adherence }) {
   const t = await getTranslations("pages.stats.adherence");
   const format = await getFormatter();

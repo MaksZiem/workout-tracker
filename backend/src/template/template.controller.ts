@@ -102,8 +102,6 @@ export class TemplateController {
     return this.templateService.remove(user.id, id);
   }
 
-  // template exercise
-
   @Post('/:templateId/exercise')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Dodaj ćwiczenie do szablonu', description: 'Dołącza ćwiczenie z globalnego katalogu wraz z docelowymi seriami/powtórzeniami/ciężarem.' })

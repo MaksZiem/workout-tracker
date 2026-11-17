@@ -2,8 +2,6 @@ import { requireUser } from "@/lib/auth/session";
 import { Sidebar } from "@/components/nav/sidebar";
 import { MobileNav } from "@/components/nav/mobile-nav";
 
-// Shell dla wszystkich ekranów za logowaniem. proxy.ts wpuszcza tu tylko
-// użytkowników z tokenem; requireUser() dodatkowo potwierdza go w backendzie.
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   const user = await requireUser();
 

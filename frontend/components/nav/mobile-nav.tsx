@@ -10,11 +10,6 @@ import { LocaleSwitcher } from "@/components/locale-switcher";
 import { NAV_ITEMS, isActive, visibleNavItems } from "./nav-items";
 import { UserMenu } from "./user-menu";
 
-/**
- * Nawigacja na telefonie: dolny pasek z najczęstszymi sekcjami, gdzie
- * „Zapisz trening” jest wyróżniony (logowanie jest mobile-first), oraz arkusz
- * „Więcej” z pozostałymi sekcjami, językiem i kontem.
- */
 export function MobileNav({ user }: { user: UserDto }) {
   const t = useTranslations("nav");
   const pathname = usePathname();

@@ -12,11 +12,6 @@ import { displayDate } from "@/lib/planner/dates";
 import { displayStatus, type PlannerEntry } from "@/lib/planner/model";
 import type { PlannerApi } from "./use-planner";
 
-/**
- * Jeden zaplanowany trening. Status słowem i kolorem:
- * zaplanowany (neutralny), w trakcie (neutralny + ikona; niebieski tylko przycisk „Kontynuuj”),
- * wykonany (zielony), pominięty (przerywana ramka, bez przygaszania), zaległy (czerwony, liczony po stronie klienta).
- */
 export function EntryCard({
   entry,
   today,

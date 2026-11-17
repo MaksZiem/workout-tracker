@@ -20,7 +20,6 @@ class ScheduleAssignmentDto {
     minimum: 0,
     maximum: 6,
   })
-  // 0 = Sunday ... 6 = Saturday, matches JS Date#getUTCDay()
   @IsInt()
   @Min(0)
   @Max(6)

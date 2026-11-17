@@ -27,10 +27,6 @@ const SORT_OPTIONS = [
   "workoutCount-asc",
 ] as const;
 
-/**
- * Konta użytkowników: wyszukiwanie, sortowanie i strony liczy backend, stan listy jest w URL.
- * Wyszukiwarka leży poza tabelą, bo tabela montuje się od nowa przy każdej nowej stronie danych.
- */
 export function UsersSection({
   page,
   query,
@@ -51,7 +47,6 @@ export function UsersSection({
 
   useEffect(() => {
     if (search.trim() === query.q.trim()) return;
-    // Zapytanie dopiero po przerwie w pisaniu, zawsze od pierwszej strony.
     const timer = setTimeout(
       () => startTransition(() => router.replace(usersHref({ ...query, q: search, page: 1 }), { scroll: false })),
       300,
@@ -59,7 +54,6 @@ export function UsersSection({
     return () => clearTimeout(timer);
   }, [search, query, router]);
 
-  // Nowe dane albo nowy stan listy: tabela startuje od świeżych wierszy z serwera.
   const tableKey = `${usersHref(query)}|${page.items.map((u) => `${u.id}:${u.role}`).join(",")}`;
 
   return (
@@ -68,7 +62,6 @@ export function UsersSection({
         <div className="sm:w-96">
           <SearchField value={search} onChange={setSearch} label={t("search")} />
         </div>
-        {/* Telefon: bez nagłówków kolumn, więc sortowanie jest listą wyboru. */}
         <label className="flex h-11 items-center gap-2 rounded-lg bg-surface-muted px-3 text-[15px] focus-within:ring-2 focus-within:ring-accent sm:hidden">
           <span className="shrink-0 text-muted">{t("sortLabel")}</span>
           <select
@@ -140,7 +133,6 @@ function UsersTable({
         tone: "default",
         undo: undoable ? () => setRole({ ...user, role }, previous, false) : undefined,
       });
-      // Przy sortowaniu po roli wiersz mógł zmienić miejsce albo stronę.
       router.refresh();
     } catch {
       apply(previous);
@@ -156,7 +148,6 @@ function UsersTable({
       await unwrap(clientApi.DELETE("/auth/{id}", { params: { path: { id: user.id } } }));
       setUsers((list) => list.filter((u) => u.id !== user.id));
       onToast({ message: t("deleted", { name: fullName(user) }), tone: "default" });
-      // Strona dobiera kolejne konto, a licznik i liczba stron się zmniejszają.
       router.refresh();
     } catch {
       onToast({ message: t("deleteError"), tone: "error" });
@@ -168,7 +159,6 @@ function UsersTable({
 
   const menu = (user: AdminUserDto) =>
     user.id === meId ? (
-      // Własnego konta nie można tu usunąć ani odebrać sobie roli (backend też tego pilnuje).
       <span className="block size-10" aria-hidden />
     ) : (
       <ActionMenu
@@ -224,7 +214,6 @@ function UsersTable({
           </div>
         ) : (
           <>
-            {/* Desktop: tabela z sortowaniem po kliknięciu nagłówka */}
             <table className="hidden w-full table-fixed text-sm sm:table">
               <thead>
                 <tr className="border-b border-border text-left text-[11px] font-semibold tracking-wide whitespace-nowrap text-muted uppercase">
@@ -252,7 +241,6 @@ function UsersTable({
               </tbody>
             </table>
 
-            {/* Telefon: lista */}
             <ul className="divide-y divide-border sm:hidden">
               {users.map((user) => (
                 <li key={user.id} className="flex min-h-14 items-center gap-3 py-2.5 pr-2 pl-4">
@@ -278,7 +266,6 @@ function UsersTable({
           <p className="border-t border-border px-4 py-3 text-sm text-muted sm:px-5">{t("alone")}</p>
         ) : null}
 
-        {/* Stopka od 11 kont: wtedy wybór rozmiaru strony coś zmienia. */}
         {page.total > PAGE_SIZES[0] ? (
           <nav
             aria-label={t("pagination")}
@@ -334,7 +321,6 @@ function UsersTable({
   );
 }
 
-/** Nagłówek kolumny jako link sortowania; aktywna kolumna ma jasny tekst i strzałkę kierunku. */
 function SortHeader({
   field,
   label,

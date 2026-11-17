@@ -40,8 +40,6 @@ export function FinishSheet({
   const unchecked = totals.total - totals.done;
   const minutes = Math.max(1, Math.round((now.getTime() - new Date(workout.createdAt).getTime()) / 60000));
 
-  // Kolejka zapisów może ponawiać bez końca przy braku sieci, więc czekamy
-  // ograniczony czas, a potem dajemy wybór zamiast wiecznego „Zapisywanie…”.
   const finish = async () => {
     setSaving(true);
     setFailed(false);
@@ -70,8 +68,6 @@ export function FinishSheet({
   const stats = [
     { label: t("sets"), value: `${totals.done}` },
     { label: t("volume"), value: t("volumeValue", { value: format.number(totals.volume, { maximumFractionDigits: 0 }) }) },
-    // Tylko przy otwartym arkuszu: zamknięty renderuje się też na serwerze, a „teraz”
-    // serwera i przeglądarki potrafi różnić się o minutę (błąd hydratacji).
     { label: t("duration"), value: open ? format.number(minutes, { style: "unit", unit: "minute", unitDisplay: "short" }) : "" },
     { label: t("records"), value: `${totals.records}`, highlight: totals.records > 0 },
   ];

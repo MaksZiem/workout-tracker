@@ -108,7 +108,6 @@ export default async function ExercisePage(props: Props) {
   );
 }
 
-/** Zamienniki od AI: nazwa z uzasadnieniem, po prawej twój wynik jak w katalogu. */
 function SubstituteList({
   items,
   kg,

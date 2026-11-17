@@ -16,9 +16,7 @@ export type AuthErrorCode =
 
 export type AuthFormState = {
   error?: AuthErrorCode;
-  /** Surowe komunikaty walidacji z backendu (po angielsku, z class-validator). */
   details?: string[];
-  /** Wartości do ponownego wypełnienia formularza (nigdy hasło). */
   values?: { email?: string; name?: string; surname?: string };
 };
 
@@ -34,7 +32,6 @@ async function startSession(token: string) {
   });
 }
 
-/** Dopuszcza tylko ścieżki wewnętrzne, żeby ?next= nie przekierował na obcą domenę. */
 function safeNext(value: FormDataEntryValue | null): string {
   const next = typeof value === "string" ? value : "";
   return next.startsWith("/") && !next.startsWith("//") ? next : "/";

@@ -6,7 +6,6 @@ import { localDate } from "./model";
 
 export type StartState = { error?: boolean };
 
-/** Uruchamia zaplanowany trening: backend tworzy trening z serią wypełnioną z szablonu. */
 export async function startScheduled(_prev: StartState, formData: FormData): Promise<StartState> {
   const id = Number(formData.get("scheduledId"));
   let workoutId: number | undefined;

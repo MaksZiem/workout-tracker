@@ -17,6 +17,5 @@ export default async function ExercisesPage(props: PageProps<"/exercises">) {
   const { group } = await props.searchParams;
   const { items, recordsOk } = await loadCatalog();
   const selected = parseGroup(group);
-  // Filtr po zmianie grupy zaczyna z pustą wyszukiwarką.
   return <ExercisesView key={selected ?? "all"} items={items} group={selected} recordsOk={recordsOk} />;
 }

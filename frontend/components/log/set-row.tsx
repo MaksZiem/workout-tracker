@@ -6,7 +6,6 @@ import { Check, CloudOff, Minus, Plus, Trophy } from "lucide-react";
 import { ActionMenu } from "@/components/ui/action-menu";
 import { WEIGHT_STEP, parseReps, parseWeight, type LogSet, type PrKind } from "@/lib/log/model";
 
-/** Wspólna siatka kolumn tabeli serii: Seria | Poprzednio | kg | Powt. | ✓ */
 export const SET_GRID = "grid grid-cols-[2.25rem_minmax(0,1fr)_5.25rem_5.25rem_2.75rem] items-center gap-x-2";
 
 type Props = {
@@ -152,7 +151,6 @@ function NumberCell({
   const [draft, setDraft] = useState<string | null>(null);
   const ref = useRef<HTMLInputElement>(null);
 
-  // Gdy wartość zmieni się z zewnątrz (stepper, kaskada), porzucamy nieaktualny szkic.
   useEffect(() => {
     if (document.activeElement !== ref.current) setDraft(null);
   }, [value]);

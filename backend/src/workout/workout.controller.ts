@@ -160,8 +160,6 @@ export class WorkoutController {
     return this.workoutService.cancel(user.id, id);
   }
 
-  // workout exercise
-
   @Post('/:workoutId/exercise')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Dodaj ćwiczenie do treningu', description: 'Dołącza ćwiczenie z globalnego katalogu do wskazanego treningu.' })
@@ -206,8 +204,6 @@ export class WorkoutController {
   ) {
     return this.workoutService.removeExercise(user.id, workoutId, weId);
   }
-
-  // exercise set
 
   @Post('/:workoutId/exercise/:weId/set')
   @UseGuards(AuthGuard)

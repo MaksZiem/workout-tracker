@@ -27,6 +27,5 @@ export default async function WorkoutDetailPage(props: Props) {
   if (id === null) notFound();
   const workout = await loadWorkoutDetail(id);
   if (!workout) notFound();
-  // key: po zmianie daty lub odświeżeniu stan klienta zaczyna od nowa.
   return <WorkoutPage key={`${workout.id}-${workout.date}`} workout={workout} />;
 }

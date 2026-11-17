@@ -6,7 +6,6 @@ import { LogOut, UserRound } from "lucide-react";
 import { signOut } from "@/lib/auth/actions";
 import type { UserDto } from "@/lib/api/extra-types";
 
-/** Imię, rola, link do konta i wylogowanie. Wspólne dla sidebara i menu „Więcej”. */
 export function UserMenu({ user, onNavigate }: { user: UserDto; onNavigate?: () => void }) {
   const t = useTranslations();
 

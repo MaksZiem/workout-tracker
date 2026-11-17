@@ -1,17 +1,13 @@
-/** Stan listy użytkowników w URL panelu admina (?q=&sort=&order=&page=). */
-
 export const USER_SORTS = ["name", "email", "role", "workoutCount"] as const;
 export type UserSort = (typeof USER_SORTS)[number];
 export type SortOrder = "asc" | "desc";
 
 export type UserListQuery = { q: string; sort: UserSort; order: SortOrder; page: number; limit: number };
 
-/** Rozmiary strony do wyboru; backend przyjmuje do 100. */
 export const PAGE_SIZES = [10, 20, 50, 100] as const;
 
 export const DEFAULT_USER_QUERY: UserListQuery = { q: "", sort: "name", order: "asc", page: 1, limit: 20 };
 
-/** Kierunek przy pierwszym kliknięciu kolumny: liczby i role od największych, tekst od A. */
 export function defaultOrder(sort: UserSort): SortOrder {
   return sort === "workoutCount" || sort === "role" ? "desc" : "asc";
 }
@@ -34,7 +30,6 @@ export function parseUserQuery(params: Params): UserListQuery {
   };
 }
 
-/** Link do /admin z danym stanem listy; domyślne wartości nie trafiają do URL. */
 export function usersHref(query: UserListQuery) {
   const params = new URLSearchParams();
   if (query.q.trim()) params.set("q", query.q.trim());

@@ -14,12 +14,10 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("title") };
 }
 
-/** Na liście widać dwa pierwsze ćwiczenia, reszta jako „+N”. */
 const NAMES_SHOWN = 2;
 
 type View = "list" | "calendar";
 
-/** Adres miesiąca w danym widoku; bieżący miesiąc w liście to po prostu /workouts. */
 const monthHref = (month: string, current: string, view: View = "list") => {
   const params = new URLSearchParams();
   if (view === "calendar") params.set("view", "calendar");
@@ -42,7 +40,6 @@ export default async function WorkoutsPage(props: PageProps<"/workouts">) {
   const shortDay = (iso: string, withMonth: boolean) =>
     format.dateTime(displayDate(iso), withMonth ? { day: "numeric", month: "short", timeZone: "UTC" } : { day: "numeric", timeZone: "UTC" });
   const isFuture = month >= current;
-  // Pusty miesiąc bez wcześniejszych treningów: dalej wstecz nic nie ma.
   const isOldest = data.ok && data.summary.workouts === 0 && data.earlier === null;
 
   const navClass =
@@ -117,7 +114,6 @@ export default async function WorkoutsPage(props: PageProps<"/workouts">) {
                 {t("empty.earlier", { month: monthLabel(data.earlier) })}
               </Link>
             ) : null}
-            {/* Nowy trening zapisuje się zawsze na dziś, więc logger proponujemy tylko w bieżącym miesiącu. */}
             {month === current ? (
               <Link href="/log" className="-ml-2 flex h-10 items-center rounded-lg px-2 text-sm font-medium text-accent hover:bg-accent-surface">
                 {t("empty.log")}

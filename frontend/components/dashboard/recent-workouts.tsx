@@ -4,7 +4,6 @@ import { ChevronRight } from "lucide-react";
 import type { RecentWorkout } from "@/lib/dashboard/load";
 import { displayDate } from "@/lib/planner/dates";
 
-/** Na telefonie 3 ostatnie treningi, od `sm` wszystkie 5. */
 const PHONE_LIMIT = 3;
 const NAMES_SHOWN = 2;
 
@@ -42,7 +41,6 @@ export async function RecentWorkouts({ workouts }: { workouts: RecentWorkout[] }
                     </span>
                   </span>
                   <span className="min-w-0 flex-1">
-                    {/* „+N” poza obcinanym tekstem, żeby zawsze było widać, że ćwiczeń jest więcej. */}
                     <span className="flex min-w-0 items-baseline gap-1.5 text-sm font-medium">
                       <span className="truncate">{w.exercises.length ? names : t("noExercises")}</span>
                       {rest > 0 ? <span className="shrink-0 text-muted tabular-nums">{t("more", { count: rest })}</span> : null}

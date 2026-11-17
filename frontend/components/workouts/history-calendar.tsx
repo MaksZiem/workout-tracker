@@ -4,12 +4,6 @@ import { CircleDot, Trophy } from "lucide-react";
 import { daysBetween, displayDate, visibleRange } from "@/lib/planner/dates";
 import type { HistoryRow } from "@/lib/workouts/model";
 
-/**
- * Historia jako miesiąc: tylko to, co zostało zrobione. Bez przyszłości, statusów
- * i akcji planera; każdy trening prowadzi do swoich szczegółów. Na desktopie
- * komórka pokazuje treningi (szablon albo ćwiczenia, serie, objętość, rekord),
- * na telefonie kropki, a cała komórka otwiera trening tego dnia.
- */
 export async function HistoryCalendar({ month, today, rows }: { month: string; today: string; rows: HistoryRow[] }) {
   const t = await getTranslations("pages.workouts");
   const format = await getFormatter();
@@ -73,7 +67,6 @@ export async function HistoryCalendar({ month, today, rows }: { month: string; t
                 {Number(date.slice(8))}
               </span>
 
-              {/* Telefon: kropka na trening (złota przy rekordzie), komórka prowadzi do treningu. */}
               {dayRows.length ? (
                 <>
                   <span className="flex gap-1 md:hidden" aria-hidden>
@@ -89,7 +82,6 @@ export async function HistoryCalendar({ month, today, rows }: { month: string; t
                 </>
               ) : null}
 
-              {/* Desktop: każdy trening osobnym linkiem. */}
               <span className="hidden min-w-0 flex-col gap-1 md:flex">
                 {dayRows.slice(0, 2).map((row) => (
                   <Link

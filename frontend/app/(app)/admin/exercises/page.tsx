@@ -17,6 +17,5 @@ export default async function Page(props: PageProps<"/admin/exercises">) {
   const { group } = await props.searchParams;
   const items = await loadAdminCatalog();
   const selected = parseGroup(group);
-  // Filtr po zmianie grupy zaczyna z pustą wyszukiwarką.
   return <AdminExercisesView key={selected ?? "all"} items={items} group={selected} />;
 }

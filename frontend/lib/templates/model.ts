@@ -7,14 +7,11 @@ export type TemplateSummary = {
   notes: string | null;
   exerciseCount: number;
   muscleGroups: MuscleGroup[];
-  /** Dzisiejszy trening z tego szablonu jest w toku. */
   inProgress: boolean;
 };
 
-/** Grupa na liście: `plan: null` to pojedyncze treningi (szablony bez planu). */
 export type TemplateGroup = { plan: { id: number; name: string } | null; templates: TemplateSummary[] };
 
-/** Czy ten szablon jest już dziś w planerze: w trakcie (kontynuuj) albo zaplanowany (rozpocznij). */
 export type TodayState = { kind: "none" } | { kind: "planned"; scheduledId: number } | { kind: "inProgress"; workoutId: number };
 
 export type TemplateDetail = {

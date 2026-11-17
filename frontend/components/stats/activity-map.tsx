@@ -2,20 +2,13 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import type { WorkoutFrequencyDay } from "@/lib/api/extra-types";
 import { displayDate, mondayIndex } from "@/lib/planner/dates";
 
-/** Na telefonie mieści się tyle tygodni; starsze kolumny chowamy. */
 const PHONE_WEEKS = 20;
 
 const LEVEL = ["bg-surface-muted", "bg-success/55", "bg-success"];
 const MISSED = "bg-danger";
 
-/** Czerwony dzień: trening z planu pominięty lub przegapiony i żadnego innego tego dnia. */
 const isMissed = (day: WorkoutFrequencyDay) => day.count === 0 && day.missed > 0;
 
-/**
- * Mapa dni treningowych: kolumna = tydzień (pon–niedz.), zieleń = trening zrobiony,
- * czerwień = pominięty trening z planu.
- * Sama siatka jest ukryta przed czytnikiem ekranu; liczba dni jest podana tekstem.
- */
 export async function ActivityMap({ days, allTime }: { days: WorkoutFrequencyDay[]; allTime: boolean }) {
   const t = await getTranslations("pages.stats.activity");
   const format = await getFormatter();
@@ -34,10 +27,8 @@ export async function ActivityMap({ days, allTime }: { days: WorkoutFrequencyDay
     const date = starts?.date ?? firstDate(week);
     return format.dateTime(displayDate(date), { month: "short", timeZone: "UTC" });
   };
-  // Etykieta pierwszej kolumny znika, gdy tuż obok zaczyna się kolejny miesiąc (inaczej nachodzą na siebie).
   const labels = weeks.map(monthLabel);
   if (labels[0] && labels.slice(1, 3).some(Boolean)) labels[0] = null;
-  // Krótki zakres (do 20 tygodni) dostaje większe komórki, żeby mapa nie ginęła w karcie.
   const large = weeks.length <= PHONE_WEEKS;
   const cell = large ? "size-[11px] sm:size-5" : "size-[11px] sm:size-3.5";
   const row = large ? "h-[11px] sm:h-5" : "h-[11px] sm:h-3.5";
@@ -65,7 +56,6 @@ export async function ActivityMap({ days, allTime }: { days: WorkoutFrequencyDay
             </span>
           ))}
         </div>
-        {/* Przy długim zakresie wyrównanie do prawej: gdy brakuje miejsca, odpadają najstarsze tygodnie. */}
         <div className={`flex min-w-0 flex-1 gap-[3px] overflow-hidden ${weeks.length > PHONE_WEEKS ? "justify-end" : ""}`}>
           {weeks.map((week, i) => (
             <div key={i} className={`${hideOnPhone(i)} ${col} shrink-0 flex-col gap-[3px]`}>

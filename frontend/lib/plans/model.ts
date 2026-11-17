@@ -23,7 +23,6 @@ export type PlanSummary = {
   exerciseCount: number;
 };
 
-/** Szablon z API → stan edytora (ćwiczenia w kolejności). */
 export function toEditorTemplate(template: WorkoutTemplate): EditorTemplate {
   return {
     id: template.id,
@@ -46,7 +45,6 @@ export function toEditorTemplate(template: WorkoutTemplate): EditorTemplate {
 
 export type TargetField = "targetSets" | "targetReps" | "targetWeight" | "restSeconds";
 
-/** Dopuszczalne wartości pól celu; puste pole = brak (tylko ciężar i przerwa). */
 const LIMITS: Record<TargetField, { min: number; max: number; optional: boolean }> = {
   targetSets: { min: 1, max: 20, optional: false },
   targetReps: { min: 1, max: 100, optional: false },
@@ -54,7 +52,6 @@ const LIMITS: Record<TargetField, { min: number; max: number; optional: boolean 
   restSeconds: { min: 0, max: 600, optional: true },
 };
 
-/** Wartość z pola tekstowego; `undefined` = nieprawidłowa. */
 export function parseTarget(field: TargetField, input: string): number | null | undefined {
   const text = input.trim();
   const limit = LIMITS[field];
@@ -66,7 +63,6 @@ export function parseTarget(field: TargetField, input: string): number | null | 
   return value;
 }
 
-/** Zamiana miejscami dwóch sąsiednich ćwiczeń; zwraca nową listę z kolejnością 0..n. */
 export function moveExercise(exercises: EditorExercise[], index: number, direction: -1 | 1) {
   const target = index + direction;
   if (target < 0 || target >= exercises.length) return null;

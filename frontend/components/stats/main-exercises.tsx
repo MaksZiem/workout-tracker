@@ -5,7 +5,6 @@ import { roundKg, type MainExercise } from "@/lib/stats/model";
 import { statsHref, type StatsRange } from "@/lib/stats/range";
 import { MiniTrend } from "./mini-trend";
 
-/** Najważniejsza sekcja: czy główne ćwiczenia idą w górę. */
 export async function MainExercises({ exercises, range }: { exercises: MainExercise[]; range: StatsRange }) {
   const t = await getTranslations("pages.stats.main");
   const tGroup = await getTranslations("enums.muscleGroup");
@@ -52,7 +51,6 @@ export async function MainExercises({ exercises, range }: { exercises: MainExerc
 
               <span className="mt-2 flex items-center justify-between gap-2 text-xs text-muted tabular-nums">
                 <span>{t("sessions", { count: ex.sessions })}</span>
-                {/* Przy „całym czasie” rekord zawsze wypada w zakresie: chip nic by nie mówił. */}
                 {ex.recordDate && range !== "all" ? (
                   <span className="flex items-center gap-1 font-medium text-pr">
                     <Trophy className="size-3.5" strokeWidth={2.25} aria-hidden />

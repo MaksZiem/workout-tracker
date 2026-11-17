@@ -17,7 +17,6 @@ import { ToastView, useToast } from "@/components/ui/toast";
 import { InlineText } from "@/components/plans/inline-text";
 import { TemplateEditor } from "@/components/plans/template-editor";
 
-/** Szablon na własnej stronie: nazwa i notatka na miejscu, tabela celów, start od razu. */
 export function TemplatePage({ detail, today }: { detail: TemplateDetail; today: string }) {
   const t = useTranslations("pages.templateDetail");
   const tUndo = useTranslations("pages.log.toast");
@@ -197,7 +196,6 @@ function ScheduleSheet({
         format.dateTime(new Date(`${state.scheduled}T00:00:00Z`), { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }),
       );
     }
-    // onScheduled zmienia się przy każdym renderze rodzica; reagujemy tylko na nowy wynik akcji.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 

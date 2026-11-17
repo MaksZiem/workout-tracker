@@ -30,11 +30,9 @@ export type NavItem = {
   icon: LucideIcon;
   group: NavGroupKey;
   adminOnly?: boolean;
-  /** Pozycja w dolnym pasku na telefonie. Pozostałe trafiają do „Więcej”. */
   mobileTab?: boolean;
 };
 
-/** Jedyne źródło prawdy dla sidebara (desktop) i dolnego paska (mobile). */
 export const NAV_ITEMS: NavItem[] = [
   { key: "dashboard", href: "/", icon: House, group: "training", mobileTab: true },
   { key: "log", href: "/log", icon: Plus, group: "training", mobileTab: true },

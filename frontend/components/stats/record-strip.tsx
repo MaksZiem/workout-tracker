@@ -3,7 +3,6 @@ import type { PersonalRecords } from "@/lib/api/extra-types";
 import { E1rmTip } from "@/components/ui/e1rm-tip";
 import { StatsTip, type TipKey } from "./stats-tip";
 
-/** Trzy rekordy ćwiczenia (e1RM, maks. ciężar, najlepsza seria) w jednym panelu. Statystyki i katalog ćwiczeń. */
 export function RecordStrip({
   records,
   kg,

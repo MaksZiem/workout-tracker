@@ -1,7 +1,6 @@
 import type { RepRecord } from "@/lib/api/extra-types";
 import { StatsTip } from "./stats-tip";
 
-/** Rekordy dla 1, 3, 5, 8, 10 i 12 powtórzeń: siatka w stylu RecordStrip. */
 export function RepRecords({
   records,
   kg,
@@ -13,7 +12,6 @@ export function RepRecords({
   kg: (v: number) => string;
   date: (iso: string) => string;
   labels: { rm: (reps: number) => string; actual: (reps: number) => string; none: string };
-  /** Klasy siatki: w wąskim arkuszu mniej kolumn niż na stronie. */
   columns?: string;
 }) {
   return (
@@ -21,7 +19,6 @@ export function RepRecords({
       {records.map((r) => (
         <div
           key={r.reps}
-          // Linie siatki bez podwójnych krawędzi: każdy kafelek rysuje tylko górną i lewą.
           className="-mt-px -ml-px border-t border-l border-border px-4 py-3.5"
         >
           <dt className="text-[13px] text-muted">{labels.rm(r.reps)}</dt>

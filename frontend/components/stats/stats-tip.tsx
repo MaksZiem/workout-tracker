@@ -22,7 +22,6 @@ export type TipKey =
   | "repRecords"
   | "repRecordActual";
 
-/** Wyjaśnienie pojęcia ze statystyk (treść w `tips.*`, z <p> i <b>). */
 export function StatsTip({
   tip,
   values,

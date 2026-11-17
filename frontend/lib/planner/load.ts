@@ -8,7 +8,6 @@ function muscleGroupsOf(exercises: { exercise?: { muscleGroup: string } }[] | un
   return [...new Set((exercises ?? []).map((te) => te.exercise?.muscleGroup as MuscleGroup).filter(Boolean))];
 }
 
-/** Wpisy planera w zakresie, szablony (do dodawania) i plany (do generowania). */
 export async function loadPlanner(from: string, to: string) {
   const api = await serverApi();
   const [{ data: scheduled }, { data: templatesData }, { data: plansData }] = await Promise.all([

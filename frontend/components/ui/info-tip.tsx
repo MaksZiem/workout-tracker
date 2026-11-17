@@ -8,18 +8,10 @@ const WIDTH = 288;
 const GAP = 6;
 const EDGE = 8;
 
-/**
- * Wyjaśnienie pojęcia w dymku. Otwiera się po najechaniu myszą, kliknięciu/dotknięciu
- * albo fokusie z klawiatury; zamyka po Escape, kliknięciu obok i przewinięciu.
- * Dymek trafia do portalu w <body> albo otwartym <dialog> (można go użyć np. wewnątrz <p>) z pozycją `fixed`
- * przyciętą do ekranu, więc nie ucieka za krawędź na telefonie.
- * Domyślny wyzwalacz to ikonka „?”; `trigger` zamienia go na podkreślony tekst.
- */
 export function InfoTip({ label, children, trigger }: { label: string; children: ReactNode; trigger?: ReactNode }) {
   const id = useId();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const tipRef = useRef<HTMLDivElement>(null);
-  // „pinned” = otwarty kliknięciem: nie zamyka się po zjechaniu myszą.
   const [open, setOpen] = useState<false | "hover" | "pinned">(false);
   const [container, setContainer] = useState<Element | null>(null);
   const [position, setPosition] = useState<{ left: number; top: number } | null>(null);
@@ -31,7 +23,6 @@ export function InfoTip({ label, children, trigger }: { label: string; children:
     const width = Math.min(WIDTH, window.innerWidth - 2 * EDGE);
     const left = Math.min(Math.max(button.left + button.width / 2 - width / 2, EDGE), window.innerWidth - width - EDGE);
     const below = button.bottom + GAP;
-    // Brak miejsca pod spodem: nad wyzwalaczem.
     const top = below + height > window.innerHeight - EDGE && button.top - GAP - height > EDGE ? button.top - GAP - height : below;
     setPosition({ left, top });
   }, [open]);
@@ -61,9 +52,7 @@ export function InfoTip({ label, children, trigger }: { label: string; children:
   }, [open]);
 
   const show = (button: HTMLElement, mode: "hover" | "pinned") => {
-    // W otwartym modalu reszta strony jest nieaktywna: dymek musi być w samym <dialog>.
     setContainer(button.closest("dialog[open]") ?? document.body);
-    // Klik na otwartym (przypiętym) dymku go zamyka; najechanie nie zmienia przypiętego.
     setOpen((v) => (mode === "pinned" ? (v === "pinned" ? false : "pinned") : v || "hover"));
   };
 
@@ -76,7 +65,6 @@ export function InfoTip({ label, children, trigger }: { label: string; children:
         aria-expanded={!!open}
         aria-describedby={open ? id : undefined}
         onClick={(e) => {
-          // Klik w środku linku (np. karta ćwiczenia) nie ma nawigować.
           e.preventDefault();
           e.stopPropagation();
           show(e.currentTarget, "pinned");

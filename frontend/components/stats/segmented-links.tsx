@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-/** Przełącznik segmentowy na linkach (stan w URL), w tym samym stylu co w planerze. */
 export function SegmentedLinks({
   label,
   items,

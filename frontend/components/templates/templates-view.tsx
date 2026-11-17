@@ -10,7 +10,6 @@ import { unwrap } from "@/lib/api/errors";
 import type { TemplateGroup, TemplateSummary } from "@/lib/templates/model";
 import { Sheet } from "@/components/ui/sheet";
 
-/** Wszystkie szablony: pojedyncze treningi, potem dni każdego planu. */
 export function TemplatesView({ groups }: { groups: TemplateGroup[] }) {
   const t = useTranslations("pages.templates");
   const [creating, setCreating] = useState(false);
@@ -104,7 +103,6 @@ function Group({
   return (
     <section aria-label={title}>
       <div className="mb-2 flex min-h-10 items-center justify-between gap-4">
-        {/* Telefon: licznik pod nazwą, żeby długa nazwa planu się nie ucinała. */}
         <div className="flex min-w-0 flex-col sm:flex-row sm:items-baseline sm:gap-2">
           <h2 className="text-[17px] leading-snug font-semibold sm:truncate">{title}</h2>
           <span className="shrink-0 text-[13px] text-muted tabular-nums">{meta}</span>

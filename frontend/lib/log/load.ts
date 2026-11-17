@@ -13,7 +13,6 @@ async function progressFor(api: Api, exerciseId: number): Promise<ExerciseProgre
   return data ?? [];
 }
 
-/** Trening z ćwiczeniami, poprzednimi wynikami i punktem odniesienia dla rekordów. */
 export async function loadWorkout(workoutId: number): Promise<LogWorkout | null> {
   const api = await serverApi();
   const { data: workout } = await api.GET("/workout/{id}", { params: { path: { id: workoutId } } });
@@ -75,7 +74,6 @@ export type StartedItem = {
   muscleGroups: MuscleGroup[];
 };
 
-/** Dane ekranu wyboru: plany PLANNED na dziś i treningi już rozpoczęte dziś. */
 export async function loadToday() {
   const api = await serverApi();
   const today = localDate();
@@ -99,7 +97,6 @@ export async function loadToday() {
     });
 
   const details = await Promise.all(
-    // Tylko treningi w trakcie; zakończone (finishedAt) nie wracają do wyboru.
     (workouts ?? [])
       .filter((w) => !w.finishedAt)
       .map((w) => api.GET("/workout/{id}", { params: { path: { id: w.id } } })),
