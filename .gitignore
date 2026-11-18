@@ -1,2 +1,5 @@
 # Zrzuty ekranu z przeglądów impeccable
 .impeccable/review/
+
+# Private deployment notes
+DEPLOY.md

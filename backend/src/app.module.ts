@@ -9,6 +9,7 @@ import { StatsModule } from './stats/stats.module';
 import { TemplateModule } from './template/template.module';
 import { PlannerModule } from './planner/planner.module';
 import { AiModule } from './ai/ai.module';
+import { createDataSourceOptions } from './database/database.options';
 
 @Module({
   imports: [
@@ -19,14 +20,8 @@ import { AiModule } from './ai/ai.module';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get('DB_HOST'),
-        port: config.get<number>('DB_PORT'),
-        username: config.get('DB_USER'),
-        password: config.get('DB_PASS'),
-        database: config.get('DB_NAME'),
+        ...createDataSourceOptions((key) => config.get<string>(key)),
         autoLoadEntities: true,
-        synchronize: true,
       }),
     }),
     UsersModule,

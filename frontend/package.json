@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -p 3001",
+    "start": "next start",
     "lint": "eslint",
     "gen:api": "openapi-typescript http://localhost:3001/api/docs-json -o lib/api/schema.d.ts",
     "typecheck": "tsc --noEmit"
