@@ -3,6 +3,7 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/MaksZiem/workout-tracker/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/MaksZiem/workout-tracker/ci.yml?branch=main&style=flat-square&label=CI&logo=githubactions&logoColor=white" alt="CI"></a>
   <img src="https://img.shields.io/badge/status-completed-ff8a3d?style=flat-square" alt="Status: completed">
   <img src="https://img.shields.io/badge/NestJS-11-E0234E?style=flat-square&logo=nestjs&logoColor=white" alt="NestJS 11">
   <img src="https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=nextdotjs&logoColor=white" alt="Next.js 16">
@@ -146,7 +147,7 @@ sequenceDiagram
 | **Data** | PostgreSQL: plans → templates → scheduled sessions → workouts → sets |
 | **AI** | Google Gemini with `responseMimeType: application/json` and a `responseSchema` |
 | **Auth** | JWT behind a BFF proxy · scrypt password hashes · `USER` / `ADMIN` guards |
-| **Quality** | Jest (services, controllers, pure stats helpers) · ESLint · Prettier · `*.http` request files |
+| **Quality** | Jest (stats helpers, planner, AI parsing and plan generation) · GitHub Actions CI · ESLint · Prettier · `*.http` request files |
 
 ## 🚀 Quick start
 
