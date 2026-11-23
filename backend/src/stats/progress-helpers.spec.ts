@@ -95,7 +95,11 @@ describe('toProgressPoint', () => {
       sets: [set(80, 8, '2026-10-05', false)],
     } as unknown as WorkoutExercise);
 
-    expect(point).toMatchObject({ topWeight: 0, volume: 0, estimatedOneRepMax: 0 });
+    expect(point).toMatchObject({
+      topWeight: 0,
+      volume: 0,
+      estimatedOneRepMax: 0,
+    });
   });
 });
 

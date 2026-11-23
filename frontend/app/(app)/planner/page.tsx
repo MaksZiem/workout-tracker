@@ -4,6 +4,7 @@ import { PlannerView } from "@/components/planner/planner-view";
 import { localDate } from "@/lib/log/model";
 import { isIsoDate, visibleRange, type PlannerView as View } from "@/lib/planner/dates";
 import { loadPlanner } from "@/lib/planner/load";
+import { parseId } from "@/lib/ids";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pages.planner");
@@ -18,7 +19,7 @@ export default async function PlannerPage(props: PageProps<"/planner">) {
   const { from, to } = visibleRange(view, anchor);
 
   const { entries, templates, plans } = await loadPlanner(from, to);
-  const generate = Number(searchParams.generate);
+  const generate = parseId(searchParams.generate);
   const generatePlanId = plans.some((p) => p.id === generate) ? generate : null;
 
   return (

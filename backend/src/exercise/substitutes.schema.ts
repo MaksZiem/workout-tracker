@@ -8,13 +8,13 @@ export const substitutesSchema = {
       items: {
         type: Type.OBJECT,
         properties: {
-          exerciseId: { type: Type.INTEGER },
+          exerciseId: { type: Type.STRING },
           substitutes: {
             type: Type.ARRAY,
             items: {
               type: Type.OBJECT,
               properties: {
-                exerciseId: { type: Type.INTEGER },
+                exerciseId: { type: Type.STRING },
                 reason: { type: Type.STRING },
               },
               required: ['exerciseId', 'reason'],

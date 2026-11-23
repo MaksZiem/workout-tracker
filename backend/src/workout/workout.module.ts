@@ -11,7 +11,12 @@ import { ScheduledWorkout } from 'src/planner/scheduled-workout.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workout, WorkoutExercise, ExerciseSet, ScheduledWorkout]),
+    TypeOrmModule.forFeature([
+      Workout,
+      WorkoutExercise,
+      ExerciseSet,
+      ScheduledWorkout,
+    ]),
     ExerciseModule,
     UsersModule,
   ],

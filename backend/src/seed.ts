@@ -57,7 +57,10 @@ async function seed() {
 
   console.log('Tworzę katalog ćwiczeń...');
   const exerciseSeeds: { name: string; muscleGroup: MuscleGroup }[] = [
-    { name: 'Wyciskanie sztangi na ławce płaskiej', muscleGroup: MuscleGroup.CHEST },
+    {
+      name: 'Wyciskanie sztangi na ławce płaskiej',
+      muscleGroup: MuscleGroup.CHEST,
+    },
     { name: 'Rozpiętki z hantlami', muscleGroup: MuscleGroup.CHEST },
     { name: 'Pompki na poręczach', muscleGroup: MuscleGroup.CHEST },
     { name: 'Wiosłowanie sztangą', muscleGroup: MuscleGroup.BACK },
@@ -66,7 +69,10 @@ async function seed() {
     { name: 'Wyciskanie żołnierskie', muscleGroup: MuscleGroup.SHOULDERS },
     { name: 'Unoszenie hantli bokiem', muscleGroup: MuscleGroup.SHOULDERS },
     { name: 'Uginanie ramion ze sztangą', muscleGroup: MuscleGroup.BICEPS },
-    { name: 'Uginanie ramion z hantlami (młotki)', muscleGroup: MuscleGroup.BICEPS },
+    {
+      name: 'Uginanie ramion z hantlami (młotki)',
+      muscleGroup: MuscleGroup.BICEPS,
+    },
     { name: 'Wyciskanie francuskie', muscleGroup: MuscleGroup.TRICEPS },
     { name: 'Prostowanie ramion na wyciągu', muscleGroup: MuscleGroup.TRICEPS },
     { name: 'Przysiad ze sztangą', muscleGroup: MuscleGroup.LEGS },
@@ -116,7 +122,9 @@ async function seed() {
     const weekIndex = Math.floor((8 - sessionsAgo) / 3);
 
     const startedAt = new Date(`${dateStr}T18:00:00`);
-    const finishedAt = new Date(startedAt.getTime() + (55 + (sessionsAgo % 4) * 5) * 60_000);
+    const finishedAt = new Date(
+      startedAt.getTime() + (55 + (sessionsAgo % 4) * 5) * 60_000,
+    );
 
     const workout = workoutRepo.create({
       date: dateStr,
@@ -155,7 +163,7 @@ async function seed() {
     { name: 'Legs Day', exercises: routines[2] },
   ];
 
-  const createdTemplates: { id: number }[] = [];
+  const createdTemplates: { id: string }[] = [];
   for (const def of templateDefs) {
     const template = await templateService.create(user, {
       name: def.name,
@@ -192,7 +200,9 @@ async function seed() {
       { templateId: createdTemplates[2].id, dayOfWeek: 5 }, // piątek
     ],
   });
-  console.log(`Zaplanowano ${scheduled.length} przyszłych treningów w kalendarzu.`);
+  console.log(
+    `Zaplanowano ${scheduled.length} przyszłych treningów w kalendarzu.`,
+  );
 
   console.log('\nGotowe! Zaloguj się:');
   console.log(`  email: ${SEED_EMAIL}`);

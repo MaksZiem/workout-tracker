@@ -6,9 +6,10 @@ import type { MuscleGroup, WorkoutTemplate } from "@/lib/api/extra-types";
 import { localDate } from "@/lib/log/model";
 import { toEditorTemplate } from "@/lib/plans/model";
 import { todayState, type TemplateDetail, type TemplateGroup, type TemplateSummary } from "./model";
+import { compareIds } from "@/lib/ids";
 
-function toSummary(template: WorkoutTemplate, running: Set<number>): TemplateSummary {
-  const exercises = [...(template.exercises ?? [])].sort((a, b) => a.order - b.order || a.id - b.id);
+function toSummary(template: WorkoutTemplate, running: Set<string>): TemplateSummary {
+  const exercises = [...(template.exercises ?? [])].sort((a, b) => a.order - b.order || compareIds(a.id, b.id));
   const muscleGroups = [...new Set(exercises.map((te) => te.exercise.muscleGroup as MuscleGroup))];
   return {
     id: template.id,
@@ -32,7 +33,7 @@ export async function loadTemplates(): Promise<TemplateGroup[]> {
   const summary = (t: WorkoutTemplate) => toSummary(t, running);
 
   const standalone = templates.filter((t) => !t.plan);
-  const byPlan = new Map<number, { plan: { id: number; name: string; createdAt: string }; items: WorkoutTemplate[] }>();
+  const byPlan = new Map<string, { plan: { id: string; name: string; createdAt: string }; items: WorkoutTemplate[] }>();
   for (const template of templates) {
     if (!template.plan) continue;
     const group = byPlan.get(template.plan.id) ?? { plan: template.plan, items: [] };
@@ -44,13 +45,13 @@ export async function loadTemplates(): Promise<TemplateGroup[]> {
     .sort((a, b) => b.plan.createdAt.localeCompare(a.plan.createdAt))
     .map(({ plan, items }) => ({
       plan: { id: plan.id, name: plan.name },
-      templates: items.sort((a, b) => a.id - b.id).map(summary),
+      templates: items.sort((a, b) => a.createdAt.localeCompare(b.createdAt)).map(summary),
     }));
 
   return [{ plan: null, templates: standalone.map(summary) }, ...planGroups];
 }
 
-export async function loadTemplate(id: number): Promise<TemplateDetail | null> {
+export async function loadTemplate(id: string): Promise<TemplateDetail | null> {
   const api = await serverApi();
   const { data: template } = await api.GET("/template/{id}", { params: { path: { id } } });
   if (!template) return null;

@@ -6,6 +6,7 @@ import type { ExercisePersonalRecords, MuscleGroup, ScheduledWorkout, Workout } 
 import { addDays, weekStart } from "@/lib/planner/dates";
 import type { PlannerEntry } from "@/lib/planner/model";
 import { settle, weeklyStreak } from "@/lib/stats/model";
+import { compareIds } from "@/lib/ids";
 
 const RESUME_DAYS = 2;
 const RECENT_WORKOUTS = 5;
@@ -13,7 +14,7 @@ const FRESH_RECORD_DAYS = 30;
 const SCHEDULE_HORIZON_DAYS = 56;
 const PLAN_STREAK_DAYS = 365;
 
-type PlanRef = { id: number; name: string };
+type PlanRef = { id: string; name: string };
 
 const planOf = (item: ScheduledWorkout): PlanRef | null =>
   item.template?.plan ? { id: item.template.plan.id, name: item.template.plan.name } : null;
@@ -21,7 +22,7 @@ const planOf = (item: ScheduledWorkout): PlanRef | null =>
 export type TodayItem =
   | {
       kind: "inProgress";
-      workoutId: number;
+      workoutId: string;
       date: string;
       createdAt: string;
       title: string | null;
@@ -32,7 +33,7 @@ export type TodayItem =
     }
   | {
       kind: "planned";
-      scheduledId: number;
+      scheduledId: string;
       title: string | null;
       plan: PlanRef | null;
       exerciseCount: number;
@@ -41,7 +42,7 @@ export type TodayItem =
     }
   | {
       kind: "done";
-      workoutId: number;
+      workoutId: string;
       title: string | null;
       plan: PlanRef | null;
       exerciseCount: number;
@@ -58,7 +59,7 @@ export type WeekSummary = {
 };
 
 export type RecentWorkout = {
-  id: number;
+  id: string;
   date: string;
   exercises: string[];
   doneSets: number;
@@ -68,7 +69,7 @@ export type RecentWorkout = {
 };
 
 export type FreshRecord = {
-  exerciseId: number;
+  exerciseId: string;
   exerciseName: string;
   kind: "e1rm" | "maxWeight";
   value: number;
@@ -119,7 +120,7 @@ export async function loadDashboard(today: string) {
     ...list.filter((w) => !w.finishedAt && w.date >= resumeFrom && w.date <= today).map((w) => w.id),
     ...list.filter((w) => w.date === today).map((w) => w.id),
   ]);
-  const details = new Map<number, WorkoutDetail>();
+  const details = new Map<string, WorkoutDetail>();
   await Promise.all(
     detailIds.map(async (id) => {
       const { data } = await api.GET("/workout/{id}", { params: { path: { id } } });
@@ -151,11 +152,11 @@ export async function loadDashboard(today: string) {
 function todayItems(
   today: string,
   plan: ScheduledWorkout[],
-  list: { id: number; date: string; finishedAt?: string | null }[],
-  details: Map<number, WorkoutDetail>,
+  list: { id: string; date: string; finishedAt?: string | null }[],
+  details: Map<string, WorkoutDetail>,
 ): TodayItem[] {
-  const titleByWorkout = new Map<number, string>();
-  const planByWorkout = new Map<number, PlanRef | null>();
+  const titleByWorkout = new Map<string, string>();
+  const planByWorkout = new Map<string, PlanRef | null>();
   for (const item of plan) {
     if (item.workout?.id && item.template?.name) titleByWorkout.set(item.workout.id, item.template.name);
     if (item.workout?.id) planByWorkout.set(item.workout.id, planOf(item));
@@ -236,7 +237,7 @@ function weekEntries(
 function planStreak(scheduled: ScheduledWorkout[], today: string) {
   const past = scheduled
     .filter((s) => s.date <= today)
-    .sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+    .sort((a, b) => b.date.localeCompare(a.date) || compareIds(b.id, a.id));
   let streak = 0;
   for (const s of past) {
     if (s.date === today && s.status !== "COMPLETED") continue;
@@ -266,8 +267,8 @@ function weekSummary(
 }
 
 function recentWorkouts(
-  list: { id: number; date: string; finishedAt?: string | null }[],
-  details: Map<number, WorkoutDetail>,
+  list: { id: string; date: string; finishedAt?: string | null }[],
+  details: Map<string, WorkoutDetail>,
 ): RecentWorkout[] {
   return list
     .filter((w) => w.finishedAt)

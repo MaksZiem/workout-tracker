@@ -24,7 +24,7 @@ export function AddSheet({
   const tNav = useTranslations("nav");
   const tEnum = useTranslations("enums.muscleGroup");
   const format = useFormatter();
-  const [pendingId, setPendingId] = useState<number | null>(null);
+  const [pendingId, setPendingId] = useState<string | null>(null);
   const [error, setError] = useState(false);
 
   const add = async (template: TemplateOption) => {

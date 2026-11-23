@@ -12,26 +12,42 @@ import { WorkoutTemplate } from './workout-template.entity';
 
 @Entity()
 export class WorkoutPlan {
-  @ApiProperty({ description: 'Unikalny identyfikator planu', example: 1 })
-  @PrimaryGeneratedColumn()
-  id: number;
+  @ApiProperty({
+    description: 'Unikalny identyfikator planu',
+    example: '3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c',
+  })
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   user: User;
 
-  @ApiProperty({ description: 'Nazwa planu treningowego', example: 'Plan siłowy 3x/tydzień' })
+  @ApiProperty({
+    description: 'Nazwa planu treningowego',
+    example: 'Plan siłowy 3x/tydzień',
+  })
   @Column()
   name: string;
 
-  @ApiPropertyOptional({ description: 'Notatki do planu', example: 'Cel: przyrost siły w 12 tygodni' })
+  @ApiPropertyOptional({
+    description: 'Notatki do planu',
+    example: 'Cel: przyrost siły w 12 tygodni',
+  })
   @Column({ nullable: true })
   notes: string;
 
-  @ApiPropertyOptional({ description: 'Szablony treningowe należące do tego planu', type: () => WorkoutTemplate, isArray: true })
+  @ApiPropertyOptional({
+    description: 'Szablony treningowe należące do tego planu',
+    type: () => WorkoutTemplate,
+    isArray: true,
+  })
   @OneToMany(() => WorkoutTemplate, (template) => template.plan)
   templates: WorkoutTemplate[];
 
-  @ApiProperty({ description: 'Data utworzenia planu', example: '2026-09-15T09:00:00.000Z' })
+  @ApiProperty({
+    description: 'Data utworzenia planu',
+    example: '2026-09-15T09:00:00.000Z',
+  })
   @CreateDateColumn()
   createdAt: Date;
 }

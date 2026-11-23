@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { errorBody } from 'src/common/error-body';
 import { JwtService } from '@nestjs/jwt';
-import { Observable } from 'rxjs';
 import { UsersService } from 'src/users/users.service';
 import { Request } from 'express';
 import { UserRole } from 'src/enums/user-role.enum';
@@ -25,23 +24,39 @@ export class AdminGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
-      throw new UnauthorizedException(errorBody(HttpStatus.UNAUTHORIZED, 'MISSING_TOKEN', 'Missing authorization token'));
+      throw new UnauthorizedException(
+        errorBody(
+          HttpStatus.UNAUTHORIZED,
+          'MISSING_TOKEN',
+          'Missing authorization token',
+        ),
+      );
     }
 
-    let payload: { id: number };
+    let payload: { id: string };
     try {
       payload = await this.jwtService.verifyAsync(token);
-    } catch (error) {
-      throw new UnauthorizedException(errorBody(HttpStatus.UNAUTHORIZED, 'INVALID_TOKEN', 'Token is wrong'));
+    } catch {
+      throw new UnauthorizedException(
+        errorBody(HttpStatus.UNAUTHORIZED, 'INVALID_TOKEN', 'Token is wrong'),
+      );
     }
 
     const user = await this.usersService.findOne(payload.id);
     if (!user) {
-      throw new UnauthorizedException(errorBody(HttpStatus.UNAUTHORIZED, 'USER_NOT_FOUND', 'User not found'));
+      throw new UnauthorizedException(
+        errorBody(HttpStatus.UNAUTHORIZED, 'USER_NOT_FOUND', 'User not found'),
+      );
     }
 
     if (user.role !== UserRole.ADMIN) {
-      throw new ForbiddenException(errorBody(HttpStatus.FORBIDDEN, 'ADMIN_REQUIRED', 'Admin role required'));
+      throw new ForbiddenException(
+        errorBody(
+          HttpStatus.FORBIDDEN,
+          'ADMIN_REQUIRED',
+          'Admin role required',
+        ),
+      );
     }
 
     request['currentUser'] = user;

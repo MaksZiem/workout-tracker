@@ -2,13 +2,48 @@ import { BadGatewayException, ConflictException } from '@nestjs/common';
 import { ExerciseService } from './exercise.service';
 
 const catalog = [
-  { id: 1, name: 'Podciąganie', muscleGroup: 'BACK', substitutesGeneratedAt: new Date() },
-  { id: 2, name: 'Ściąganie drążka', muscleGroup: 'BACK', substitutesGeneratedAt: null },
-  { id: 3, name: 'Wiosłowanie', muscleGroup: 'BACK', substitutesGeneratedAt: null },
-  { id: 4, name: 'Pullover', muscleGroup: 'BACK', substitutesGeneratedAt: null },
-  { id: 5, name: 'Face pull', muscleGroup: 'BACK', substitutesGeneratedAt: null },
-  { id: 6, name: 'Szrugsy', muscleGroup: 'BACK', substitutesGeneratedAt: null },
-  { id: 7, name: 'Martwy ciąg', muscleGroup: 'BACK', substitutesGeneratedAt: null },
+  {
+    id: '1',
+    name: 'Podciąganie',
+    muscleGroup: 'BACK',
+    substitutesGeneratedAt: new Date(),
+  },
+  {
+    id: '2',
+    name: 'Ściąganie drążka',
+    muscleGroup: 'BACK',
+    substitutesGeneratedAt: null,
+  },
+  {
+    id: '3',
+    name: 'Wiosłowanie',
+    muscleGroup: 'BACK',
+    substitutesGeneratedAt: null,
+  },
+  {
+    id: '4',
+    name: 'Pullover',
+    muscleGroup: 'BACK',
+    substitutesGeneratedAt: null,
+  },
+  {
+    id: '5',
+    name: 'Face pull',
+    muscleGroup: 'BACK',
+    substitutesGeneratedAt: null,
+  },
+  {
+    id: '6',
+    name: 'Szrugsy',
+    muscleGroup: 'BACK',
+    substitutesGeneratedAt: null,
+  },
+  {
+    id: '7',
+    name: 'Martwy ciąg',
+    muscleGroup: 'BACK',
+    substitutesGeneratedAt: null,
+  },
 ];
 
 describe('ExerciseService substitutes', () => {
@@ -19,7 +54,12 @@ describe('ExerciseService substitutes', () => {
     create: jest.Mock;
     update: jest.Mock;
   };
-  let repo: { find: jest.Mock; findOneBy: jest.Mock; remove: jest.Mock; manager: typeof manager };
+  let repo: {
+    find: jest.Mock;
+    findOneBy: jest.Mock;
+    remove: jest.Mock;
+    manager: typeof manager;
+  };
   let substitutes: { find: jest.Mock };
   let gemini: { generateJson: jest.Mock };
   let service: ExerciseService;
@@ -51,7 +91,11 @@ describe('ExerciseService substitutes', () => {
     };
     substitutes = { find: jest.fn().mockResolvedValue([]) };
     gemini = { generateJson: jest.fn() };
-    service = new ExerciseService(repo as any, substitutes as any, gemini as any);
+    service = new ExerciseService(
+      repo as any,
+      substitutes as any,
+      gemini as any,
+    );
   });
 
   describe('generateSubstitutes', () => {
@@ -59,22 +103,32 @@ describe('ExerciseService substitutes', () => {
       gemini.generateJson.mockResolvedValue({
         results: [
           {
-            exerciseId: 1,
+            exerciseId: '1',
             substitutes: [
-              { exerciseId: 2, reason: 'Same vertical pull' },
-              { exerciseId: 3, reason: 'Back, but a horizontal pull' },
+              { exerciseId: '2', reason: 'Same vertical pull' },
+              { exerciseId: '3', reason: 'Back, but a horizontal pull' },
             ],
           },
         ],
       });
 
-      await service.generateSubstitutes(1);
+      await service.generateSubstitutes('1');
 
       expect(savedSubstitutes()).toEqual([
-        { exercise: { id: 1 }, substitute: { id: 2 }, reason: 'Same vertical pull', rank: 0 },
-        { exercise: { id: 1 }, substitute: { id: 3 }, reason: 'Back, but a horizontal pull', rank: 1 },
+        {
+          exercise: { id: '1' },
+          substitute: { id: '2' },
+          reason: 'Same vertical pull',
+          rank: 0,
+        },
+        {
+          exercise: { id: '1' },
+          substitute: { id: '3' },
+          reason: 'Back, but a horizontal pull',
+          rank: 1,
+        },
       ]);
-      expect(manager.update).toHaveBeenCalledWith(expect.anything(), 1, {
+      expect(manager.update).toHaveBeenCalledWith(expect.anything(), '1', {
         substitutesGeneratedAt: expect.any(Date),
       });
     });
@@ -83,48 +137,59 @@ describe('ExerciseService substitutes', () => {
       gemini.generateJson.mockResolvedValue({
         results: [
           {
-            exerciseId: 1,
+            exerciseId: '1',
             substitutes: [
-              { exerciseId: 999, reason: 'Invented' },
-              { exerciseId: 1, reason: 'Itself' },
-              { exerciseId: 2, reason: 'Good' },
-              { exerciseId: 2, reason: 'Duplicate' },
+              { exerciseId: '999', reason: 'Invented' },
+              { exerciseId: '1', reason: 'Itself' },
+              { exerciseId: '2', reason: 'Good' },
+              { exerciseId: '2', reason: 'Duplicate' },
             ],
           },
         ],
       });
 
-      await service.generateSubstitutes(1);
+      await service.generateSubstitutes('1');
 
-      expect(savedSubstitutes().map((s) => s.substitute.id)).toEqual([2]);
+      expect(savedSubstitutes().map((s) => s.substitute.id)).toEqual(['2']);
     });
 
     it('keeps at most 5 substitutes', async () => {
       gemini.generateJson.mockResolvedValue({
         results: [
           {
-            exerciseId: 1,
-            substitutes: [2, 3, 4, 5, 6, 7].map((id) => ({ exerciseId: id, reason: 'ok' })),
+            exerciseId: '1',
+            substitutes: ['2', '3', '4', '5', '6', '7'].map((id) => ({
+              exerciseId: id,
+              reason: 'ok',
+            })),
           },
         ],
       });
 
-      await service.generateSubstitutes(1);
+      await service.generateSubstitutes('1');
 
-      expect(savedSubstitutes().map((s) => s.substitute.id)).toEqual([2, 3, 4, 5, 6]);
+      expect(savedSubstitutes().map((s) => s.substitute.id)).toEqual([
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+      ]);
     });
 
     it('trims the reason and cuts it to 200 characters', async () => {
       gemini.generateJson.mockResolvedValue({
         results: [
           {
-            exerciseId: 1,
-            substitutes: [{ exerciseId: 2, reason: `  ${'x'.repeat(250)}  ` }],
+            exerciseId: '1',
+            substitutes: [
+              { exerciseId: '2', reason: `  ${'x'.repeat(250)}  ` },
+            ],
           },
         ],
       });
 
-      await service.generateSubstitutes(1);
+      await service.generateSubstitutes('1');
 
       expect(savedSubstitutes()[0].reason).toBe('x'.repeat(200));
     });
@@ -132,7 +197,7 @@ describe('ExerciseService substitutes', () => {
     it('returns 502 with AI_UNAVAILABLE when Gemini fails', async () => {
       gemini.generateJson.mockRejectedValue(new Error('boom'));
 
-      await expect(service.generateSubstitutes(1)).rejects.toThrow(
+      await expect(service.generateSubstitutes('1')).rejects.toThrow(
         BadGatewayException,
       );
       expect(manager.save).not.toHaveBeenCalled();
@@ -171,13 +236,16 @@ describe('ExerciseService substitutes', () => {
     Object.assign(repo, {
       createQueryBuilder: jest.fn(() => query),
       create: jest.fn((data) => data),
-      save: jest.fn((data) => Promise.resolve({ id: 1, ...data })),
+      save: jest.fn((data) => Promise.resolve({ id: '1', ...data })),
     });
     gemini.generateJson.mockRejectedValue(new Error('boom'));
 
-    const created = await service.create({ name: 'Podciąganie', muscleGroup: 'BACK' } as any);
+    const created = await service.create({
+      name: 'Podciąganie',
+      muscleGroup: 'BACK',
+    } as any);
 
-    expect(created.id).toBe(1);
+    expect(created.id).toBe('1');
   });
 
   it('refuses to create an exercise with a name that is already taken', async () => {

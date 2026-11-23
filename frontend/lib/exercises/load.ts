@@ -7,9 +7,9 @@ import { settle, type Section } from "@/lib/stats/model";
 
 export type ExerciseMark = { e1rm: number; date: string; set: { weight: number; reps: number } };
 
-export type CatalogExercise = { id: number; name: string; muscleGroup: MuscleGroup; mark: ExerciseMark | null };
+export type CatalogExercise = { id: string; name: string; muscleGroup: MuscleGroup; mark: ExerciseMark | null };
 
-export type SubstituteItem = { id: number; name: string; reason: string; mark: ExerciseMark | null };
+export type SubstituteItem = { id: string; name: string; reason: string; mark: ExerciseMark | null };
 
 function marksOf(records: ExercisePersonalRecords[]) {
   return new Map(
@@ -27,7 +27,7 @@ export async function loadCatalog() {
     unwrap(api.GET("/exercise")),
     settle(unwrap(api.GET("/stats/records"))),
   ]);
-  const marks = records.ok ? marksOf(records.data) : new Map<number, ExerciseMark>();
+  const marks = records.ok ? marksOf(records.data) : new Map<string, ExerciseMark>();
   const order = (g: MuscleGroup) => MUSCLE_GROUPS.indexOf(g);
   const items: CatalogExercise[] = exercises
     .map((e) => ({ id: e.id, name: e.name, muscleGroup: e.muscleGroup as MuscleGroup, mark: marks.get(e.id) ?? null }))
@@ -37,7 +37,7 @@ export async function loadCatalog() {
 
 export type SubstitutesSection = { ok: true; data: SubstituteItem[] } | { ok: false; reason: "pending" | "error" };
 
-export async function loadExerciseCard(id: number) {
+export async function loadExerciseCard(id: string) {
   const api = await serverApi();
   const exercise = await api.GET("/exercise/{id}", { params: { path: { id } } });
   if (errorCode(exercise.error) === "EXERCISE_NOT_FOUND") return null;
@@ -47,7 +47,7 @@ export async function loadExerciseCard(id: number) {
     settle(unwrap(api.GET("/stats/records"))),
     settle(unwrap(api.GET("/exercise/{id}/substitutes", { params: { path: { id } } }))),
   ]);
-  const marks = records.ok ? marksOf(records.data) : new Map<number, ExerciseMark>();
+  const marks = records.ok ? marksOf(records.data) : new Map<string, ExerciseMark>();
 
   const own: Section<ExercisePersonalRecords | null> = records.ok
     ? { ok: true, data: records.data.find((r) => r.exerciseId === id) ?? null }

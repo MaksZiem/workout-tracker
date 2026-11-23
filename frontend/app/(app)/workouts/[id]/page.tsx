@@ -4,13 +4,13 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { displayDate } from "@/lib/planner/dates";
 import { loadWorkoutDetail } from "@/lib/workouts/load";
 import { WorkoutPage } from "@/components/workouts/workout-page";
+import { parseId } from "@/lib/ids";
 
 type Props = PageProps<"/workouts/[id]">;
 
 async function workoutId(props: Props) {
   const { id } = await props.params;
-  const value = Number(id);
-  return Number.isInteger(value) && value > 0 ? value : null;
+  return parseId(id);
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {

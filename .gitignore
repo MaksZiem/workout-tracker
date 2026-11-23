@@ -3,3 +3,53 @@
 
 # Private deployment notes
 DEPLOY.md
+
+# dependencies
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# build output
+backend/dist/
+frontend/.next/
+frontend/out/
+frontend/build/
+*.tsbuildinfo
+frontend/next-env.d.ts
+
+# tests
+coverage/
+.nyc_output/
+
+# env files
+.env*
+!.env*.example
+
+# logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+*.launch
+.settings/
+
+# temp
+.tmp
+.temp
+
+# misc
+.DS_Store
+*.pem
+.vercel

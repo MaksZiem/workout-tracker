@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { Picker } from "@/components/log/picker";
 import { WorkoutLogger } from "@/components/log/workout-logger";
 import { loadToday, loadWorkout } from "@/lib/log/load";
+import { parseId } from "@/lib/ids";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pages.log");
@@ -12,9 +13,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function LogPage(props: PageProps<"/log">) {
   const { workout: workoutParam } = await props.searchParams;
-  const workoutId = Number(typeof workoutParam === "string" ? workoutParam : NaN);
+  const workoutId = parseId(workoutParam);
 
-  if (Number.isInteger(workoutId) && workoutId > 0) {
+  if (workoutId) {
     const workout = await loadWorkout(workoutId);
     if (!workout) notFound();
     return <WorkoutLogger key={workout.id} workout={workout} />;

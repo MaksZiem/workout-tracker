@@ -2,7 +2,7 @@ import { decodeJwt } from "jose";
 import { USER_ROLES, type UserRole } from "@/lib/api/extra-types";
 
 export type SessionClaims = {
-  id: number;
+  id: string;
   email: string;
   role: UserRole;
   name: string;
@@ -18,7 +18,7 @@ export function readToken(token: string | undefined): SessionClaims | null {
       return null;
     }
     if (
-      typeof claims.id !== "number" ||
+      typeof claims.id !== "string" ||
       typeof claims.email !== "string" ||
       !USER_ROLES.includes(claims.role as UserRole)
     ) {

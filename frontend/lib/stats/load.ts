@@ -35,7 +35,7 @@ export async function loadOverview(range: StatsRange, today: string) {
     settle(unwrap(api.GET("/stats/stagnation"))),
   ]);
 
-  const groupOf = new Map<number, MuscleGroup>(
+  const groupOf = new Map<string, MuscleGroup>(
     catalog.ok ? catalog.data.map((e) => [e.id, e.muscleGroup as MuscleGroup]) : [],
   );
 
@@ -67,7 +67,7 @@ async function loadMainExercises(
   api: Awaited<ReturnType<typeof serverApi>>,
   records: ExercisePersonalRecords[],
   query: { from?: string; to: string },
-  groupOf: Map<number, MuscleGroup>,
+  groupOf: Map<string, MuscleGroup>,
 ): Promise<MainExercise[]> {
   const candidates = records.slice(0, MAX_PROGRESS_REQUESTS);
   const progress = await Promise.all(
@@ -92,7 +92,7 @@ async function loadMainExercises(
     );
 }
 
-export async function loadExercise(exerciseId: number, range: StatsRange, today: string) {
+export async function loadExercise(exerciseId: string, range: StatsRange, today: string) {
   const api = await serverApi();
   const bounds = rangeBounds(range, today);
 
@@ -125,7 +125,7 @@ export async function loadExercise(exerciseId: number, range: StatsRange, today:
   };
 }
 
-async function loadRecords(api: Awaited<ReturnType<typeof serverApi>>, exerciseId: number) {
+async function loadRecords(api: Awaited<ReturnType<typeof serverApi>>, exerciseId: string) {
   try {
     const records = await unwrap(api.GET("/stats/exercise/{exerciseId}/records", { params: { path: { exerciseId } } }));
     return { ok: true as const, data: records };

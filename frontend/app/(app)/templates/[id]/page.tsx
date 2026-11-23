@@ -4,13 +4,13 @@ import { getTranslations } from "next-intl/server";
 import { localDate } from "@/lib/log/model";
 import { loadTemplate } from "@/lib/templates/load";
 import { TemplatePage } from "@/components/templates/template-page";
+import { parseId } from "@/lib/ids";
 
 type Props = PageProps<"/templates/[id]">;
 
 async function templateId(props: Props) {
   const { id } = await props.params;
-  const value = Number(id);
-  return Number.isInteger(value) && value > 0 ? value : null;
+  return parseId(id);
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {

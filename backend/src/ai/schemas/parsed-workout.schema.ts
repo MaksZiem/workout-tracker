@@ -8,7 +8,7 @@ export const parsedWorkoutSchema = {
       items: {
         type: Type.OBJECT,
         properties: {
-          exerciseId: { type: Type.INTEGER },
+          exerciseId: { type: Type.STRING },
           sets: {
             type: Type.ARRAY,
             items: {

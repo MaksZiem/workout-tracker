@@ -3,13 +3,13 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { loadPlan } from "@/lib/plans/load";
 import { PlanEditor } from "@/components/plans/plan-editor";
+import { parseId } from "@/lib/ids";
 
 type Props = PageProps<"/plans/[id]">;
 
 async function planId(props: Props) {
   const { id } = await props.params;
-  const value = Number(id);
-  return Number.isInteger(value) && value > 0 ? value : null;
+  return parseId(id);
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {

@@ -26,7 +26,7 @@ export function PlanEditor({ plan: initial, fromAi }: { plan: PlanDetail; fromAi
     notes: initial.notes,
   });
   const [templates, setTemplates] = useState<EditorTemplate[]>(initial.templates);
-  const [newTemplateId, setNewTemplateId] = useState<number | null>(null);
+  const [newTemplateId, setNewTemplateId] = useState<string | null>(null);
   const [aiBanner, setAiBanner] = useState(fromAi);
   const [confirming, setConfirming] = useState(false);
   const [deleting, setDeleting] = useState(false);

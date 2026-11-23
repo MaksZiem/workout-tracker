@@ -1,7 +1,14 @@
-import { BadGatewayException, ConflictException, Injectable, Logger, NotFoundException, HttpStatus } from '@nestjs/common';
+import {
+  BadGatewayException,
+  ConflictException,
+  Injectable,
+  Logger,
+  NotFoundException,
+  HttpStatus,
+} from '@nestjs/common';
 import { errorBody } from 'src/common/error-body';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Exercise } from './exercise.entity';
 import { MuscleGroup } from 'src/enums/muscle-group.enum';
 import { CreateExerciseDto } from './dtos/create-exercise.dto';
@@ -19,7 +26,8 @@ export class ExerciseService {
 
   constructor(
     @InjectRepository(Exercise) private repo: Repository<Exercise>,
-    @InjectRepository(ExerciseSubstitute) private substitutes: Repository<ExerciseSubstitute>,
+    @InjectRepository(ExerciseSubstitute)
+    private substitutes: Repository<ExerciseSubstitute>,
     private gemini: GeminiService,
   ) {}
 
@@ -29,38 +37,53 @@ export class ExerciseService {
     });
   }
 
-  findOne(id: number) {
-    return this.repo.findOneBy({id})
+  findOne(id: string) {
+    return this.repo.findOneBy({ id });
   }
 
   async create(dto: CreateExerciseDto): Promise<Exercise> {
-    await this.assertNameFree(dto.name)
-    const exercise = await this.repo.save(this.repo.create(dto))
-    return this.tryGenerateSubstitutes(exercise)
+    await this.assertNameFree(dto.name);
+    const exercise = await this.repo.save(this.repo.create(dto));
+    return this.tryGenerateSubstitutes(exercise);
   }
 
-  async update(id: number, dto: UpdateExerciseDto) {
-    const exercise = await this.findOne(id)
-    if(!exercise) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'EXERCISE_NOT_FOUND', 'Exercise not found'))
+  async update(id: string, dto: UpdateExerciseDto) {
+    const exercise = await this.findOne(id);
+    if (!exercise) {
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'EXERCISE_NOT_FOUND',
+          'Exercise not found',
+        ),
+      );
     }
     if (dto.name !== undefined) {
-      await this.assertNameFree(dto.name, id)
+      await this.assertNameFree(dto.name, id);
     }
     const changed =
       (dto.name !== undefined && dto.name !== exercise.name) ||
-      (dto.muscleGroup !== undefined && dto.muscleGroup !== exercise.muscleGroup)
-    assignDefined(exercise, dto)
-    const saved = await this.repo.save(exercise)
-    return changed ? this.tryGenerateSubstitutes(saved, { resetOnFailure: true }) : saved
+      (dto.muscleGroup !== undefined &&
+        dto.muscleGroup !== exercise.muscleGroup);
+    assignDefined(exercise, dto);
+    const saved = await this.repo.save(exercise);
+    return changed
+      ? this.tryGenerateSubstitutes(saved, { resetOnFailure: true })
+      : saved;
   }
 
-  async usage(id: number) {
-    const exercise = await this.findOne(id)
+  async usage(id: string) {
+    const exercise = await this.findOne(id);
     if (!exercise) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'EXERCISE_NOT_FOUND', 'Exercise not found'))
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'EXERCISE_NOT_FOUND',
+          'Exercise not found',
+        ),
+      );
     }
-    const manager = this.repo.manager
+    const manager = this.repo.manager;
     const [workouts, templates] = await Promise.all([
       manager
         .createQueryBuilder(WorkoutExercise, 'we')
@@ -72,123 +95,196 @@ export class ExerciseService {
         .select('COUNT(DISTINCT te.templateId)', 'count')
         .where('te.exerciseId = :id', { id })
         .getRawOne<{ count: string }>(),
-    ])
-    return { workoutCount: Number(workouts?.count ?? 0), templateCount: Number(templates?.count ?? 0) }
+    ]);
+    return {
+      workoutCount: Number(workouts?.count ?? 0),
+      templateCount: Number(templates?.count ?? 0),
+    };
   }
 
-  async remove(id: number) {
-    const exercise = await this.findOne(id)
-    if(!exercise) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'EXERCISE_NOT_FOUND', 'Exercise not found'))
-    }
-    const { workoutCount, templateCount } = await this.usage(id)
-    if (workoutCount || templateCount) {
-      throw new ConflictException(errorBody(HttpStatus.CONFLICT, 'EXERCISE_IN_USE', `Exercise is used in ${workoutCount} workout(s) and ${templateCount} template(s)`, { workoutCount, templateCount }))
-    }
-    return this.repo.remove(exercise)
-  }
-
-  async findSubstitutes(id: number) {
-    const exercise = await this.findOne(id)
+  async remove(id: string) {
+    const exercise = await this.findOne(id);
     if (!exercise) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'EXERCISE_NOT_FOUND', 'Exercise not found'))
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'EXERCISE_NOT_FOUND',
+          'Exercise not found',
+        ),
+      );
+    }
+    const { workoutCount, templateCount } = await this.usage(id);
+    if (workoutCount || templateCount) {
+      throw new ConflictException(
+        errorBody(
+          HttpStatus.CONFLICT,
+          'EXERCISE_IN_USE',
+          `Exercise is used in ${workoutCount} workout(s) and ${templateCount} template(s)`,
+          { workoutCount, templateCount },
+        ),
+      );
+    }
+    return this.repo.remove(exercise);
+  }
+
+  async findSubstitutes(id: string) {
+    const exercise = await this.findOne(id);
+    if (!exercise) {
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'EXERCISE_NOT_FOUND',
+          'Exercise not found',
+        ),
+      );
     }
     const rows = await this.substitutes.find({
       where: { exercise: { id } },
       order: { rank: 'ASC' },
-    })
-    return rows.map((r) => ({ exercise: r.substitute, reason: r.reason }))
+    });
+    return rows.map((r) => ({ exercise: r.substitute, reason: r.reason }));
   }
 
-  async generateSubstitutes(id: number) {
-    const exercise = await this.findOne(id)
+  async generateSubstitutes(id: string) {
+    const exercise = await this.findOne(id);
     if (!exercise) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'EXERCISE_NOT_FOUND', 'Exercise not found'))
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'EXERCISE_NOT_FOUND',
+          'Exercise not found',
+        ),
+      );
     }
-    const picked = await this.pickSubstitutes([exercise], await this.repo.find())
-    await this.saveSubstitutes(id, picked.get(id) ?? [])
-    return this.findSubstitutes(id)
+    const picked = await this.pickSubstitutes(
+      [exercise],
+      await this.repo.find(),
+    );
+    await this.saveSubstitutes(id, picked.get(id) ?? []);
+    return this.findSubstitutes(id);
   }
 
   async generateAllSubstitutes(onlyMissing: boolean) {
-    const catalog = await this.repo.find({ order: { id: 'ASC' } })
-    const targets = onlyMissing ? catalog.filter((e) => !e.substitutesGeneratedAt) : catalog
-    let updated = 0
-    const failed: string[] = []
+    const catalog = await this.repo.find({ order: { name: 'ASC' } });
+    const targets = onlyMissing
+      ? catalog.filter((e) => !e.substitutesGeneratedAt)
+      : catalog;
+    let updated = 0;
+    const failed: string[] = [];
 
     for (let i = 0; i < targets.length; i += SUBSTITUTES_BATCH) {
-      const batch = targets.slice(i, i + SUBSTITUTES_BATCH)
-      let picked: Map<number, PickedSubstitute[]>
+      const batch = targets.slice(i, i + SUBSTITUTES_BATCH);
+      let picked: Map<string, PickedSubstitute[]>;
       try {
-        picked = await this.pickSubstitutes(batch, catalog, { retryOnTransient: true })
+        picked = await this.pickSubstitutes(batch, catalog, {
+          retryOnTransient: true,
+        });
       } catch {
-        failed.push(...batch.map((e) => e.name))
-        continue
+        failed.push(...batch.map((e) => e.name));
+        continue;
       }
       for (const exercise of batch) {
-        await this.saveSubstitutes(exercise.id, picked.get(exercise.id) ?? [])
-        updated++
+        await this.saveSubstitutes(exercise.id, picked.get(exercise.id) ?? []);
+        updated++;
       }
     }
-    return { updated, failed }
+    return { updated, failed };
   }
 
-  async removeSubstitute(id: number, substituteId: number) {
-    const result = await this.substitutes.delete({ exercise: { id }, substitute: { id: substituteId } })
+  async removeSubstitute(id: string, substituteId: string) {
+    const result = await this.substitutes.delete({
+      exercise: { id },
+      substitute: { id: substituteId },
+    });
     if (!result.affected) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'SUBSTITUTE_NOT_FOUND', 'Substitute not found'))
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'SUBSTITUTE_NOT_FOUND',
+          'Substitute not found',
+        ),
+      );
     }
-    return this.findSubstitutes(id)
+    return this.findSubstitutes(id);
   }
 
-  private async tryGenerateSubstitutes(exercise: Exercise, options = { resetOnFailure: false }) {
+  private async tryGenerateSubstitutes(
+    exercise: Exercise,
+    options = { resetOnFailure: false },
+  ) {
     try {
-      await this.generateSubstitutes(exercise.id)
+      await this.generateSubstitutes(exercise.id);
     } catch {
       if (options.resetOnFailure) {
         await this.repo.manager.transaction(async (manager) => {
-          await manager.delete(ExerciseSubstitute, { exercise: { id: exercise.id } })
-          await manager.update(Exercise, exercise.id, { substitutesGeneratedAt: null })
-        })
+          await manager.delete(ExerciseSubstitute, {
+            exercise: { id: exercise.id },
+          });
+          await manager.update(Exercise, exercise.id, {
+            substitutesGeneratedAt: null,
+          });
+        });
       }
     }
-    return (await this.findOne(exercise.id)) ?? exercise
+    return (await this.findOne(exercise.id)) ?? exercise;
   }
 
-  private async pickSubstitutes(targets: Exercise[], catalog: Exercise[], options = { retryOnTransient: false }) {
-    const prompt = this.substitutesPrompt(targets, catalog)
-    let answer: { results: { exerciseId: number; substitutes: PickedSubstitute[] }[] }
+  private async pickSubstitutes(
+    targets: Exercise[],
+    catalog: Exercise[],
+    options = { retryOnTransient: false },
+  ): Promise<Map<string, PickedSubstitute[]>> {
+    const prompt = this.substitutesPrompt(targets, catalog);
+    let answer: {
+      results: { exerciseId: string; substitutes: PickedSubstitute[] }[];
+    };
     try {
-      answer = await this.gemini.generateJson(prompt, substitutesSchema)
+      answer = await this.gemini.generateJson(prompt, substitutesSchema);
     } catch (error) {
-      const delay = options.retryOnTransient ? transientRetryDelay(error) : null
+      const delay = options.retryOnTransient
+        ? transientRetryDelay(error)
+        : null;
       if (delay === null) {
-        this.logger.warn(`Substitutes failed for ${targets.length} exercise(s): ${errorMessage(error)}`)
-        throw new BadGatewayException(errorBody(HttpStatus.BAD_GATEWAY, 'AI_UNAVAILABLE', 'AI could not pick substitutes, try again later'))
+        this.logger.warn(
+          `Substitutes failed for ${targets.length} exercise(s): ${errorMessage(error)}`,
+        );
+        throw new BadGatewayException(
+          errorBody(
+            HttpStatus.BAD_GATEWAY,
+            'AI_UNAVAILABLE',
+            'AI could not pick substitutes, try again later',
+          ),
+        );
       }
-      await new Promise((resolve) => setTimeout(resolve, delay))
-      return this.pickSubstitutes(targets, catalog)
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      return this.pickSubstitutes(targets, catalog);
     }
 
-    const valid = new Set(catalog.map((e) => e.id))
-    const wanted = new Set(targets.map((e) => e.id))
-    const result = new Map<number, PickedSubstitute[]>()
+    const valid = new Set(catalog.map((e) => e.id));
+    const wanted = new Set(targets.map((e) => e.id));
+    const result = new Map<string, PickedSubstitute[]>();
     for (const entry of answer.results ?? []) {
-      if (!wanted.has(entry.exerciseId) || result.has(entry.exerciseId)) continue
-      const seen = new Set<number>([entry.exerciseId])
+      if (!wanted.has(entry.exerciseId) || result.has(entry.exerciseId))
+        continue;
+      const seen = new Set<string>([entry.exerciseId]);
       result.set(
         entry.exerciseId,
         (entry.substitutes ?? [])
-          .filter((s) => valid.has(s.exerciseId) && !seen.has(s.exerciseId) && seen.add(s.exerciseId))
+          .filter(
+            (s) =>
+              valid.has(s.exerciseId) &&
+              !seen.has(s.exerciseId) &&
+              seen.add(s.exerciseId),
+          )
           .slice(0, 5),
-      )
+      );
     }
-    return result
+    return result;
   }
 
-  private async saveSubstitutes(id: number, picked: PickedSubstitute[]) {
+  private async saveSubstitutes(id: string, picked: PickedSubstitute[]) {
     await this.repo.manager.transaction(async (manager) => {
-      await manager.delete(ExerciseSubstitute, { exercise: { id } })
+      await manager.delete(ExerciseSubstitute, { exercise: { id } });
       await manager.save(
         picked.map((s, rank) =>
           manager.create(ExerciseSubstitute, {
@@ -198,13 +294,15 @@ export class ExerciseService {
             rank,
           }),
         ),
-      )
-      await manager.update(Exercise, id, { substitutesGeneratedAt: new Date() })
-    })
+      );
+      await manager.update(Exercise, id, {
+        substitutesGeneratedAt: new Date(),
+      });
+    });
   }
 
   private substitutesPrompt(targets: Exercise[], catalog: Exercise[]) {
-    const line = (e: Exercise) => `${e.id} | ${e.name} | ${e.muscleGroup}`
+    const line = (e: Exercise) => `${e.id} | ${e.name} | ${e.muscleGroup}`;
     return `Jesteś doświadczonym trenerem przygotowania siłowego.
 
 Dla każdego ćwiczenia z listy "Ćwiczenia" wybierz z "Katalogu" ćwiczenia, które są dobrym zamiennikiem
@@ -222,34 +320,40 @@ Używaj wyłącznie id z katalogu. Zwróć wynik dla każdego ćwiczenia z listy
 ${targets.map(line).join('\n')}
 
 Katalog (id | nazwa | grupa):
-${catalog.map(line).join('\n')}`
+${catalog.map(line).join('\n')}`;
   }
 
-  private async assertNameFree(name: string, exceptId?: number) {
+  private async assertNameFree(name: string, exceptId?: string) {
     const query = this.repo
       .createQueryBuilder('e')
-      .where('LOWER(e.name) = LOWER(:name)', { name: name.trim() })
+      .where('LOWER(e.name) = LOWER(:name)', { name: name.trim() });
     if (exceptId !== undefined) {
-      query.andWhere('e.id != :exceptId', { exceptId })
+      query.andWhere('e.id != :exceptId', { exceptId });
     }
     if (await query.getExists()) {
-      throw new ConflictException(errorBody(HttpStatus.CONFLICT, 'EXERCISE_NAME_TAKEN', 'Exercise with this name already exists'))
+      throw new ConflictException(
+        errorBody(
+          HttpStatus.CONFLICT,
+          'EXERCISE_NAME_TAKEN',
+          'Exercise with this name already exists',
+        ),
+      );
     }
   }
 }
 
-const SUBSTITUTES_BATCH = 20
+const SUBSTITUTES_BATCH = 20;
 
-type PickedSubstitute = { exerciseId: number; reason: string }
+type PickedSubstitute = { exerciseId: string; reason: string };
 
 function errorMessage(error: unknown) {
-  return error instanceof Error ? error.message : String(error)
+  return error instanceof Error ? error.message : String(error);
 }
 
 function transientRetryDelay(error: unknown): number | null {
-  const message = errorMessage(error)
-  if (message.includes('"code":503')) return 5000
-  if (!message.includes('"code":429')) return null
-  const seconds = Number(/"retryDelay":"(\d+)s"/.exec(message)?.[1] ?? 30)
-  return Math.min(seconds + 1, 60) * 1000
+  const message = errorMessage(error);
+  if (message.includes('"code":503')) return 5000;
+  if (!message.includes('"code":429')) return null;
+  const seconds = Number(/"retryDelay":"(\d+)s"/.exec(message)?.[1] ?? 30);
+  return Math.min(seconds + 1, 60) * 1000;
 }

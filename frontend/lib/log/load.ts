@@ -3,22 +3,23 @@ import "server-only";
 import { serverApi } from "@/lib/api/server";
 import type { ExerciseProgressPoint, MuscleGroup } from "@/lib/api/extra-types";
 import { baselineFrom, localDate, previousFrom, type LogExercise, type LogWorkout } from "./model";
+import { compareIds } from "@/lib/ids";
 
 type Api = Awaited<ReturnType<typeof serverApi>>;
 
-async function progressFor(api: Api, exerciseId: number): Promise<ExerciseProgressPoint[]> {
+async function progressFor(api: Api, exerciseId: string): Promise<ExerciseProgressPoint[]> {
   const { data } = await api.GET("/stats/exercise/{exerciseId}/progress", {
     params: { path: { exerciseId } },
   });
   return data ?? [];
 }
 
-export async function loadWorkout(workoutId: number): Promise<LogWorkout | null> {
+export async function loadWorkout(workoutId: string): Promise<LogWorkout | null> {
   const api = await serverApi();
   const { data: workout } = await api.GET("/workout/{id}", { params: { path: { id: workoutId } } });
   if (!workout) return null;
 
-  const workoutExercises = [...(workout.exercises ?? [])].sort((a, b) => a.order - b.order || a.id - b.id);
+  const workoutExercises = [...(workout.exercises ?? [])].sort((a, b) => a.order - b.order || compareIds(a.id, b.id));
   const exerciseIds = [...new Set(workoutExercises.map((we) => we.exercise.id))];
   const progress = new Map(
     await Promise.all(exerciseIds.map(async (id) => [id, await progressFor(api, id)] as const)),
@@ -39,7 +40,7 @@ export async function loadWorkout(workoutId: number): Promise<LogWorkout | null>
       baseline: baselineFrom(points, workout.date),
       status: "saved",
       sets: [...(we.sets ?? [])]
-        .sort((a, b) => a.setNumber - b.setNumber || a.id - b.id)
+        .sort((a, b) => a.setNumber - b.setNumber || compareIds(a.id, b.id))
         .map((set) => ({
           key: `set-${set.id}`,
           id: set.id,
@@ -58,7 +59,7 @@ export async function loadWorkout(workoutId: number): Promise<LogWorkout | null>
 }
 
 export type PlannedItem = {
-  id: number;
+  id: string;
   templateName: string | null;
   exerciseCount: number;
   setCount: number;
@@ -66,7 +67,7 @@ export type PlannedItem = {
 };
 
 export type StartedItem = {
-  id: number;
+  id: string;
   createdAt: string;
   exerciseCount: number;
   setCount: number;

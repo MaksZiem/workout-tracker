@@ -5,12 +5,13 @@ import { serverApi } from "@/lib/api/server";
 import { localDate } from "@/lib/log/model";
 import type { StartState } from "@/lib/log/actions";
 import { todayState } from "./model";
+import { parseId } from "@/lib/ids";
 
 export async function startTemplate(_prev: StartState, formData: FormData): Promise<StartState> {
-  const templateId = Number(formData.get("templateId"));
-  if (!Number.isInteger(templateId) || templateId <= 0) return { error: true };
+  const templateId = parseId(formData.get("templateId"));
+  if (!templateId) return { error: true };
   const date = localDate();
-  let workoutId: number | undefined;
+  let workoutId: string | undefined;
 
   try {
     const api = await serverApi();
@@ -46,9 +47,9 @@ export async function startTemplate(_prev: StartState, formData: FormData): Prom
 export type ScheduleState = { error?: boolean; scheduled?: string };
 
 export async function scheduleTemplate(_prev: ScheduleState, formData: FormData): Promise<ScheduleState> {
-  const templateId = Number(formData.get("templateId"));
+  const templateId = parseId(formData.get("templateId"));
   const date = String(formData.get("date") ?? "");
-  if (!Number.isInteger(templateId) || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: true };
+  if (!templateId || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: true };
   try {
     const api = await serverApi();
     const { response } = await api.POST("/planner/scheduled", { body: { templateId, date } });

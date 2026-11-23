@@ -35,7 +35,7 @@ export function UsersSection({
 }: {
   page: AdminUsersPage;
   query: UserListQuery;
-  meId: number;
+  meId: string;
   onToast: ShowToast;
 }) {
   const t = useTranslations("pages.admin.users");
@@ -106,7 +106,7 @@ function UsersTable({
 }: {
   page: AdminUsersPage;
   query: UserListQuery;
-  meId: number;
+  meId: string;
   pending: boolean;
   onPageSize: (limit: number) => void;
   onClearSearch: () => void;

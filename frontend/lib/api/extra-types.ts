@@ -57,7 +57,7 @@ export type PersonalRecords = {
 };
 
 export type ExercisePersonalRecords = PersonalRecords & {
-  exerciseId: number;
+  exerciseId: string;
   exerciseName: string;
 };
 
@@ -96,7 +96,7 @@ export type RepRange = (typeof REP_RANGES)[number];
 export type RepRangeStats = { range: RepRange; sets: number };
 
 export type StagnantExercise = {
-  exerciseId: number;
+  exerciseId: string;
   exerciseName: string;
   bestEstimatedOneRepMax: number;
   bestWeight: number;

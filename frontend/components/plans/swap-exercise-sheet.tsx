@@ -6,7 +6,7 @@ import { clientApi } from "@/lib/api/client";
 import type { ExerciseSubstitute, MuscleGroup } from "@/lib/api/extra-types";
 import { Sheet } from "@/components/ui/sheet";
 
-type Picked = { id: number; name: string; muscleGroup: MuscleGroup };
+type Picked = { id: string; name: string; muscleGroup: MuscleGroup };
 type State = { kind: "loading" } | { kind: "ready"; items: ExerciseSubstitute[] } | { kind: "unavailable" } | { kind: "error" };
 
 export function SwapExerciseSheet({
@@ -16,8 +16,8 @@ export function SwapExerciseSheet({
   onPick,
   onBrowse,
 }: {
-  exercise: { exerciseId: number; name: string } | null;
-  taken: Set<number>;
+  exercise: { exerciseId: string; name: string } | null;
+  taken: Set<string>;
   onClose: () => void;
   onPick: (picked: Picked) => void;
   onBrowse: () => void;

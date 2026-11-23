@@ -9,13 +9,13 @@ import { roundKg } from "@/lib/stats/model";
 import { RecordStrip } from "@/components/stats/record-strip";
 import { SectionError, StatsSection } from "@/components/stats/section";
 import { E1rmTip } from "@/components/ui/e1rm-tip";
+import { parseId } from "@/lib/ids";
 
 type Props = PageProps<"/exercises/[id]">;
 
 async function exerciseId(props: Props) {
   const { id } = await props.params;
-  const value = Number(id);
-  return Number.isInteger(value) && value > 0 ? value : null;
+  return parseId(id);
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {

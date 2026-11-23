@@ -29,11 +29,11 @@ export function toProgressPoint(we: WorkoutExercise) {
 
   return {
     date: we.workout.date,
-    sets: completedSets.map((s) => ({weight: s.weight, reps: s.reps})),
+    sets: completedSets.map((s) => ({ weight: s.weight, reps: s.reps })),
     topWeight,
     volume,
-    estimatedOneRepMax
-  }
+    estimatedOneRepMax,
+  };
 }
 
 export function computePersonalRecords(sets: ExerciseSet[]) {
@@ -78,14 +78,15 @@ export function weekStart(dateString: string): string {
 
 export function daysBetween(from: string, to: string): number {
   return Math.round(
-    (Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86_400_000,
+    (Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) /
+      86_400_000,
   );
 }
 
 export type SetRow = {
-  workoutId: number;
+  workoutId: string;
   date: string;
-  exerciseId: number;
+  exerciseId: string;
   exerciseName: string;
   weight: number;
   reps: number;
@@ -172,7 +173,7 @@ export const STAGNATION_DAYS = 42;
 export const STAGNATION_MIN_SESSIONS = 3;
 
 export type StagnantExercise = {
-  exerciseId: number;
+  exerciseId: string;
   exerciseName: string;
   bestEstimatedOneRepMax: number;
   bestWeight: number;
@@ -183,8 +184,11 @@ export type StagnantExercise = {
   lastSessionDate: string;
 };
 
-export function computeStagnation(sets: SetRow[], today: string): StagnantExercise[] {
-  const byExercise = new Map<number, SetRow[]>();
+export function computeStagnation(
+  sets: SetRow[],
+  today: string,
+): StagnantExercise[] {
+  const byExercise = new Map<string, SetRow[]>();
   for (const set of sets) {
     if (set.weight <= 0) continue;
     const group = byExercise.get(set.exerciseId) ?? [];
@@ -196,7 +200,9 @@ export function computeStagnation(sets: SetRow[], today: string): StagnantExerci
   for (const [exerciseId, exerciseSets] of byExercise) {
     let best = exerciseSets[0];
     let bestValue = 0;
-    for (const set of [...exerciseSets].sort((a, b) => a.date.localeCompare(b.date))) {
+    for (const set of [...exerciseSets].sort((a, b) =>
+      a.date.localeCompare(b.date),
+    )) {
       const value = estimateOneRepMax(set.weight, set.reps);
       if (value > bestValue) {
         bestValue = value;
@@ -207,7 +213,10 @@ export function computeStagnation(sets: SetRow[], today: string): StagnantExerci
     const sessionsSince = new Set(
       exerciseSets.filter((s) => s.date > best.date).map((s) => s.workoutId),
     ).size;
-    const lastSessionDate = exerciseSets.reduce((last, s) => (s.date > last ? s.date : last), best.date);
+    const lastSessionDate = exerciseSets.reduce(
+      (last, s) => (s.date > last ? s.date : last),
+      best.date,
+    );
     const daysSinceBest = daysBetween(best.date, today);
 
     if (
@@ -248,7 +257,8 @@ export function computeAdherence(
   for (const s of scheduled) {
     if (s.status === ScheduledWorkoutStatus.COMPLETED) result.completed += 1;
     else if (s.status === ScheduledWorkoutStatus.SKIPPED) result.skipped += 1;
-    else if (s.status === ScheduledWorkoutStatus.PLANNED && s.date < today) result.missed += 1;
+    else if (s.status === ScheduledWorkoutStatus.PLANNED && s.date < today)
+      result.missed += 1;
     else result.upcoming += 1;
   }
   const due = result.completed + result.skipped + result.missed;

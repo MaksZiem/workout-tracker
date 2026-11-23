@@ -316,7 +316,7 @@ function DateSheet({
   onSaved,
 }: {
   open: boolean;
-  workoutId: number;
+  workoutId: string;
   date: string;
   onClose: () => void;
   onSaved: (date: string) => void;

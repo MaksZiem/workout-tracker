@@ -17,7 +17,7 @@ import { StatsTip } from "./stats-tip";
 type Loaded = { records: PersonalRecords | null; repRecords: RepRecord[] };
 type State = { status: "loading" } | { status: "error" } | { status: "ready"; data: Loaded };
 
-async function loadRecords(exerciseId: number): Promise<Loaded> {
+async function loadRecords(exerciseId: string): Promise<Loaded> {
   const path = { params: { path: { exerciseId } } };
   const [records, repRecords] = await Promise.all([
     unwrap(clientApi.GET("/stats/exercise/{exerciseId}/records", path)).catch((error) => {
@@ -29,7 +29,7 @@ async function loadRecords(exerciseId: number): Promise<Loaded> {
   return { records, repRecords };
 }
 
-export function ExerciseRecordsSheet({ exercise, onClose }: { exercise: { id: number; name: string }; onClose: () => void }) {
+export function ExerciseRecordsSheet({ exercise, onClose }: { exercise: { id: string; name: string }; onClose: () => void }) {
   const t = useTranslations("pages.statsExercise");
   const tNav = useTranslations("nav");
   const tCommon = useTranslations("common");

@@ -22,7 +22,7 @@ type Props = {
   entries: PlannerEntry[];
   templates: TemplateOption[];
   plans: PlanOption[];
-  generatePlanId?: number | null;
+  generatePlanId?: string | null;
 };
 
 const href = (view: View, date: string) => `/planner?view=${view}&date=${date}`;

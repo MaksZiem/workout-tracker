@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  HttpStatus,
+} from '@nestjs/common';
 import { errorBody } from 'src/common/error-body';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Workout } from './workout.entity';
@@ -39,12 +44,18 @@ export class WorkoutService {
     private exerciseService: ExerciseService,
   ) {}
 
-  async finish(userId: number, id: number) {
+  async finish(userId: string, id: string) {
     const workout = await this.repo.findOne({
       where: { id, user: { id: userId } },
     });
     if (!workout) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_NOT_FOUND', 'Workout not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'WORKOUT_NOT_FOUND',
+          'Workout not found',
+        ),
+      );
     }
     if (!workout.finishedAt) {
       workout.finishedAt = new Date();
@@ -62,7 +73,7 @@ export class WorkoutService {
     return this.repo.save(workout);
   }
 
-  findAllForUser(userId: number, filters?: FindWorkoutDto): Promise<Workout[]> {
+  findAllForUser(userId: string, filters?: FindWorkoutDto): Promise<Workout[]> {
     const where: FindOptionsWhere<Workout> = { user: { id: userId } };
 
     if (filters?.from && filters?.to) {
@@ -86,70 +97,110 @@ export class WorkoutService {
           id: true,
           order: true,
           exercise: { id: true, name: true, muscleGroup: true },
-          sets: { id: true, setNumber: true, weight: true, reps: true, restSeconds: true, completed: true },
+          sets: {
+            id: true,
+            setNumber: true,
+            weight: true,
+            reps: true,
+            restSeconds: true,
+            completed: true,
+          },
         },
       },
       order: { date: 'desc' },
     });
   }
 
-  findOne(userId: number, id: number) {
+  findOne(userId: string, id: string) {
     return this.repo.findOne({
       where: { id, user: { id: userId } },
       relations: ['exercises', 'exercises.exercise', 'exercises.sets'],
     });
   }
 
-  async update(userId: number, id: number, dto: UpdateWorkoutDto) {
+  async update(userId: string, id: string, dto: UpdateWorkoutDto) {
     const workout = await this.repo.findOne({
       where: { id, user: { id: userId } },
     });
     if (!workout) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_NOT_FOUND', 'Workout not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'WORKOUT_NOT_FOUND',
+          'Workout not found',
+        ),
+      );
     }
     assignDefined(workout, dto);
     return this.repo.save(workout);
   }
 
-  async remove(userId: number, id: number) {
+  async remove(userId: string, id: string) {
     const workout = await this.repo.findOne({
       where: { id, user: { id: userId } },
     });
     if (!workout) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_NOT_FOUND', 'Workout not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'WORKOUT_NOT_FOUND',
+          'Workout not found',
+        ),
+      );
     }
     await this.scheduledRepo.update(
       {
         workout: { id },
         user: { id: userId },
-        status: In([ScheduledWorkoutStatus.IN_PROGRESS, ScheduledWorkoutStatus.COMPLETED]),
+        status: In([
+          ScheduledWorkoutStatus.IN_PROGRESS,
+          ScheduledWorkoutStatus.COMPLETED,
+        ]),
       },
       { status: ScheduledWorkoutStatus.PLANNED },
     );
     return this.repo.remove(workout);
   }
 
-  async cancel(userId: number, id: number) {
+  async cancel(userId: string, id: string) {
     const workout = await this.repo.findOne({
       where: { id, user: { id: userId } },
     });
     if (!workout) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_NOT_FOUND', 'Workout not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'WORKOUT_NOT_FOUND',
+          'Workout not found',
+        ),
+      );
     }
     if (workout.finishedAt) {
-      throw new ConflictException(errorBody(HttpStatus.CONFLICT, 'WORKOUT_ALREADY_FINISHED', 'Workout is already finished'));
+      throw new ConflictException(
+        errorBody(
+          HttpStatus.CONFLICT,
+          'WORKOUT_ALREADY_FINISHED',
+          'Workout is already finished',
+        ),
+      );
     }
     await this.remove(userId, id);
     return { cancelled: true };
   }
 
-  async duplicateWorkout(userId: number, id: number) {
+  async duplicateWorkout(userId: string, id: string) {
     const workout = await this.repo.findOne({
       where: { id, user: { id: userId } },
       relations: ['exercises', 'exercises.exercise', 'exercises.sets'],
     });
     if (!workout) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_NOT_FOUND', 'Workout not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'WORKOUT_NOT_FOUND',
+          'Workout not found',
+        ),
+      );
     }
 
     const duplicate = this.repo.create({
@@ -201,20 +252,32 @@ export class WorkoutService {
   }
 
   async addExercise(
-    userId: number,
-    workoutId: number,
+    userId: string,
+    workoutId: string,
     dto: AddExerciseToWorkoutDto,
   ) {
     const workout = await this.repo.findOne({
       where: { id: workoutId, user: { id: userId } },
     });
     if (!workout) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_NOT_FOUND', 'Workout not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'WORKOUT_NOT_FOUND',
+          'Workout not found',
+        ),
+      );
     }
 
     const exercise = await this.exerciseService.findOne(dto.exerciseId);
     if (!exercise) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'EXERCISE_NOT_FOUND', 'Exercise not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'EXERCISE_NOT_FOUND',
+          'Exercise not found',
+        ),
+      );
     }
 
     const workoutExercise = this.workoutExerciseRepo.create({
@@ -226,42 +289,60 @@ export class WorkoutService {
   }
 
   async updateExercise(
-    userId: number,
-    workoutId: number,
-    weId: number,
+    userId: string,
+    workoutId: string,
+    weId: string,
     dto: UpdateWorkoutExerciseDto,
   ) {
     const we = await this.workoutExerciseRepo.findOne({
       where: { id: weId, workout: { id: workoutId, user: { id: userId } } },
     });
     if (!we) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_EXERCISE_NOT_FOUND', 'Workout exercise not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'WORKOUT_EXERCISE_NOT_FOUND',
+          'Workout exercise not found',
+        ),
+      );
     }
     assignDefined(we, dto);
     return this.workoutExerciseRepo.save(we);
   }
 
-  async removeExercise(userId: number, workoutId: number, weId: number) {
+  async removeExercise(userId: string, workoutId: string, weId: string) {
     const we = await this.workoutExerciseRepo.findOne({
       where: { id: weId, workout: { id: workoutId, user: { id: userId } } },
     });
     if (!we) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_EXERCISE_NOT_FOUND', 'Workout exercise not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'WORKOUT_EXERCISE_NOT_FOUND',
+          'Workout exercise not found',
+        ),
+      );
     }
     return this.workoutExerciseRepo.remove(we);
   }
 
   async addSet(
-    userId: number,
-    workoutId: number,
-    weId: number,
+    userId: string,
+    workoutId: string,
+    weId: string,
     dto: AddSetDto,
   ) {
     const we = await this.workoutExerciseRepo.findOne({
       where: { id: weId, workout: { id: workoutId, user: { id: userId } } },
     });
     if (!we) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_EXERCISE_NOT_FOUND', 'Workout exercise not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'WORKOUT_EXERCISE_NOT_FOUND',
+          'Workout exercise not found',
+        ),
+      );
     }
     const exerciseSet = this.exerciseSetRepo.create({
       ...dto,
@@ -271,20 +352,25 @@ export class WorkoutService {
   }
 
   async updateSet(
-    userId: number,
-    workoutId: number,
-    weId: number,
-    setId: number,
+    userId: string,
+    workoutId: string,
+    weId: string,
+    setId: string,
     dto: UpdateSetDto,
   ) {
     const set = await this.exerciseSetRepo.findOne({
       where: {
         id: setId,
-        workoutExercise: { id: weId, workout: { id: workoutId, user: { id: userId } } },
+        workoutExercise: {
+          id: weId,
+          workout: { id: workoutId, user: { id: userId } },
+        },
       },
     });
     if (!set) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'SET_NOT_FOUND', 'Set not found'));
+      throw new NotFoundException(
+        errorBody(HttpStatus.NOT_FOUND, 'SET_NOT_FOUND', 'Set not found'),
+      );
     }
 
     assignDefined(set, dto);
@@ -293,19 +379,24 @@ export class WorkoutService {
   }
 
   async removeSet(
-    userId: number,
-    workoutId: number,
-    weId: number,
-    setId: number,
+    userId: string,
+    workoutId: string,
+    weId: string,
+    setId: string,
   ) {
     const set = await this.exerciseSetRepo.findOne({
       where: {
         id: setId,
-        workoutExercise: { id: weId, workout: { id: workoutId, user: { id: userId } } },
+        workoutExercise: {
+          id: weId,
+          workout: { id: workoutId, user: { id: userId } },
+        },
       },
     });
     if (!set) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'SET_NOT_FOUND', 'Set not found'));
+      throw new NotFoundException(
+        errorBody(HttpStatus.NOT_FOUND, 'SET_NOT_FOUND', 'Set not found'),
+      );
     }
     return this.exerciseSetRepo.remove(set);
   }

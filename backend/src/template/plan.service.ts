@@ -21,14 +21,14 @@ export class PlanService {
     return this.repo.save(plan);
   }
 
-  findAllForUser(userId: number) {
+  findAllForUser(userId: string) {
     return this.repo.find({
       where: { user: { id: userId } },
       order: { createdAt: 'DESC' },
     });
   }
 
-  findOne(userId: number, id: number) {
+  findOne(userId: string, id: string) {
     return this.repo.findOne({
       where: { id, user: { id: userId } },
       relations: [
@@ -39,23 +39,29 @@ export class PlanService {
     });
   }
 
-  async findOwned(userId: number, id: number) {
+  async findOwned(userId: string, id: string) {
     const plan = await this.repo.findOne({
       where: { id, user: { id: userId } },
     });
     if (!plan) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'PLAN_NOT_FOUND', 'Workout plan not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'PLAN_NOT_FOUND',
+          'Workout plan not found',
+        ),
+      );
     }
     return plan;
   }
 
-  async update(userId: number, id: number, dto: UpdateWorkoutPlanDto) {
+  async update(userId: string, id: string, dto: UpdateWorkoutPlanDto) {
     const plan = await this.findOwned(userId, id);
     assignDefined(plan, dto);
     return this.repo.save(plan);
   }
 
-  async remove(userId: number, id: number) {
+  async remove(userId: string, id: string) {
     const plan = await this.findOwned(userId, id);
     const today = new Date().toISOString().slice(0, 10);
 

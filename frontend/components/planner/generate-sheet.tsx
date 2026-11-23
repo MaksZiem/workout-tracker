@@ -10,7 +10,7 @@ import { Sheet } from "@/components/ui/sheet";
 import { addDays, daysBetween, displayDate, mondayIndex, toBackendDayOfWeek, weekStart } from "@/lib/planner/dates";
 import { defaultSpread, type PlanOption } from "@/lib/planner/model";
 
-type PlanTemplate = { id: number; name: string };
+type PlanTemplate = { id: string; name: string };
 
 const capitalize = (value: string) => value.charAt(0).toLocaleUpperCase() + value.slice(1);
 
@@ -28,7 +28,7 @@ export function GenerateSheet({
   open: boolean;
   onClose: () => void;
   plans: PlanOption[];
-  initialPlanId?: number | null;
+  initialPlanId?: string | null;
   today: string;
   onGenerated: (count: number) => void;
 }) {
@@ -36,7 +36,7 @@ export function GenerateSheet({
   const tNav = useTranslations("nav");
   const format = useFormatter();
 
-  const [planId, setPlanId] = useState<number | null>(initialPlanId ?? plans[0]?.id ?? null);
+  const [planId, setPlanId] = useState<string | null>(initialPlanId ?? plans[0]?.id ?? null);
   const [templates, setTemplates] = useState<PlanTemplate[] | null>(null);
   const [days, setDays] = useState<number[]>([]);
   const [weeks, setWeeks] = useState(4);
@@ -164,7 +164,7 @@ export function GenerateSheet({
               value={planId ?? ""}
               onChange={(e) => {
                 setTemplates(null);
-                setPlanId(Number(e.target.value));
+                setPlanId(e.target.value);
               }}
               className="h-11 rounded-lg border border-border bg-surface-muted px-3 text-[15px]"
             >

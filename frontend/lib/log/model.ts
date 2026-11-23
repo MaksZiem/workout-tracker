@@ -8,7 +8,7 @@ export type SyncStatus = "saved" | "pending" | "failed";
 
 export type LogSet = {
   key: string;
-  id?: number;
+  id?: string;
   setNumber: number;
   weight: number;
   reps: number;
@@ -20,9 +20,9 @@ export type LogSet = {
 
 export type LogExercise = {
   key: string;
-  id?: number;
+  id?: string;
   order: number;
-  exercise: { id: number; name: string; muscleGroup: MuscleGroup };
+  exercise: { id: string; name: string; muscleGroup: MuscleGroup };
   sets: LogSet[];
   previous: PreviousSession | null;
   baseline: Baseline | null;
@@ -31,7 +31,7 @@ export type LogExercise = {
 };
 
 export type LogWorkout = {
-  id: number;
+  id: string;
   date: string;
   createdAt: string;
   exercises: LogExercise[];

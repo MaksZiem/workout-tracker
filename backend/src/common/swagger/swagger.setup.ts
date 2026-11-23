@@ -28,20 +28,29 @@ Każdy błąd ma spójny format JSON:
 \`\`\`
 - \`code\` to stały identyfikator błędu, na podstawie którego frontend wyświetla przetłumaczony komunikat (PL/EN), a \`params\` zawiera wartości do wstawienia w ten komunikat.
 - \`message\` jest po angielsku i służy do debugowania.
-- Błędy walidacji (400) zwracają w \`message\` tablicę komunikatów, po jednym na każde niepoprawne pole.
+- Błędy walidacji danych wejściowych mają kod \`VALIDATION_FAILED\` i zwracają w \`message\` tablicę komunikatów, po jednym na każde niepoprawne pole.
+- Identyfikator w ścieżce, który nie jest UUID, daje błąd 400 z kodem \`INVALID_ID\` (\`params.param\` to nazwa parametru).
+- Błędy bez własnego kodu (np. nieistniejąca ścieżka) dostają kod z nazwy statusu HTTP, np. \`NOT_FOUND\`.
 
 ## Język AI
 Generowanie planu przyjmuje pole \`language\` (\`pl\` lub \`en\`), w którym AI nazywa plan i treningi.`;
 
 const TAGS: [string, string][] = [
   ['auth', 'Rejestracja, logowanie i zarządzanie kontem użytkownika'],
-  ['exercise', 'Globalna baza ćwiczeń (katalog dostępny dla wszystkich użytkowników)'],
-  ['workout', 'Zarejestrowane treningi użytkownika wraz z ćwiczeniami i seriami'],
+  [
+    'exercise',
+    'Globalna baza ćwiczeń (katalog dostępny dla wszystkich użytkowników)',
+  ],
+  [
+    'workout',
+    'Zarejestrowane treningi użytkownika wraz z ćwiczeniami i seriami',
+  ],
   ['template', 'Szablony treningowe wielokrotnego użytku'],
   ['plan', 'Plany treningowe grupujące szablony (np. plan tygodniowy)'],
   ['planner', 'Harmonogram treningów w kalendarzu'],
   ['stats', 'Statystyki, rekordy życiowe i postępy użytkownika'],
   ['ai', 'Funkcje wspierane sztuczną inteligencją (Gemini)'],
+  ['health', 'Stan aplikacji dla monitoringu i reverse proxy'],
 ];
 
 export function setupSwagger(app: INestApplication): void {

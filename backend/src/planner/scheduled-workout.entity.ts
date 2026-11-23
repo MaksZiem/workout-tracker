@@ -7,18 +7,29 @@ import { ScheduledWorkoutStatus } from 'src/enums/scheduled-workout-status.enum'
 
 @Entity()
 export class ScheduledWorkout {
-  @ApiProperty({ description: 'Unikalny identyfikator zaplanowanego treningu', example: 1 })
-  @PrimaryGeneratedColumn()
-  id: number;
+  @ApiProperty({
+    description: 'Unikalny identyfikator zaplanowanego treningu',
+    example: '3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c',
+  })
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   user: User;
 
-  @ApiPropertyOptional({ description: 'Szablon treningowy, na podstawie którego trening zostanie wygenerowany', type: () => WorkoutTemplate, nullable: true })
+  @ApiPropertyOptional({
+    description:
+      'Szablon treningowy, na podstawie którego trening zostanie wygenerowany',
+    type: () => WorkoutTemplate,
+    nullable: true,
+  })
   @ManyToOne(() => WorkoutTemplate, { onDelete: 'SET NULL', nullable: true })
   template: WorkoutTemplate;
 
-  @ApiProperty({ description: 'Zaplanowana data treningu (YYYY-MM-DD)', example: '2026-09-25' })
+  @ApiProperty({
+    description: 'Zaplanowana data treningu (YYYY-MM-DD)',
+    example: '2026-09-25',
+  })
   @Column({ type: 'date' })
   date: string;
 
@@ -36,7 +47,8 @@ export class ScheduledWorkout {
   status: ScheduledWorkoutStatus;
 
   @ApiPropertyOptional({
-    description: 'Faktyczny trening utworzony po rozpoczęciu zaplanowanej sesji (patrz POST /planner/scheduled/{id}/start)',
+    description:
+      'Faktyczny trening utworzony po rozpoczęciu zaplanowanej sesji (patrz POST /planner/scheduled/{id}/start)',
     type: () => Workout,
     nullable: true,
   })

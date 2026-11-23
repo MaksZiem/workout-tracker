@@ -25,7 +25,7 @@ export function AdminView({
   catalog: Section<CatalogHealth>;
   users: Section<AdminUsersPage>;
   query: UserListQuery;
-  meId: number;
+  meId: string;
 }) {
   const t = useTranslations("pages.admin");
   const { toast, show, dismiss } = useToast();

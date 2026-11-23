@@ -1,4 +1,5 @@
-import { Controller, Get, Param, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
+import { ParseIdPipe } from 'src/common/pipes/parse-id.pipe';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiNotFoundResponse,
@@ -21,7 +22,10 @@ import { ExerciseProgressFilterDto } from './dtos/exercise-progress-filter.dto';
 
 @ApiTags('stats')
 @ApiBearerAuth(BEARER_AUTH)
-@ApiUnauthorizedResponse({ description: 'Brak tokenu lub token nieprawidłowy', type: UnauthorizedErrorDto })
+@ApiUnauthorizedResponse({
+  description: 'Brak tokenu lub token nieprawidłowy',
+  type: UnauthorizedErrorDto,
+})
 @Controller('stats')
 export class StatsController {
   constructor(private readonly statsService: StatsService) {}
@@ -30,16 +34,27 @@ export class StatsController {
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary: 'Postęp w danym ćwiczeniu w czasie',
-    description: 'Zwraca chronologiczną listę punktów postępu (ciężar, objętość, szacowany 1RM) dla wskazanego ćwiczenia, opcjonalnie w zadanym zakresie dat.',
+    description:
+      'Zwraca chronologiczną listę punktów postępu (ciężar, objętość, szacowany 1RM) dla wskazanego ćwiczenia, opcjonalnie w zadanym zakresie dat.',
   })
-  @ApiParam({ name: 'exerciseId', type: Number, example: 1, description: 'Identyfikator ćwiczenia' })
+  @ApiParam({
+    name: 'exerciseId',
+    type: String,
+    format: 'uuid',
+    example: '3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c',
+    description: 'Identyfikator ćwiczenia',
+  })
   @ApiOkResponse({
-    description: 'Lista punktów postępu, jeden na trening zawierający dane ćwiczenie',
+    description:
+      'Lista punktów postępu, jeden na trening zawierający dane ćwiczenie',
     schema: {
       example: [
         {
           date: '2026-08-01',
-          sets: [{ weight: 80, reps: 8 }, { weight: 80, reps: 7 }],
+          sets: [
+            { weight: 80, reps: 8 },
+            { weight: 80, reps: 7 },
+          ],
           topWeight: 80,
           volume: 1200,
           estimatedOneRepMax: 101.3,
@@ -56,19 +71,31 @@ export class StatsController {
   })
   getExerciseProgress(
     @CurrentUser() user: User,
-    @Param('exerciseId', ParseIntPipe) exerciseId: number,
+    @Param('exerciseId', ParseIdPipe) exerciseId: string,
     @Query() filters: ExerciseProgressFilterDto,
   ) {
-    return this.statsService.getExerciseProgress(user.id, exerciseId, filters.from, filters.to)
+    return this.statsService.getExerciseProgress(
+      user.id,
+      exerciseId,
+      filters.from,
+      filters.to,
+    );
   }
 
   @Get('/exercise/:exerciseId/records')
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary: 'Rekordy życiowe dla danego ćwiczenia',
-    description: 'Zwraca najlepszy ciężar, najlepszą objętość w pojedynczej serii oraz najlepszy szacowany ciężar maksymalny (1RM) dla wskazanego ćwiczenia, liczone na podstawie ukończonych serii.',
+    description:
+      'Zwraca najlepszy ciężar, najlepszą objętość w pojedynczej serii oraz najlepszy szacowany ciężar maksymalny (1RM) dla wskazanego ćwiczenia, liczone na podstawie ukończonych serii.',
   })
-  @ApiParam({ name: 'exerciseId', type: Number, example: 1, description: 'Identyfikator ćwiczenia' })
+  @ApiParam({
+    name: 'exerciseId',
+    type: String,
+    format: 'uuid',
+    example: '3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c',
+    description: 'Identyfikator ćwiczenia',
+  })
   @ApiOkResponse({
     description: 'Rekordy życiowe dla ćwiczenia',
     schema: {
@@ -85,23 +112,30 @@ export class StatsController {
       },
     },
   })
-  @ApiNotFoundResponse({ description: 'Brak ukończonych serii dla tego ćwiczenia', type: NotFoundErrorDto })
+  @ApiNotFoundResponse({
+    description: 'Brak ukończonych serii dla tego ćwiczenia',
+    type: NotFoundErrorDto,
+  })
   getPersonalRecords(
     @CurrentUser() user: User,
-    @Param('exerciseId', ParseIntPipe) exerciseId: number,
+    @Param('exerciseId', ParseIdPipe) exerciseId: string,
   ) {
-    return this.statsService.getPersonalRecords(user.id, exerciseId)
+    return this.statsService.getPersonalRecords(user.id, exerciseId);
   }
 
   @Get('/records')
   @UseGuards(AuthGuard)
-  @ApiOperation({ summary: 'Rekordy życiowe dla wszystkich ćwiczeń', description: 'Zwraca rekordy życiowe (jak wyżej) dla każdego ćwiczenia, w którym użytkownik ma choć jedną ukończoną serię.' })
+  @ApiOperation({
+    summary: 'Rekordy życiowe dla wszystkich ćwiczeń',
+    description:
+      'Zwraca rekordy życiowe (jak wyżej) dla każdego ćwiczenia, w którym użytkownik ma choć jedną ukończoną serię.',
+  })
   @ApiOkResponse({
     description: 'Lista rekordów życiowych pogrupowanych po ćwiczeniu',
     schema: {
       example: [
         {
-          exerciseId: 1,
+          exerciseId: 'eef41190-e1f9-505c-a1e8-cb4440c3d597',
           exerciseName: 'Wyciskanie sztangi leżąc',
           maxWeight: 100,
           maxWeightDate: '2026-09-01',
@@ -117,12 +151,16 @@ export class StatsController {
     },
   })
   getAllPersonalRecords(@CurrentUser() user: User) {
-    return this.statsService.getAllPersonalRecords(user.id)
+    return this.statsService.getAllPersonalRecords(user.id);
   }
 
   @Get('/muscle-groups')
   @UseGuards(AuthGuard)
-  @ApiOperation({ summary: 'Rozkład objętości treningowej wg grup mięśniowych', description: 'Zwraca liczbę ukończonych serii i całkowitą objętość (ciężar x powtórzenia) dla każdej trenowanej grupy mięśniowej, opcjonalnie w zadanym zakresie dat.' })
+  @ApiOperation({
+    summary: 'Rozkład objętości treningowej wg grup mięśniowych',
+    description:
+      'Zwraca liczbę ukończonych serii i całkowitą objętość (ciężar x powtórzenia) dla każdej trenowanej grupy mięśniowej, opcjonalnie w zadanym zakresie dat.',
+  })
   @ApiOkResponse({
     description: 'Rozkład serii/objętości wg grupy mięśniowej',
     schema: {
@@ -136,14 +174,19 @@ export class StatsController {
     @CurrentUser() user: User,
     @Query() filters: ExerciseProgressFilterDto,
   ) {
-    return this.statsService.getMuscleGroupDistribution(user.id, filters.from, filters.to)
+    return this.statsService.getMuscleGroupDistribution(
+      user.id,
+      filters.from,
+      filters.to,
+    );
   }
 
   @Get('/frequency')
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary: 'Częstotliwość treningów (heatmapa)',
-    description: 'Zwraca gęstą listę dni (bez dziur) z liczbą treningów w danym dniu oraz liczbą pominiętych lub przegapionych treningów z planu (`missed`) - gotową pod heatmapę w stylu GitHub contributions. Domyślnie ostatnie 365 dni.',
+    description:
+      'Zwraca gęstą listę dni (bez dziur) z liczbą treningów w danym dniu oraz liczbą pominiętych lub przegapionych treningów z planu (`missed`) - gotową pod heatmapę w stylu GitHub contributions. Domyślnie ostatnie 365 dni.',
   })
   @ApiOkResponse({
     description: 'Lista dni z liczbą treningów',
@@ -159,20 +202,35 @@ export class StatsController {
     @CurrentUser() user: User,
     @Query() filters: ExerciseProgressFilterDto,
   ) {
-    return this.statsService.getWorkoutFrequency(user.id, filters.from, filters.to)
+    return this.statsService.getWorkoutFrequency(
+      user.id,
+      filters.from,
+      filters.to,
+    );
   }
 
   @Get('/streak')
   @UseGuards(AuthGuard)
-  @ApiOperation({ summary: 'Aktualna passa treningowa', description: 'Zwraca liczbę kolejnych dni (licząc wstecz od dziś lub wczoraj) z co najmniej jednym treningiem.' })
-  @ApiOkResponse({ description: 'Liczba dni passy treningowej', schema: { type: 'number', example: 5 } })
+  @ApiOperation({
+    summary: 'Aktualna passa treningowa',
+    description:
+      'Zwraca liczbę kolejnych dni (licząc wstecz od dziś lub wczoraj) z co najmniej jednym treningiem.',
+  })
+  @ApiOkResponse({
+    description: 'Liczba dni passy treningowej',
+    schema: { type: 'number', example: 5 },
+  })
   getCurrentStreak(@CurrentUser() user: User) {
-    return this.statsService.getCurrentStreak(user.id)
+    return this.statsService.getCurrentStreak(user.id);
   }
 
   @Get('/summary')
   @UseGuards(AuthGuard)
-  @ApiOperation({ summary: 'Podsumowanie aktywności użytkownika', description: 'Zwraca zbiorcze statystyki: liczbę treningów, serii, łączną objętość, średnią liczbę serii na trening, najczęściej trenowaną grupę mięśniową i aktualną passę.' })
+  @ApiOperation({
+    summary: 'Podsumowanie aktywności użytkownika',
+    description:
+      'Zwraca zbiorcze statystyki: liczbę treningów, serii, łączną objętość, średnią liczbę serii na trening, najczęściej trenowaną grupę mięśniową i aktualną passę.',
+  })
   @ApiOkResponse({
     description: 'Podsumowanie statystyk',
     schema: {
@@ -190,16 +248,23 @@ export class StatsController {
     @CurrentUser() user: User,
     @Query() filters: ExerciseProgressFilterDto,
   ) {
-    return this.statsService.getSummary(user.id, filters.from, filters.to)
+    return this.statsService.getSummary(user.id, filters.from, filters.to);
   }
 
   @Get('/exercise/:exerciseId/rep-records')
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary: 'Rekordy powtórzeń dla danego ćwiczenia',
-    description: 'Dla 1, 3, 5, 8, 10 i 12 powtórzeń zwraca największy ciężar z ukończonej serii o co najmniej tylu powtórzeniach (seria 100 kg × 8 jest też rekordem 5RM). Brak serii - pola null.',
+    description:
+      'Dla 1, 3, 5, 8, 10 i 12 powtórzeń zwraca największy ciężar z ukończonej serii o co najmniej tylu powtórzeniach (seria 100 kg × 8 jest też rekordem 5RM). Brak serii - pola null.',
   })
-  @ApiParam({ name: 'exerciseId', type: Number, example: 1, description: 'Identyfikator ćwiczenia' })
+  @ApiParam({
+    name: 'exerciseId',
+    type: String,
+    format: 'uuid',
+    example: '3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c',
+    description: 'Identyfikator ćwiczenia',
+  })
   @ApiOkResponse({
     description: 'Rekordy dla kolejnych liczb powtórzeń',
     schema: {
@@ -212,33 +277,43 @@ export class StatsController {
   })
   getRepRecords(
     @CurrentUser() user: User,
-    @Param('exerciseId', ParseIntPipe) exerciseId: number,
+    @Param('exerciseId', ParseIdPipe) exerciseId: string,
   ) {
-    return this.statsService.getRepRecords(user.id, exerciseId)
+    return this.statsService.getRepRecords(user.id, exerciseId);
   }
 
   @Get('/adherence')
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary: 'Realizacja planu treningowego',
-    description: 'Zlicza zaplanowane treningi w zakresie: zrealizowane, pominięte, przegapione (zaplanowane w przeszłości i nierozpoczęte) oraz nadchodzące. `rate` to udział zrealizowanych wśród tych, które już powinny się odbyć (null, gdy takich nie ma).',
+    description:
+      'Zlicza zaplanowane treningi w zakresie: zrealizowane, pominięte, przegapione (zaplanowane w przeszłości i nierozpoczęte) oraz nadchodzące. `rate` to udział zrealizowanych wśród tych, które już powinny się odbyć (null, gdy takich nie ma).',
   })
   @ApiOkResponse({
     description: 'Podsumowanie realizacji planu',
-    schema: { example: { completed: 11, skipped: 1, missed: 1, upcoming: 3, rate: 0.846 } },
+    schema: {
+      example: {
+        completed: 11,
+        skipped: 1,
+        missed: 1,
+        upcoming: 3,
+        rate: 0.846,
+      },
+    },
   })
   getAdherence(
     @CurrentUser() user: User,
     @Query() filters: ExerciseProgressFilterDto,
   ) {
-    return this.statsService.getAdherence(user.id, filters.from, filters.to)
+    return this.statsService.getAdherence(user.id, filters.from, filters.to);
   }
 
   @Get('/weekly')
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary: 'Treningi, serie i objętość tydzień po tygodniu',
-    description: 'Zwraca gęstą listę tygodni (pon–niedz.) z liczbą treningów, ukończonych serii i objętością. Bez `from` - od tygodnia pierwszego treningu.',
+    description:
+      'Zwraca gęstą listę tygodni (pon–niedz.) z liczbą treningów, ukończonych serii i objętością. Bez `from` - od tygodnia pierwszego treningu.',
   })
   @ApiOkResponse({
     description: 'Lista tygodni',
@@ -253,14 +328,15 @@ export class StatsController {
     @CurrentUser() user: User,
     @Query() filters: ExerciseProgressFilterDto,
   ) {
-    return this.statsService.getWeeklyStats(user.id, filters.from, filters.to)
+    return this.statsService.getWeeklyStats(user.id, filters.from, filters.to);
   }
 
   @Get('/rep-ranges')
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary: 'Rozkład serii wg zakresu powtórzeń',
-    description: 'Liczba ukończonych serii w zakresach: STRENGTH (1–5), HYPERTROPHY (6–12), ENDURANCE (13+).',
+    description:
+      'Liczba ukończonych serii w zakresach: STRENGTH (1–5), HYPERTROPHY (6–12), ENDURANCE (13+).',
   })
   @ApiOkResponse({
     description: 'Serie w trzech zakresach powtórzeń',
@@ -276,21 +352,22 @@ export class StatsController {
     @CurrentUser() user: User,
     @Query() filters: ExerciseProgressFilterDto,
   ) {
-    return this.statsService.getRepRanges(user.id, filters.from, filters.to)
+    return this.statsService.getRepRanges(user.id, filters.from, filters.to);
   }
 
   @Get('/stagnation')
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary: 'Ćwiczenia bez postępu',
-    description: 'Ćwiczenia trenowane w ostatnich 21 dniach, w których najlepszy szacowany 1RM pochodzi sprzed ponad 42 dni, a od tamtej pory były co najmniej 3 sesje. Najdłuższy zastój pierwszy.',
+    description:
+      'Ćwiczenia trenowane w ostatnich 21 dniach, w których najlepszy szacowany 1RM pochodzi sprzed ponad 42 dni, a od tamtej pory były co najmniej 3 sesje. Najdłuższy zastój pierwszy.',
   })
   @ApiOkResponse({
     description: 'Lista ćwiczeń w zastoju',
     schema: {
       example: [
         {
-          exerciseId: 1,
+          exerciseId: 'eef41190-e1f9-505c-a1e8-cb4440c3d597',
           exerciseName: 'Wyciskanie sztangi leżąc',
           bestEstimatedOneRepMax: 112.5,
           bestWeight: 93.75,
@@ -304,6 +381,6 @@ export class StatsController {
     },
   })
   getStagnation(@CurrentUser() user: User) {
-    return this.statsService.getStagnation(user.id)
+    return this.statsService.getStagnation(user.id);
   }
 }

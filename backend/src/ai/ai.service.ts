@@ -4,7 +4,10 @@ import { GeminiService } from 'src/gemini/gemini.service';
 import { ExerciseService } from 'src/exercise/exercise.service';
 import { TemplateService } from 'src/template/template.service';
 import { User } from 'src/users/user.entity';
-import { GenerateWorkoutPlanDto, PlanLanguage } from './dtos/generate-workout-plan.dto';
+import {
+  GenerateWorkoutPlanDto,
+  PlanLanguage,
+} from './dtos/generate-workout-plan.dto';
 import { TrainingGoal } from 'src/enums/training-goal.enum';
 import { workoutPlanSchema } from './schemas/workout-plan.schema';
 import { WorkoutTemplate } from 'src/template/workout-template.entity';
@@ -44,7 +47,7 @@ interface GeneratedPlan {
     name: string;
     notes?: string;
     exercises: {
-      exerciseId: number;
+      exerciseId: string;
       order: number;
       targetSets: number;
       targetReps: number;
@@ -56,7 +59,7 @@ interface GeneratedPlan {
 
 interface ParsedWorkout {
   exercises: {
-    exerciseId: number;
+    exerciseId: string;
     sets: { reps: number; weight: number }[];
   }[];
 }
@@ -118,7 +121,13 @@ export class AiService {
   async parseWorkout(user: User, dto: ParseWorkoutDto) {
     const workout = await this.workoutService.findOne(user.id, dto.workoutId);
     if (!workout) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'WORKOUT_NOT_FOUND', 'Workout not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'WORKOUT_NOT_FOUND',
+          'Workout not found',
+        ),
+      );
     }
     const exercises = await this.exerciseService.findAll();
     const validExerciseIds = new Set(exercises.map((e) => e.id));
@@ -160,7 +169,7 @@ export class AiService {
 
   private buildPrompt(
     dto: GenerateWorkoutPlanDto,
-    exercises: { id: number; name: string; muscleGroup: string }[],
+    exercises: { id: string; name: string; muscleGroup: string }[],
   ): string {
     const exerciseList = exercises
       .map((e) => `- id:${e.id} ${e.name} (${e.muscleGroup})`)
@@ -178,7 +187,7 @@ export class AiService {
 
   private buildParsePrompt(
     text: string,
-    exercises: { id: number; name: string; muscleGroup: string }[],
+    exercises: { id: string; name: string; muscleGroup: string }[],
   ): string {
     const exerciseList = exercises
       .map((e) => `- id:${e.id} ${e.name} (${e.muscleGroup})`)

@@ -1,14 +1,15 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class ErrorResponseDto {
   @ApiProperty({ description: 'Kod statusu HTTP', example: 404 })
   statusCode: number;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description:
       'Stały kod błędu. Frontend tłumaczy komunikat na podstawie tego pola, a nie pola message',
+    example: 'WORKOUT_NOT_FOUND',
   })
-  code?: string;
+  code: string;
 
   @ApiProperty({
     description:
@@ -18,48 +19,33 @@ export class ErrorResponseDto {
   })
   message: string | string[];
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Wartości wstawiane do przetłumaczonego komunikatu',
     type: 'object',
     additionalProperties: { oneOf: [{ type: 'string' }, { type: 'number' }] },
     example: {},
   })
-  params?: Record<string, string | number>;
-
-  @ApiPropertyOptional({
-    description: 'Nazwa błędu HTTP (zwracana przez wbudowane wyjątki Nest)',
-    example: 'Not Found',
-  })
-  error?: string;
+  params: Record<string, string | number>;
 }
 
 function errorDto(
   name: string,
   statusCode: number,
-  error: string,
   message: string | string[],
-  code?: string,
+  code: string,
 ) {
   class Dto extends ErrorResponseDto {
     @ApiProperty({ example: statusCode })
     declare statusCode: number;
 
-    @ApiPropertyOptional({
-      example: code,
-      description: code
-        ? undefined
-        : 'Dla tego statusu zwykle nieobecny (wbudowany wyjątek Nest)',
-    })
-    declare code?: string;
+    @ApiProperty({ example: code })
+    declare code: string;
 
     @ApiProperty({
       oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }],
       example: message,
     })
     declare message: string | string[];
-
-    @ApiPropertyOptional({ example: error })
-    declare error?: string;
   }
 
   Object.defineProperty(Dto, 'name', { value: name });
@@ -69,17 +55,16 @@ function errorDto(
 export const BadRequestErrorDto = errorDto(
   'BadRequestErrorDto',
   400,
-  'Bad Request',
   [
     'email must be an email',
     'password must be longer than or equal to 8 characters',
   ],
+  'VALIDATION_FAILED',
 );
 
 export const UnauthorizedErrorDto = errorDto(
   'UnauthorizedErrorDto',
   401,
-  'Unauthorized',
   'Missing authorization token',
   'MISSING_TOKEN',
 );
@@ -87,7 +72,6 @@ export const UnauthorizedErrorDto = errorDto(
 export const ForbiddenErrorDto = errorDto(
   'ForbiddenErrorDto',
   403,
-  'Forbidden',
   'Action not allowed',
   'ACTION_NOT_ALLOWED',
 );
@@ -95,7 +79,6 @@ export const ForbiddenErrorDto = errorDto(
 export const NotFoundErrorDto = errorDto(
   'NotFoundErrorDto',
   404,
-  'Not Found',
   'Workout not found',
   'WORKOUT_NOT_FOUND',
 );
@@ -103,7 +86,6 @@ export const NotFoundErrorDto = errorDto(
 export const ConflictErrorDto = errorDto(
   'ConflictErrorDto',
   409,
-  'Conflict',
   'Exercise with this name already exists',
   'EXERCISE_NAME_TAKEN',
 );
@@ -111,7 +93,6 @@ export const ConflictErrorDto = errorDto(
 export const BadGatewayErrorDto = errorDto(
   'BadGatewayErrorDto',
   502,
-  'Bad Gateway',
   'AI could not pick substitutes, try again later',
   'AI_UNAVAILABLE',
 );

@@ -1,25 +1,25 @@
 import type { MuscleGroup, ScheduledWorkoutStatus } from "@/lib/api/extra-types";
 
 export type PlannerEntry = {
-  id: number;
+  id: string;
   date: string;
   status: ScheduledWorkoutStatus;
-  templateId: number | null;
+  templateId: string | null;
   templateName: string | null;
   plan: PlanOption | null;
   exerciseCount: number;
   muscleGroups: MuscleGroup[];
-  workoutId: number | null;
+  workoutId: string | null;
 };
 
 export type TemplateOption = {
-  id: number;
+  id: string;
   name: string;
   exerciseCount: number;
   muscleGroups: MuscleGroup[];
 };
 
-export type PlanOption = { id: number; name: string };
+export type PlanOption = { id: string; name: string };
 
 export type DisplayStatus = ScheduledWorkoutStatus | "OVERDUE";
 

@@ -12,7 +12,7 @@ export async function loadPlans(): Promise<PlanSummary[]> {
   );
   return details.map((plan) => {
     const templates = [...(plan.templates ?? [])]
-      .sort((a, b) => a.id - b.id)
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
       .map((t) => ({ id: t.id, name: t.name, exerciseCount: t.exercises?.length ?? 0 }));
     return {
       id: plan.id,
@@ -24,9 +24,9 @@ export async function loadPlans(): Promise<PlanSummary[]> {
   });
 }
 
-export type PlanDetail = { id: number; name: string; notes: string; templates: EditorTemplate[] };
+export type PlanDetail = { id: string; name: string; notes: string; templates: EditorTemplate[] };
 
-export async function loadPlan(id: number): Promise<PlanDetail | null> {
+export async function loadPlan(id: string): Promise<PlanDetail | null> {
   const api = await serverApi();
   const { data: plan } = await api.GET("/plan/{id}", { params: { path: { id } } });
   if (!plan) return null;
@@ -34,6 +34,6 @@ export async function loadPlan(id: number): Promise<PlanDetail | null> {
     id: plan.id,
     name: plan.name,
     notes: plan.notes ?? "",
-    templates: [...(plan.templates ?? [])].sort((a, b) => a.id - b.id).map(toEditorTemplate),
+    templates: [...(plan.templates ?? [])].sort((a, b) => a.createdAt.localeCompare(b.createdAt)).map(toEditorTemplate),
   };
 }

@@ -36,14 +36,20 @@ export class PlannerService {
       dto.templateId,
     );
     if (!template) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'TEMPLATE_NOT_FOUND', 'Workout template not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'TEMPLATE_NOT_FOUND',
+          'Workout template not found',
+        ),
+      );
     }
     const scheduled = this.repo.create({ user, template, date: dto.date });
     return this.repo.save(scheduled);
   }
 
   async generate(user: User, dto: GenerateScheduleDto) {
-    const templates = new Map<number, WorkoutTemplate>();
+    const templates = new Map<string, WorkoutTemplate>();
     for (const assignment of dto.assignments) {
       if (!templates.has(assignment.templateId)) {
         const template = await this.templateService.findOne(
@@ -51,13 +57,20 @@ export class PlannerService {
           assignment.templateId,
         );
         if (!template) {
-          throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'TEMPLATE_NOT_FOUND', `Workout template ${assignment.templateId} not found`, { id: assignment.templateId }));
+          throw new NotFoundException(
+            errorBody(
+              HttpStatus.NOT_FOUND,
+              'TEMPLATE_NOT_FOUND',
+              `Workout template ${assignment.templateId} not found`,
+              { id: assignment.templateId },
+            ),
+          );
         }
         templates.set(assignment.templateId, template);
       }
     }
 
-    const templateIdsByDayOfWeek = new Map<number, number[]>();
+    const templateIdsByDayOfWeek = new Map<number, string[]>();
     for (const assignment of dto.assignments) {
       const ids = templateIdsByDayOfWeek.get(assignment.dayOfWeek) ?? [];
       ids.push(assignment.templateId);
@@ -89,7 +102,7 @@ export class PlannerService {
     return this.repo.save(toCreate);
   }
 
-  findAllForUser(userId: number, filters?: FindScheduledWorkoutDto) {
+  findAllForUser(userId: string, filters?: FindScheduledWorkoutDto) {
     const where: FindOptionsWhere<ScheduledWorkout> = {
       user: { id: userId },
     };
@@ -108,40 +121,58 @@ export class PlannerService {
     });
   }
 
-  findToday(userId: number, date?: string) {
+  findToday(userId: string, date?: string) {
     const today = date ?? new Date().toISOString().slice(0, 10);
     return this.repo.find({
       where: { user: { id: userId }, date: today },
-      relations: ['template', 'template.plan', 'template.exercises', 'template.exercises.exercise', 'workout'],
+      relations: [
+        'template',
+        'template.plan',
+        'template.exercises',
+        'template.exercises.exercise',
+        'workout',
+      ],
     });
   }
 
-  private async findOwned(userId: number, id: number) {
+  private async findOwned(userId: string, id: string) {
     const scheduled = await this.repo.findOne({
       where: { id, user: { id: userId } },
       relations: ['template'],
     });
     if (!scheduled) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'SCHEDULED_WORKOUT_NOT_FOUND', 'Scheduled workout not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'SCHEDULED_WORKOUT_NOT_FOUND',
+          'Scheduled workout not found',
+        ),
+      );
     }
     return scheduled;
   }
 
-  async update(userId: number, id: number, dto: UpdateScheduledWorkoutDto) {
+  async update(userId: string, id: string, dto: UpdateScheduledWorkoutDto) {
     const scheduled = await this.findOwned(userId, id);
     assignDefined(scheduled, dto);
     return this.repo.save(scheduled);
   }
 
-  async remove(userId: number, id: number) {
+  async remove(userId: string, id: string) {
     const scheduled = await this.findOwned(userId, id);
     return this.repo.remove(scheduled);
   }
 
-  async start(userId: number, id: number) {
+  async start(userId: string, id: string) {
     const scheduled = await this.findOwned(userId, id);
     if (!scheduled.template) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'SCHEDULED_WORKOUT_NO_TEMPLATE', 'Scheduled workout has no template to start from'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'SCHEDULED_WORKOUT_NO_TEMPLATE',
+          'Scheduled workout has no template to start from',
+        ),
+      );
     }
 
     const template = await this.templateService.findOne(
@@ -149,7 +180,13 @@ export class PlannerService {
       scheduled.template.id,
     );
     if (!template) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'TEMPLATE_NOT_FOUND', 'Workout template not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'TEMPLATE_NOT_FOUND',
+          'Workout template not found',
+        ),
+      );
     }
 
     const workout = await this.workoutService.createFromTemplate(

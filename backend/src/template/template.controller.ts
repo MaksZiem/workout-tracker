@@ -1,3 +1,4 @@
+import { ParseIdPipe } from 'src/common/pipes/parse-id.pipe';
 import {
   Body,
   Controller,
@@ -5,7 +6,6 @@ import {
   Get,
   NotFoundException,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   UseGuards,
@@ -42,16 +42,29 @@ import { WorkoutTemplateExercise } from './workout-template-exercise.entity';
 
 @ApiTags('template')
 @ApiBearerAuth(BEARER_AUTH)
-@ApiUnauthorizedResponse({ description: 'Brak tokenu lub token nieprawidłowy', type: UnauthorizedErrorDto })
+@ApiUnauthorizedResponse({
+  description: 'Brak tokenu lub token nieprawidłowy',
+  type: UnauthorizedErrorDto,
+})
 @Controller('template')
 export class TemplateController {
   constructor(private readonly templateService: TemplateService) {}
 
   @Post()
   @UseGuards(AuthGuard)
-  @ApiOperation({ summary: 'Utwórz szablon treningowy', description: 'Tworzy pusty szablon (bez ćwiczeń), opcjonalnie przypisany do planu.' })
-  @ApiCreatedResponse({ description: 'Szablon utworzony', type: WorkoutTemplate })
-  @ApiBadRequestResponse({ description: 'Nieprawidłowe dane wejściowe', type: BadRequestErrorDto })
+  @ApiOperation({
+    summary: 'Utwórz szablon treningowy',
+    description:
+      'Tworzy pusty szablon (bez ćwiczeń), opcjonalnie przypisany do planu.',
+  })
+  @ApiCreatedResponse({
+    description: 'Szablon utworzony',
+    type: WorkoutTemplate,
+  })
+  @ApiBadRequestResponse({
+    description: 'Nieprawidłowe dane wejściowe',
+    type: BadRequestErrorDto,
+  })
   create(@CurrentUser() user: User, @Body() dto: CreateWorkoutTemplateDto) {
     return this.templateService.create(user, dto);
   }
@@ -59,7 +72,11 @@ export class TemplateController {
   @Get()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Pobierz wszystkie szablony użytkownika' })
-  @ApiOkResponse({ description: 'Lista szablonów', type: WorkoutTemplate, isArray: true })
+  @ApiOkResponse({
+    description: 'Lista szablonów',
+    type: WorkoutTemplate,
+    isArray: true,
+  })
   findAll(@CurrentUser() user: User) {
     return this.templateService.findAllForUser(user.id);
   }
@@ -67,13 +84,32 @@ export class TemplateController {
   @Get('/:id')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Pobierz szczegóły szablonu wraz z ćwiczeniami' })
-  @ApiParam({ name: 'id', type: Number, example: 1, description: 'Identyfikator szablonu' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    format: 'uuid',
+    example: '3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c',
+    description: 'Identyfikator szablonu',
+  })
   @ApiOkResponse({ description: 'Szczegóły szablonu', type: WorkoutTemplate })
-  @ApiNotFoundResponse({ description: 'Szablon nie istnieje lub nie należy do zalogowanego użytkownika', type: NotFoundErrorDto })
-  async findOne(@CurrentUser() user: User, @Param('id', ParseIntPipe) id: number) {
+  @ApiNotFoundResponse({
+    description:
+      'Szablon nie istnieje lub nie należy do zalogowanego użytkownika',
+    type: NotFoundErrorDto,
+  })
+  async findOne(
+    @CurrentUser() user: User,
+    @Param('id', ParseIdPipe) id: string,
+  ) {
     const template = await this.templateService.findOne(user.id, id);
     if (!template) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'TEMPLATE_NOT_FOUND', 'Workout template not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'TEMPLATE_NOT_FOUND',
+          'Workout template not found',
+        ),
+      );
     }
     return template;
   }
@@ -81,12 +117,25 @@ export class TemplateController {
   @Patch('/:id')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Zaktualizuj szablon (nazwa, notatki)' })
-  @ApiParam({ name: 'id', type: Number, example: 1, description: 'Identyfikator szablonu' })
-  @ApiOkResponse({ description: 'Zaktualizowany szablon', type: WorkoutTemplate })
-  @ApiNotFoundResponse({ description: 'Szablon nie istnieje lub nie należy do zalogowanego użytkownika', type: NotFoundErrorDto })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    format: 'uuid',
+    example: '3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c',
+    description: 'Identyfikator szablonu',
+  })
+  @ApiOkResponse({
+    description: 'Zaktualizowany szablon',
+    type: WorkoutTemplate,
+  })
+  @ApiNotFoundResponse({
+    description:
+      'Szablon nie istnieje lub nie należy do zalogowanego użytkownika',
+    type: NotFoundErrorDto,
+  })
   update(
     @CurrentUser() user: User,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIdPipe) id: string,
     @Body() dto: UpdateWorkoutTemplateDto,
   ) {
     return this.templateService.update(user.id, id, dto);
@@ -94,23 +143,53 @@ export class TemplateController {
 
   @Delete('/:id')
   @UseGuards(AuthGuard)
-  @ApiOperation({ summary: 'Usuń szablon', description: 'Usuwa szablon wraz ze wszystkimi jego ćwiczeniami (kaskadowo).' })
-  @ApiParam({ name: 'id', type: Number, example: 1, description: 'Identyfikator szablonu' })
+  @ApiOperation({
+    summary: 'Usuń szablon',
+    description:
+      'Usuwa szablon wraz ze wszystkimi jego ćwiczeniami (kaskadowo).',
+  })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    format: 'uuid',
+    example: '3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c',
+    description: 'Identyfikator szablonu',
+  })
   @ApiOkResponse({ description: 'Szablon usunięty', type: WorkoutTemplate })
-  @ApiNotFoundResponse({ description: 'Szablon nie istnieje lub nie należy do zalogowanego użytkownika', type: NotFoundErrorDto })
-  remove(@CurrentUser() user: User, @Param('id', ParseIntPipe) id: number) {
+  @ApiNotFoundResponse({
+    description:
+      'Szablon nie istnieje lub nie należy do zalogowanego użytkownika',
+    type: NotFoundErrorDto,
+  })
+  remove(@CurrentUser() user: User, @Param('id', ParseIdPipe) id: string) {
     return this.templateService.remove(user.id, id);
   }
 
   @Post('/:templateId/exercise')
   @UseGuards(AuthGuard)
-  @ApiOperation({ summary: 'Dodaj ćwiczenie do szablonu', description: 'Dołącza ćwiczenie z globalnego katalogu wraz z docelowymi seriami/powtórzeniami/ciężarem.' })
-  @ApiParam({ name: 'templateId', type: Number, example: 1, description: 'Identyfikator szablonu' })
-  @ApiCreatedResponse({ description: 'Ćwiczenie dodane do szablonu', type: WorkoutTemplateExercise })
-  @ApiNotFoundResponse({ description: 'Szablon lub ćwiczenie nie istnieje', type: NotFoundErrorDto })
+  @ApiOperation({
+    summary: 'Dodaj ćwiczenie do szablonu',
+    description:
+      'Dołącza ćwiczenie z globalnego katalogu wraz z docelowymi seriami/powtórzeniami/ciężarem.',
+  })
+  @ApiParam({
+    name: 'templateId',
+    type: String,
+    format: 'uuid',
+    example: '3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c',
+    description: 'Identyfikator szablonu',
+  })
+  @ApiCreatedResponse({
+    description: 'Ćwiczenie dodane do szablonu',
+    type: WorkoutTemplateExercise,
+  })
+  @ApiNotFoundResponse({
+    description: 'Szablon lub ćwiczenie nie istnieje',
+    type: NotFoundErrorDto,
+  })
   addExercise(
     @CurrentUser() user: User,
-    @Param('templateId', ParseIntPipe) templateId: number,
+    @Param('templateId', ParseIdPipe) templateId: string,
     @Body() dto: AddTemplateExerciseDto,
   ) {
     return this.templateService.addExercise(user.id, templateId, dto);
@@ -119,14 +198,32 @@ export class TemplateController {
   @Patch('/:templateId/exercise/:teId')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Zaktualizuj ćwiczenie w szablonie' })
-  @ApiParam({ name: 'templateId', type: Number, example: 1, description: 'Identyfikator szablonu' })
-  @ApiParam({ name: 'teId', type: Number, example: 3, description: 'Identyfikator wpisu ćwiczenia w szablonie' })
-  @ApiOkResponse({ description: 'Zaktualizowane ćwiczenie szablonu', type: WorkoutTemplateExercise })
-  @ApiNotFoundResponse({ description: 'Wpis ćwiczenia nie istnieje w tym szablonie', type: NotFoundErrorDto })
+  @ApiParam({
+    name: 'templateId',
+    type: String,
+    format: 'uuid',
+    example: '3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c',
+    description: 'Identyfikator szablonu',
+  })
+  @ApiParam({
+    name: 'teId',
+    type: String,
+    format: 'uuid',
+    example: '3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c',
+    description: 'Identyfikator wpisu ćwiczenia w szablonie',
+  })
+  @ApiOkResponse({
+    description: 'Zaktualizowane ćwiczenie szablonu',
+    type: WorkoutTemplateExercise,
+  })
+  @ApiNotFoundResponse({
+    description: 'Wpis ćwiczenia nie istnieje w tym szablonie',
+    type: NotFoundErrorDto,
+  })
   updateExercise(
     @CurrentUser() user: User,
-    @Param('templateId', ParseIntPipe) templateId: number,
-    @Param('teId', ParseIntPipe) teId: number,
+    @Param('templateId', ParseIdPipe) templateId: string,
+    @Param('teId', ParseIdPipe) teId: string,
     @Body() dto: UpdateTemplateExerciseDto,
   ) {
     return this.templateService.updateExercise(user.id, templateId, teId, dto);
@@ -135,14 +232,32 @@ export class TemplateController {
   @Delete('/:templateId/exercise/:teId')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Usuń ćwiczenie z szablonu' })
-  @ApiParam({ name: 'templateId', type: Number, example: 1, description: 'Identyfikator szablonu' })
-  @ApiParam({ name: 'teId', type: Number, example: 3, description: 'Identyfikator wpisu ćwiczenia w szablonie' })
-  @ApiOkResponse({ description: 'Ćwiczenie usunięte z szablonu', type: WorkoutTemplateExercise })
-  @ApiNotFoundResponse({ description: 'Wpis ćwiczenia nie istnieje w tym szablonie', type: NotFoundErrorDto })
+  @ApiParam({
+    name: 'templateId',
+    type: String,
+    format: 'uuid',
+    example: '3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c',
+    description: 'Identyfikator szablonu',
+  })
+  @ApiParam({
+    name: 'teId',
+    type: String,
+    format: 'uuid',
+    example: '3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c',
+    description: 'Identyfikator wpisu ćwiczenia w szablonie',
+  })
+  @ApiOkResponse({
+    description: 'Ćwiczenie usunięte z szablonu',
+    type: WorkoutTemplateExercise,
+  })
+  @ApiNotFoundResponse({
+    description: 'Wpis ćwiczenia nie istnieje w tym szablonie',
+    type: NotFoundErrorDto,
+  })
   removeExercise(
     @CurrentUser() user: User,
-    @Param('templateId', ParseIntPipe) templateId: number,
-    @Param('teId', ParseIntPipe) teId: number,
+    @Param('templateId', ParseIdPipe) templateId: string,
+    @Param('teId', ParseIdPipe) teId: string,
   ) {
     return this.templateService.removeExercise(user.id, templateId, teId);
   }

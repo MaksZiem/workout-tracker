@@ -58,7 +58,7 @@ function Title({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Origin({ plan, scheduled = false }: { plan: { id: number; name: string } | null; scheduled?: boolean }) {
+function Origin({ plan, scheduled = false }: { plan: { id: string; name: string } | null; scheduled?: boolean }) {
   const t = useTranslations("pages.dashboard.today");
   if (!plan && !scheduled) return null;
   return (

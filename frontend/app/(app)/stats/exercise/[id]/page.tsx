@@ -16,13 +16,13 @@ import { StatsTip } from "@/components/stats/stats-tip";
 import { E1rmTip } from "@/components/ui/e1rm-tip";
 import { SegmentedLinks } from "@/components/stats/segmented-links";
 import { SectionError, StatsSection } from "@/components/stats/section";
+import { parseId } from "@/lib/ids";
 
 type Props = PageProps<"/stats/exercise/[id]">;
 
 async function exerciseId(props: Props) {
   const { id } = await props.params;
-  const value = Number(id);
-  return Number.isInteger(value) && value > 0 ? value : null;
+  return parseId(id);
 }
 
 export async function generateMetadata(): Promise<Metadata> {

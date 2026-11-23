@@ -40,7 +40,7 @@ export class TemplateService {
     return this.repo.save(template);
   }
 
-  findAllForUser(userId: number) {
+  findAllForUser(userId: string) {
     return this.repo.find({
       where: { user: { id: userId } },
       relations: ['plan', 'exercises', 'exercises.exercise'],
@@ -48,28 +48,34 @@ export class TemplateService {
     });
   }
 
-  findOne(userId: number, id: number) {
+  findOne(userId: string, id: string) {
     return this.repo.findOne({
       where: { id, user: { id: userId } },
       relations: ['plan', 'exercises', 'exercises.exercise'],
     });
   }
 
-  private async findOwned(userId: number, id: number) {
+  private async findOwned(userId: string, id: string) {
     const template = await this.findOne(userId, id);
     if (!template) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'TEMPLATE_NOT_FOUND', 'Workout template not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'TEMPLATE_NOT_FOUND',
+          'Workout template not found',
+        ),
+      );
     }
     return template;
   }
 
-  async update(userId: number, id: number, dto: UpdateWorkoutTemplateDto) {
+  async update(userId: string, id: string, dto: UpdateWorkoutTemplateDto) {
     const template = await this.findOwned(userId, id);
     assignDefined(template, dto);
     return this.repo.save(template);
   }
 
-  async remove(userId: number, id: number) {
+  async remove(userId: string, id: string) {
     const template = await this.findOwned(userId, id);
     const today = new Date().toISOString().slice(0, 10);
 
@@ -88,15 +94,21 @@ export class TemplateService {
   }
 
   async addExercise(
-    userId: number,
-    templateId: number,
+    userId: string,
+    templateId: string,
     dto: AddTemplateExerciseDto,
   ) {
     const template = await this.findOwned(userId, templateId);
 
     const exercise = await this.exerciseService.findOne(dto.exerciseId);
     if (!exercise) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'EXERCISE_NOT_FOUND', 'Exercise not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'EXERCISE_NOT_FOUND',
+          'Exercise not found',
+        ),
+      );
     }
 
     const templateExercise = this.templateExerciseRepo.create({
@@ -112,22 +124,34 @@ export class TemplateService {
   }
 
   async updateExercise(
-    userId: number,
-    templateId: number,
-    teId: number,
+    userId: string,
+    templateId: string,
+    teId: string,
     dto: UpdateTemplateExerciseDto,
   ) {
     const te = await this.templateExerciseRepo.findOne({
       where: { id: teId, template: { id: templateId, user: { id: userId } } },
     });
     if (!te) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'TEMPLATE_EXERCISE_NOT_FOUND', 'Template exercise not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'TEMPLATE_EXERCISE_NOT_FOUND',
+          'Template exercise not found',
+        ),
+      );
     }
     const { exerciseId, ...targets } = dto;
     if (exerciseId !== undefined) {
       const exercise = await this.exerciseService.findOne(exerciseId);
       if (!exercise) {
-        throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'EXERCISE_NOT_FOUND', 'Exercise not found'));
+        throw new NotFoundException(
+          errorBody(
+            HttpStatus.NOT_FOUND,
+            'EXERCISE_NOT_FOUND',
+            'Exercise not found',
+          ),
+        );
       }
       te.exercise = exercise;
     }
@@ -135,12 +159,18 @@ export class TemplateService {
     return this.templateExerciseRepo.save(te);
   }
 
-  async removeExercise(userId: number, templateId: number, teId: number) {
+  async removeExercise(userId: string, templateId: string, teId: string) {
     const te = await this.templateExerciseRepo.findOne({
       where: { id: teId, template: { id: templateId, user: { id: userId } } },
     });
     if (!te) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'TEMPLATE_EXERCISE_NOT_FOUND', 'Template exercise not found'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'TEMPLATE_EXERCISE_NOT_FOUND',
+          'Template exercise not found',
+        ),
+      );
     }
     return this.templateExerciseRepo.remove(te);
   }

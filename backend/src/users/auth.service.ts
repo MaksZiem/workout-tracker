@@ -9,7 +9,7 @@ import { UsersService } from './users.service';
 import { JwtService } from '@nestjs/jwt';
 import { hashPassword } from 'src/helpers/hash-password';
 import { promisify } from 'util';
-import { randomBytes, scrypt as _scrypt, timingSafeEqual } from 'crypto';
+import { scrypt as _scrypt, timingSafeEqual } from 'crypto';
 
 const scrypt = promisify(_scrypt);
 
@@ -23,12 +23,23 @@ export class AuthService {
   async signup(email: string, password: string, name: string, surname: string) {
     const users = await this.usersService.find(email);
     if (users.length) {
-      throw new BadRequestException(errorBody(HttpStatus.BAD_REQUEST, 'EMAIL_IN_USE', 'User already exists'));
+      throw new BadRequestException(
+        errorBody(
+          HttpStatus.BAD_REQUEST,
+          'EMAIL_IN_USE',
+          'User already exists',
+        ),
+      );
     }
 
     const hashedPassword = await hashPassword(password);
 
-    const user = await this.usersService.create(email, hashedPassword, name, surname);
+    const user = await this.usersService.create(
+      email,
+      hashedPassword,
+      name,
+      surname,
+    );
 
     const payload = {
       id: user.id,
@@ -46,21 +57,39 @@ export class AuthService {
     const [user] = await this.usersService.find(email);
 
     if (!user) {
-      throw new UnauthorizedException(errorBody(HttpStatus.UNAUTHORIZED, 'INVALID_CREDENTIALS', 'Invalid email or password'));
+      throw new UnauthorizedException(
+        errorBody(
+          HttpStatus.UNAUTHORIZED,
+          'INVALID_CREDENTIALS',
+          'Invalid email or password',
+        ),
+      );
     }
 
     const [salt, storedHash] = user.password.split('.');
     const hash = (await scrypt(password, salt, 32)) as Buffer;
     const storedHashBuffer = Buffer.from(storedHash, 'hex');
 
-     if (
+    if (
       storedHashBuffer.length !== hash.length ||
       !timingSafeEqual(storedHashBuffer, hash)
     ) {
-      throw new UnauthorizedException(errorBody(HttpStatus.UNAUTHORIZED, 'INVALID_CREDENTIALS', 'Invalid email or password'));
+      throw new UnauthorizedException(
+        errorBody(
+          HttpStatus.UNAUTHORIZED,
+          'INVALID_CREDENTIALS',
+          'Invalid email or password',
+        ),
+      );
     }
 
-    const payload = { id: user.id, email: user.email, role: user.role, name: user.name, surname: user.surname };
+    const payload = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      name: user.name,
+      surname: user.surname,
+    };
 
     const access_token = await this.jwtService.signAsync(payload);
 

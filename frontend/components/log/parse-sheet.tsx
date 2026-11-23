@@ -16,7 +16,7 @@ export function ParseSheet({
 }: {
   open: boolean;
   onClose: () => void;
-  workoutId: number;
+  workoutId: string;
   onParsed: (workout: Workout) => void;
 }) {
   const t = useTranslations("pages.log.ai");

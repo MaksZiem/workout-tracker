@@ -5,20 +5,29 @@ import { WorkoutTemplate } from './workout-template.entity';
 
 @Entity()
 export class WorkoutTemplateExercise {
-  @ApiProperty({ description: 'Unikalny identyfikator wpisu ćwiczenia w szablonie', example: 1 })
-  @PrimaryGeneratedColumn()
-  id: number;
+  @ApiProperty({
+    description: 'Unikalny identyfikator wpisu ćwiczenia w szablonie',
+    example: '3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c',
+  })
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => WorkoutTemplate, (template) => template.exercises, {
     onDelete: 'CASCADE',
   })
   template: WorkoutTemplate;
 
-  @ApiProperty({ description: 'Ćwiczenie z globalnego katalogu', type: () => Exercise })
+  @ApiProperty({
+    description: 'Ćwiczenie z globalnego katalogu',
+    type: () => Exercise,
+  })
   @ManyToOne(() => Exercise)
   exercise: Exercise;
 
-  @ApiProperty({ description: 'Kolejność ćwiczenia w szablonie (0 = pierwsze)', example: 0 })
+  @ApiProperty({
+    description: 'Kolejność ćwiczenia w szablonie (0 = pierwsze)',
+    example: 0,
+  })
   @Column({ default: 0 })
   order: number;
 
@@ -26,11 +35,17 @@ export class WorkoutTemplateExercise {
   @Column({ default: 3 })
   targetSets: number;
 
-  @ApiProperty({ description: 'Docelowa liczba powtórzeń w serii', example: 10 })
+  @ApiProperty({
+    description: 'Docelowa liczba powtórzeń w serii',
+    example: 10,
+  })
   @Column()
   targetReps: number;
 
-  @ApiPropertyOptional({ description: 'Docelowy ciężar w kilogramach', example: 60 })
+  @ApiPropertyOptional({
+    description: 'Docelowy ciężar w kilogramach',
+    example: 60,
+  })
   @Column({
     type: 'decimal',
     precision: 6,
@@ -43,7 +58,10 @@ export class WorkoutTemplateExercise {
   })
   targetWeight: number;
 
-  @ApiPropertyOptional({ description: 'Docelowy czas odpoczynku w sekundach', example: 90 })
+  @ApiPropertyOptional({
+    description: 'Docelowy czas odpoczynku w sekundach',
+    example: 90,
+  })
   @Column({ nullable: true })
   restSeconds: number;
 }

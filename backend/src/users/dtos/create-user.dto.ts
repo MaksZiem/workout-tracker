@@ -3,7 +3,8 @@ import { IsEmail, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({
-    description: 'Adres e-mail, który będzie loginem użytkownika. Musi być unikalny.',
+    description:
+      'Adres e-mail, który będzie loginem użytkownika. Musi być unikalny.',
     example: 'jan.kowalski@example.com',
   })
   @IsEmail()

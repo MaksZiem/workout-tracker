@@ -15,7 +15,7 @@ export const workoutPlanSchema = {
             items: {
               type: Type.OBJECT,
               properties: {
-                exerciseId: { type: Type.INTEGER },
+                exerciseId: { type: Type.STRING },
                 order: { type: Type.INTEGER },
                 targetSets: { type: Type.INTEGER },
                 targetReps: { type: Type.INTEGER },

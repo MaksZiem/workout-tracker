@@ -1,9 +1,10 @@
 import type { MuscleGroup, WorkoutTemplate } from "@/lib/api/extra-types";
 import { parseWeight } from "@/lib/log/model";
+import { compareIds } from "@/lib/ids";
 
 export type EditorExercise = {
-  id: number;
-  exerciseId: number;
+  id: string;
+  exerciseId: string;
   name: string;
   muscleGroup: MuscleGroup;
   order: number;
@@ -13,13 +14,13 @@ export type EditorExercise = {
   restSeconds: number | null;
 };
 
-export type EditorTemplate = { id: number; name: string; exercises: EditorExercise[] };
+export type EditorTemplate = { id: string; name: string; exercises: EditorExercise[] };
 
 export type PlanSummary = {
-  id: number;
+  id: string;
   name: string;
   notes: string | null;
-  templates: { id: number; name: string; exerciseCount: number }[];
+  templates: { id: string; name: string; exerciseCount: number }[];
   exerciseCount: number;
 };
 
@@ -28,7 +29,7 @@ export function toEditorTemplate(template: WorkoutTemplate): EditorTemplate {
     id: template.id,
     name: template.name,
     exercises: [...(template.exercises ?? [])]
-      .sort((a, b) => a.order - b.order || a.id - b.id)
+      .sort((a, b) => a.order - b.order || compareIds(a.id, b.id))
       .map((te) => ({
         id: te.id,
         exerciseId: te.exercise.id,

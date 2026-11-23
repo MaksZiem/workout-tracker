@@ -4,16 +4,22 @@ import { WorkoutExercise } from './workout-exercise.entity';
 
 @Entity()
 export class ExerciseSet {
-  @ApiProperty({ description: 'Unikalny identyfikator serii', example: 1 })
-  @PrimaryGeneratedColumn()
-  id: number;
+  @ApiProperty({
+    description: 'Unikalny identyfikator serii',
+    example: '3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c',
+  })
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => WorkoutExercise, (workoutExercise) => workoutExercise.sets, {
     onDelete: 'CASCADE',
   })
   workoutExercise: WorkoutExercise;
 
-  @ApiProperty({ description: 'Numer serii w ramach ćwiczenia (od 1)', example: 1 })
+  @ApiProperty({
+    description: 'Numer serii w ramach ćwiczenia (od 1)',
+    example: 1,
+  })
   @Column({ default: 1 })
   setNumber: number;
 
@@ -33,11 +39,18 @@ export class ExerciseSet {
   @Column()
   reps: number;
 
-  @ApiPropertyOptional({ description: 'Czas odpoczynku po serii w sekundach', example: 90 })
+  @ApiPropertyOptional({
+    description: 'Czas odpoczynku po serii w sekundach',
+    example: 90,
+  })
   @Column({ nullable: true })
   restSeconds: number;
 
-  @ApiProperty({ description: 'Czy seria została ukończona', example: true, default: false })
+  @ApiProperty({
+    description: 'Czy seria została ukończona',
+    example: true,
+    default: false,
+  })
   @Column({ default: false })
   completed: boolean;
 }

@@ -8,7 +8,7 @@ import type { ScheduledWorkoutStatus } from "@/lib/api/extra-types";
 import type { Toast } from "@/components/ui/toast";
 import type { PlannerEntry } from "@/lib/planner/model";
 
-type Patch = { id: number; status?: ScheduledWorkoutStatus; date?: string };
+type Patch = { id: string; status?: ScheduledWorkoutStatus; date?: string };
 
 const UNDO_WINDOW = 5000;
 
@@ -23,7 +23,7 @@ export function usePlanner(serverEntries: PlannerEntry[], messages: PlannerMessa
   const [entries, applyPatch] = useOptimistic(serverEntries, (state, patch: Patch) =>
     state.map((e) => (e.id === patch.id ? { ...e, ...patch } : e)),
   );
-  const [hidden, setHidden] = useState<Set<number>>(new Set());
+  const [hidden, setHidden] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<Toast | null>(null);
   const toastSeq = useRef(0);
 
@@ -55,7 +55,7 @@ export function usePlanner(serverEntries: PlannerEntry[], messages: PlannerMessa
   );
 
   const remove = useCallback(
-    (id: number) => {
+    (id: string) => {
       setHidden((prev) => new Set(prev).add(id));
       let undone = false;
       const commit = setTimeout(async () => {

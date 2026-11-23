@@ -8,7 +8,11 @@ import { UsersModule } from 'src/users/users.module';
 import { GeminiModule } from 'src/gemini/gemini.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Exercise, ExerciseSubstitute]), UsersModule, GeminiModule],
+  imports: [
+    TypeOrmModule.forFeature([Exercise, ExerciseSubstitute]),
+    UsersModule,
+    GeminiModule,
+  ],
   controllers: [ExerciseController],
   providers: [ExerciseService],
   exports: [ExerciseService],

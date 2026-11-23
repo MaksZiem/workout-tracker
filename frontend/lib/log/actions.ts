@@ -3,12 +3,14 @@
 import { redirect } from "next/navigation";
 import { serverApi } from "@/lib/api/server";
 import { localDate } from "./model";
+import { parseId } from "@/lib/ids";
 
 export type StartState = { error?: boolean };
 
 export async function startScheduled(_prev: StartState, formData: FormData): Promise<StartState> {
-  const id = Number(formData.get("scheduledId"));
-  let workoutId: number | undefined;
+  const id = parseId(formData.get("scheduledId"));
+  if (!id) return { error: true };
+  let workoutId: string | undefined;
   try {
     const api = await serverApi();
     const { data } = await api.POST("/planner/scheduled/{id}/start", { params: { path: { id } } });
@@ -21,7 +23,7 @@ export async function startScheduled(_prev: StartState, formData: FormData): Pro
 }
 
 export async function startEmpty(): Promise<StartState> {
-  let workoutId: number | undefined;
+  let workoutId: string | undefined;
   try {
     const api = await serverApi();
     const { data } = await api.POST("/workout", { body: { date: localDate() } });

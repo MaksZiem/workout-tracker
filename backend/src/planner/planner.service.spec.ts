@@ -3,10 +3,10 @@ import { PlannerService } from './planner.service';
 import { User } from 'src/users/user.entity';
 
 describe('PlannerService.generate', () => {
-  const user = { id: 1 } as User;
-  const push = { id: 31, name: 'Push' };
-  const pull = { id: 32, name: 'Pull' };
-  const legs = { id: 33, name: 'Legs' };
+  const user = { id: '1' } as User;
+  const push = { id: '31', name: 'Push' };
+  const pull = { id: '32', name: 'Pull' };
+  const legs = { id: '33', name: 'Legs' };
 
   let repo: { find: jest.Mock; create: jest.Mock; save: jest.Mock };
   let templateService: { findOne: jest.Mock };
@@ -19,11 +19,15 @@ describe('PlannerService.generate', () => {
       save: jest.fn((data) => Promise.resolve(data)),
     };
     templateService = {
-      findOne: jest.fn((userId: number, id: number) =>
+      findOne: jest.fn((userId: string, id: string) =>
         Promise.resolve([push, pull, legs].find((t) => t.id === id) ?? null),
       ),
     };
-    service = new PlannerService(repo as any, templateService as any, {} as any);
+    service = new PlannerService(
+      repo as any,
+      templateService as any,
+      {} as any,
+    );
   });
 
   it('schedules each template on its day of the week', async () => {
@@ -31,9 +35,9 @@ describe('PlannerService.generate', () => {
       from: '2026-10-05',
       to: '2026-10-11',
       assignments: [
-        { templateId: 31, dayOfWeek: 1 },
-        { templateId: 32, dayOfWeek: 3 },
-        { templateId: 33, dayOfWeek: 5 },
+        { templateId: '31', dayOfWeek: 1 },
+        { templateId: '32', dayOfWeek: 3 },
+        { templateId: '33', dayOfWeek: 5 },
       ],
     });
 
@@ -48,7 +52,7 @@ describe('PlannerService.generate', () => {
     const result = await service.generate(user, {
       from: '2026-10-05',
       to: '2026-10-25',
-      assignments: [{ templateId: 31, dayOfWeek: 1 }],
+      assignments: [{ templateId: '31', dayOfWeek: 1 }],
     });
 
     expect(result.map((s) => s.date)).toEqual([
@@ -65,8 +69,8 @@ describe('PlannerService.generate', () => {
       from: '2026-10-05',
       to: '2026-10-11',
       assignments: [
-        { templateId: 31, dayOfWeek: 1 },
-        { templateId: 32, dayOfWeek: 3 },
+        { templateId: '31', dayOfWeek: 1 },
+        { templateId: '32', dayOfWeek: 3 },
       ],
     });
 
@@ -78,7 +82,7 @@ describe('PlannerService.generate', () => {
       service.generate(user, {
         from: '2026-10-05',
         to: '2026-10-11',
-        assignments: [{ templateId: 99, dayOfWeek: 1 }],
+        assignments: [{ templateId: '99', dayOfWeek: 1 }],
       }),
     ).rejects.toThrow(NotFoundException);
     expect(repo.save).not.toHaveBeenCalled();

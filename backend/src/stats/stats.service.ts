@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ExerciseSet } from 'src/workout/exercise-set.entity';
 import { WorkoutExercise } from 'src/workout/workout-exercise.entity';
 import { Workout } from 'src/workout/workout.entity';
-import { WorkoutService } from 'src/workout/workout.service';
 import {
   Between,
   FindOptionsWhere,
@@ -41,8 +40,8 @@ export class StatsService {
   ) {}
 
   async getExerciseProgress(
-    userId: number,
-    exerciseId: number,
+    userId: string,
+    exerciseId: string,
     from?: string,
     to?: string,
   ) {
@@ -62,7 +61,7 @@ export class StatsService {
     return workoutExercises.map((we) => toProgressPoint(we));
   }
 
-  async getPersonalRecords(userId: number, exerciseId: number) {
+  async getPersonalRecords(userId: string, exerciseId: string) {
     const sets = await this.exerciseSetRepo.find({
       where: {
         completed: true,
@@ -79,13 +78,19 @@ export class StatsService {
     });
 
     if (!sets.length) {
-      throw new NotFoundException(errorBody(HttpStatus.NOT_FOUND, 'NO_COMPLETED_SETS', 'No completed sets found for this exercise'));
+      throw new NotFoundException(
+        errorBody(
+          HttpStatus.NOT_FOUND,
+          'NO_COMPLETED_SETS',
+          'No completed sets found for this exercise',
+        ),
+      );
     }
 
     return computePersonalRecords(sets);
   }
 
-  async getAllPersonalRecords(userId: number) {
+  async getAllPersonalRecords(userId: string) {
     const sets = await this.exerciseSetRepo.find({
       where: {
         completed: true,
@@ -97,7 +102,7 @@ export class StatsService {
         'workoutExercise.exercise',
       ],
     });
-    const byExercise = new Map<number, ExerciseSet[]>();
+    const byExercise = new Map<string, ExerciseSet[]>();
     for (const set of sets) {
       const exerciseId = set.workoutExercise.exercise.id;
       const group = byExercise.get(exerciseId) ?? [];
@@ -114,7 +119,7 @@ export class StatsService {
     );
   }
 
-  async getMuscleGroupDistribution(userId: number, from?: string, to?: string) {
+  async getMuscleGroupDistribution(userId: string, from?: string, to?: string) {
     const workoutWhere = this.workoutWhere(userId, from, to);
 
     const sets = await this.exerciseSetRepo.find({
@@ -147,7 +152,7 @@ export class StatsService {
     }));
   }
 
-  async getWorkoutFrequency(userId: number, from?: string, to?: string) {
+  async getWorkoutFrequency(userId: string, from?: string, to?: string) {
     const rangeTo = to ?? today();
     const rangeFrom = from ?? addDays(rangeTo, -364);
 
@@ -167,10 +172,7 @@ export class StatsService {
 
     const countsByDate = new Map<string, number>();
     for (const workout of workouts) {
-      countsByDate.set(
-        workout.date,
-        (countsByDate.get(workout.date) ?? 0) + 1,
-      );
+      countsByDate.set(workout.date, (countsByDate.get(workout.date) ?? 0) + 1);
     }
 
     const now = today();
@@ -194,7 +196,7 @@ export class StatsService {
     return days;
   }
 
-  async getCurrentStreak(userId: number): Promise<number> {
+  async getCurrentStreak(userId: string): Promise<number> {
     const workouts = await this.workoutRepo.find({
       where: { user: { id: userId } },
       select: ['date'],
@@ -216,7 +218,7 @@ export class StatsService {
     return streak;
   }
 
-  async getSummary(userId: number, from?: string, to?: string) {
+  async getSummary(userId: string, from?: string, to?: string) {
     const workoutWhere = this.workoutWhere(userId, from, to);
 
     const [totalWorkouts, muscleGroups, currentStreak] = await Promise.all([
@@ -243,7 +245,7 @@ export class StatsService {
     };
   }
 
-  async getAdherence(userId: number, from?: string, to?: string) {
+  async getAdherence(userId: string, from?: string, to?: string) {
     const scheduled = await this.scheduledRepo.find({
       where: { user: { id: userId }, date: this.dateRange(from, to) },
       select: ['date', 'status'],
@@ -251,7 +253,7 @@ export class StatsService {
     return computeAdherence(scheduled, today());
   }
 
-  async getWeeklyStats(userId: number, from?: string, to?: string) {
+  async getWeeklyStats(userId: string, from?: string, to?: string) {
     const rangeTo = to ?? today();
     const [workouts, sets] = await Promise.all([
       this.workoutRepo.find({
@@ -268,25 +270,25 @@ export class StatsService {
     );
   }
 
-  async getRepRanges(userId: number, from?: string, to?: string) {
+  async getRepRanges(userId: string, from?: string, to?: string) {
     return computeRepRanges(await this.completedSets(userId, from, to));
   }
 
-  async getStagnation(userId: number) {
+  async getStagnation(userId: string) {
     return computeStagnation(await this.completedSets(userId), today());
   }
 
-  async getRepRecords(userId: number, exerciseId: number) {
+  async getRepRecords(userId: string, exerciseId: string) {
     return computeRepRecords(
       await this.completedSets(userId, undefined, undefined, exerciseId),
     );
   }
 
   private async completedSets(
-    userId: number,
+    userId: string,
     from?: string,
     to?: string,
-    exerciseId?: number,
+    exerciseId?: string,
   ): Promise<SetRow[]> {
     const sets = await this.exerciseSetRepo.find({
       where: {
@@ -313,7 +315,7 @@ export class StatsService {
   }
 
   private workoutWhere(
-    userId: number,
+    userId: string,
     from?: string,
     to?: string,
   ): FindOptionsWhere<Workout> {

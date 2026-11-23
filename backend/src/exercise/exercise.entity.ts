@@ -5,11 +5,17 @@ import { WorkoutExercise } from 'src/workout/workout-exercise.entity';
 
 @Entity()
 export class Exercise {
-  @ApiProperty({ description: 'Unikalny identyfikator ćwiczenia', example: 1 })
-  @PrimaryGeneratedColumn()
-  id: number;
+  @ApiProperty({
+    description: 'Unikalny identyfikator ćwiczenia',
+    example: '3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c',
+  })
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @ApiProperty({ description: 'Nazwa ćwiczenia (unikalna)', example: 'Wyciskanie sztangi leżąc' })
+  @ApiProperty({
+    description: 'Nazwa ćwiczenia (unikalna)',
+    example: 'Wyciskanie sztangi leżąc',
+  })
   @Column({ unique: true })
   name: string;
 

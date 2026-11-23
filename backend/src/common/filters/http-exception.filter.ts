@@ -7,6 +7,43 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { errorBody, ErrorParams } from '../error-body';
+
+type ExceptionBody = {
+  code?: unknown;
+  message?: unknown;
+  params?: unknown;
+};
+
+function statusCode(status: number) {
+  const name: unknown = HttpStatus[status];
+  return typeof name === 'string' ? name : 'ERROR';
+}
+
+function toMessage(value: unknown, fallback: string): string | string[] {
+  if (typeof value === 'string') return value;
+  if (Array.isArray(value) && value.every((v) => typeof v === 'string')) {
+    return value;
+  }
+  return fallback;
+}
+
+function normalize(status: number, body: string | object) {
+  const fallback = statusCode(status);
+  if (typeof body === 'string') {
+    return errorBody(status, fallback, body);
+  }
+  const { code, message, params } = body as ExceptionBody;
+  const normalized = errorBody(
+    status,
+    typeof code === 'string' ? code : fallback,
+    toMessage(message, fallback),
+    typeof params === 'object' && params !== null
+      ? (params as ErrorParams)
+      : {},
+  );
+  return message === undefined ? { ...body, ...normalized } : normalized;
+}
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -16,23 +53,20 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = host.switchToHttp().getResponse<Response>();
 
     if (exception instanceof HttpException) {
-      const statusCode = exception.getStatus();
-      const body = exception.getResponse();
-
-      response
-        .status(statusCode)
-        .json(
-          typeof body === 'string'
-            ? { statusCode, message: body, error: HttpStatus[statusCode] }
-            : body,
-        );
+      const status = exception.getStatus();
+      response.status(status).json(normalize(status, exception.getResponse()));
       return;
     }
 
     this.logger.error(exception instanceof Error ? exception.stack : exception);
-    response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: 'Internal server error',
-    });
+    response
+      .status(HttpStatus.INTERNAL_SERVER_ERROR)
+      .json(
+        errorBody(
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          'INTERNAL_SERVER_ERROR',
+          'Internal server error',
+        ),
+      );
   }
 }

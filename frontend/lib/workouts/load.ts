@@ -56,7 +56,7 @@ export async function loadMonth(month: string) {
   return { ok: true as const, rows, weeks: toWeeks(rows), summary: summarize(rows), earlier };
 }
 
-export async function loadWorkoutDetail(id: number) {
+export async function loadWorkoutDetail(id: string) {
   const api = await serverApi();
   const [{ data: workout }, records] = await Promise.all([
     api.GET("/workout/{id}", { params: { path: { id } } }),

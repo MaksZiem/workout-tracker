@@ -27,7 +27,7 @@ export function metricValue(session: Session, metric: StatsMetric) {
 export type TrendPoint = { date: string; value: number };
 
 export type MainExercise = {
-  id: number;
+  id: string;
   name: string;
   muscleGroup: MuscleGroup | null;
   sessions: number;
@@ -38,7 +38,7 @@ export type MainExercise = {
 };
 
 export function toMainExercise(
-  id: number,
+  id: string,
   name: string,
   muscleGroup: MuscleGroup | null,
   sessions: Session[],

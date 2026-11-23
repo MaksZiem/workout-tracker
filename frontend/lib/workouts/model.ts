@@ -1,6 +1,7 @@
 import type { ExercisePersonalRecords, MuscleGroup, Workout } from "@/lib/api/extra-types";
 import { estimatedOneRepMax as epley } from "@/lib/log/model";
 import { addDays, weekStart } from "@/lib/planner/dates";
+import { compareIds } from "@/lib/ids";
 
 const MAX_MINUTES = 6 * 60;
 
@@ -19,7 +20,7 @@ function volumeOf(sets: { weight: number | string; reps: number; completed: bool
 }
 
 export type HistoryRow = {
-  id: number;
+  id: string;
   date: string;
   exercises: string[];
   doneSets: number;
@@ -27,12 +28,13 @@ export type HistoryRow = {
   minutes: number | null;
   inProgress: boolean;
   templateName: string | null;
-  plan: { id: number; name: string } | null;
+  plan: { id: string; name: string } | null;
   record: boolean;
+  createdAt: string;
 };
 
 export type RowContext = {
-  scheduled: Map<number, { templateName: string | null; plan: { id: number; name: string } | null }>;
+  scheduled: Map<string, { templateName: string | null; plan: { id: string; name: string } | null }>;
   records: ExercisePersonalRecords[];
 };
 
@@ -54,6 +56,7 @@ export function toRow(w: Workout, ctx?: RowContext): HistoryRow {
     inProgress: !w.finishedAt,
     templateName: source?.templateName ?? null,
     plan: source?.plan ?? null,
+    createdAt: w.createdAt,
     record: (ctx?.records ?? []).some(
       (r) =>
         ids.has(r.exerciseId) &&
@@ -64,7 +67,7 @@ export function toRow(w: Workout, ctx?: RowContext): HistoryRow {
 
 export function toWeeks(rows: HistoryRow[]): HistoryWeek[] {
   const weeks = new Map<string, HistoryRow[]>();
-  for (const row of [...rows].sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id)) {
+  for (const row of [...rows].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt))) {
     const start = weekStart(row.date);
     weeks.set(start, [...(weeks.get(start) ?? []), row]);
   }
@@ -83,7 +86,7 @@ export function summarize(rows: HistoryRow[]): MonthSummary {
 export type RecordKind = "e1rm" | "maxWeight" | "bestSet";
 
 export type DetailSet = {
-  id: number;
+  id: string;
   number: number;
   weight: number;
   reps: number;
@@ -92,8 +95,8 @@ export type DetailSet = {
 };
 
 export type DetailExercise = {
-  id: number;
-  exerciseId: number;
+  id: string;
+  exerciseId: string;
   name: string;
   muscleGroup: MuscleGroup;
   sets: DetailSet[];
@@ -102,7 +105,7 @@ export type DetailExercise = {
 };
 
 export type WorkoutDetail = {
-  id: number;
+  id: string;
   date: string;
   notes: string;
   createdAt: string;
@@ -122,7 +125,7 @@ export function toDetail(w: Workout, records: ExercisePersonalRecords[]): Workou
     .sort((a, b) => a.order - b.order)
     .map((we): DetailExercise => {
       const sets: DetailSet[] = [...(we.sets ?? [])]
-        .sort((a, b) => a.setNumber - b.setNumber || a.id - b.id)
+        .sort((a, b) => a.setNumber - b.setNumber || compareIds(a.id, b.id))
         .map((s) => ({ id: s.id, number: s.setNumber, weight: Number(s.weight), reps: s.reps, completed: s.completed, records: [] }));
       const record = byExercise.get(we.exercise.id);
       const done = sets.filter((s) => s.completed && s.weight > 0);

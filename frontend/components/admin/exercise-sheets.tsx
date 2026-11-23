@@ -155,7 +155,7 @@ function SubstitutesReview({ exercise, locked }: { exercise: AdminExercise; lock
   const t = useTranslations("pages.adminExercises.sheet");
   const router = useRouter();
   const [review, setReview] = useState<Review>({ state: "loading" });
-  const [busy, setBusy] = useState<"regenerate" | number | null>(null);
+  const [busy, setBusy] = useState<"regenerate" | string | null>(null);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
@@ -168,7 +168,7 @@ function SubstitutesReview({ exercise, locked }: { exercise: AdminExercise; lock
     };
   }, [exercise.id, exercise.substitutesPicked]);
 
-  const act = async (kind: "regenerate" | number) => {
+  const act = async (kind: "regenerate" | string) => {
     if (busy !== null) return;
     setBusy(kind);
     setFailed(false);

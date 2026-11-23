@@ -17,7 +17,7 @@ describe('AuthService', () => {
 
   describe('signup', () => {
     it('rejects an email that is already in use', async () => {
-      usersService.find.mockResolvedValue([{ id: 1 }]);
+      usersService.find.mockResolvedValue([{ id: '1' }]);
 
       await expect(
         service.signup('jan@example.com', 'secret123', 'Jan', 'Kowalski'),
@@ -27,7 +27,7 @@ describe('AuthService', () => {
 
     it('stores a hashed password, never the plain one', async () => {
       usersService.find.mockResolvedValue([]);
-      usersService.create.mockResolvedValue({ id: 1 });
+      usersService.create.mockResolvedValue({ id: '1' });
 
       await service.signup('jan@example.com', 'secret123', 'Jan', 'Kowalski');
 
@@ -38,7 +38,10 @@ describe('AuthService', () => {
 
     it('returns an access token', async () => {
       usersService.find.mockResolvedValue([]);
-      usersService.create.mockResolvedValue({ id: 1, email: 'jan@example.com' });
+      usersService.create.mockResolvedValue({
+        id: '1',
+        email: 'jan@example.com',
+      });
 
       const result = await service.signup(
         'jan@example.com',
@@ -62,7 +65,7 @@ describe('AuthService', () => {
 
     it('rejects a wrong password', async () => {
       usersService.find.mockResolvedValue([
-        { id: 1, password: await hashPassword('secret123') },
+        { id: '1', password: await hashPassword('secret123') },
       ]);
 
       await expect(
@@ -74,7 +77,7 @@ describe('AuthService', () => {
     it('returns a token for the correct password', async () => {
       usersService.find.mockResolvedValue([
         {
-          id: 1,
+          id: '1',
           email: 'jan@example.com',
           password: await hashPassword('secret123'),
         },

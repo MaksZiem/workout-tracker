@@ -12,23 +12,33 @@ import { WorkoutExercise } from './workout-exercise.entity';
 
 @Entity()
 export class Workout {
-  @ApiProperty({ description: 'Unikalny identyfikator treningu', example: 1 })
-  @PrimaryGeneratedColumn()
-  id: number;
+  @ApiProperty({
+    description: 'Unikalny identyfikator treningu',
+    example: '3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c',
+  })
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   user: User;
 
-  @ApiProperty({ description: 'Data odbycia treningu (YYYY-MM-DD)', example: '2026-09-22' })
+  @ApiProperty({
+    description: 'Data odbycia treningu (YYYY-MM-DD)',
+    example: '2026-09-22',
+  })
   @Column({ type: 'date' })
   date: string;
 
-  @ApiPropertyOptional({ description: 'Notatki dotyczące treningu', example: 'Świetna sesja, nowy rekord na przysiadzie' })
+  @ApiPropertyOptional({
+    description: 'Notatki dotyczące treningu',
+    example: 'Świetna sesja, nowy rekord na przysiadzie',
+  })
   @Column({ nullable: true })
   notes: string;
 
   @ApiPropertyOptional({
-    description: 'Ćwiczenia wykonane w ramach treningu wraz z seriami (zwracane przy pobieraniu pojedynczego treningu)',
+    description:
+      'Ćwiczenia wykonane w ramach treningu wraz z seriami (zwracane przy pobieraniu pojedynczego treningu)',
     type: () => WorkoutExercise,
     isArray: true,
   })
@@ -36,7 +46,8 @@ export class Workout {
   exercises: WorkoutExercise[];
 
   @ApiPropertyOptional({
-    description: 'Moment zakończenia treningu (null = trening w trakcie). Ustawiany przez POST /workout/{id}/finish.',
+    description:
+      'Moment zakończenia treningu (null = trening w trakcie). Ustawiany przez POST /workout/{id}/finish.',
     example: '2026-09-22T19:40:00.000Z',
     type: String,
     format: 'date-time',
@@ -45,7 +56,10 @@ export class Workout {
   @Column({ type: 'timestamptz', nullable: true })
   finishedAt: Date | null;
 
-  @ApiProperty({ description: 'Data utworzenia rekordu w systemie', example: '2026-09-22T18:32:00.000Z' })
+  @ApiProperty({
+    description: 'Data utworzenia rekordu w systemie',
+    example: '2026-09-22T18:32:00.000Z',
+  })
   @CreateDateColumn()
   createdAt: Date;
 }

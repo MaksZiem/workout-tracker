@@ -121,7 +121,7 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
     stateRef.current = exercises;
   }, [exercises]);
 
-  const ids = useRef(new Map<string, number>());
+  const ids = useRef(new Map<string, string>());
   useEffect(() => {
     for (const ex of initial.exercises) {
       if (ex.id) ids.current.set(ex.key, ex.id);
@@ -369,7 +369,7 @@ export function useWorkoutLog(initial: LogWorkout, messages: LogMessages) {
   );
 
   const loadHistory = useCallback(
-    async (exKey: string, exerciseId: number) => {
+    async (exKey: string, exerciseId: string) => {
       try {
         const points = await unwrap(
           clientApi.GET("/stats/exercise/{exerciseId}/progress", {

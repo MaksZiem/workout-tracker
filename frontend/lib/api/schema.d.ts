@@ -966,6 +966,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Stan aplikacji i połączenia z bazą */
+        get: operations["Health_check"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -973,9 +990,9 @@ export interface components {
         UserDto: {
             /**
              * @description Unikalny identyfikator użytkownika
-             * @example 1
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c
              */
-            id: number;
+            id: string;
             /**
              * @description Adres e-mail (login)
              * @example jan.kowalski@example.com
@@ -1008,7 +1025,7 @@ export interface components {
              * @description Stały kod błędu. Frontend tłumaczy komunikat na podstawie tego pola, a nie pola message
              * @example MISSING_TOKEN
              */
-            code?: string;
+            code: string;
             /**
              * @description Komunikat błędu po angielsku. Dla błędów walidacji (400) jest to tablica komunikatów, po jednym na każde niepoprawne pole
              * @example Missing authorization token
@@ -1018,21 +1035,16 @@ export interface components {
              * @description Wartości wstawiane do przetłumaczonego komunikatu
              * @example {}
              */
-            params?: {
+            params: {
                 [key: string]: string | number;
             };
-            /**
-             * @description Nazwa błędu HTTP (zwracana przez wbudowane wyjątki Nest)
-             * @example Unauthorized
-             */
-            error?: string;
         };
         AdminUserDto: {
             /**
              * @description Unikalny identyfikator użytkownika
-             * @example 1
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c
              */
-            id: number;
+            id: string;
             /**
              * @description Adres e-mail (login)
              * @example jan.kowalski@example.com
@@ -1090,8 +1102,11 @@ export interface components {
              * @example 400
              */
             statusCode: number;
-            /** @description Dla tego statusu zwykle nieobecny (wbudowany wyjątek Nest) */
-            code?: string;
+            /**
+             * @description Stały kod błędu. Frontend tłumaczy komunikat na podstawie tego pola, a nie pola message
+             * @example VALIDATION_FAILED
+             */
+            code: string;
             /**
              * @description Komunikat błędu po angielsku. Dla błędów walidacji (400) jest to tablica komunikatów, po jednym na każde niepoprawne pole
              * @example [
@@ -1104,14 +1119,9 @@ export interface components {
              * @description Wartości wstawiane do przetłumaczonego komunikatu
              * @example {}
              */
-            params?: {
+            params: {
                 [key: string]: string | number;
             };
-            /**
-             * @description Nazwa błędu HTTP (zwracana przez wbudowane wyjątki Nest)
-             * @example Bad Request
-             */
-            error?: string;
         };
         ForbiddenErrorDto: {
             /**
@@ -1123,7 +1133,7 @@ export interface components {
              * @description Stały kod błędu. Frontend tłumaczy komunikat na podstawie tego pola, a nie pola message
              * @example ACTION_NOT_ALLOWED
              */
-            code?: string;
+            code: string;
             /**
              * @description Komunikat błędu po angielsku. Dla błędów walidacji (400) jest to tablica komunikatów, po jednym na każde niepoprawne pole
              * @example Action not allowed
@@ -1133,14 +1143,9 @@ export interface components {
              * @description Wartości wstawiane do przetłumaczonego komunikatu
              * @example {}
              */
-            params?: {
+            params: {
                 [key: string]: string | number;
             };
-            /**
-             * @description Nazwa błędu HTTP (zwracana przez wbudowane wyjątki Nest)
-             * @example Forbidden
-             */
-            error?: string;
         };
         CreateUserDto: {
             /**
@@ -1188,9 +1193,9 @@ export interface components {
         User: {
             /**
              * @description Unikalny identyfikator użytkownika
-             * @example 1
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c
              */
-            id: number;
+            id: string;
             /**
              * @description Adres e-mail (login)
              * @example jan.kowalski@example.com
@@ -1224,7 +1229,7 @@ export interface components {
              * @description Stały kod błędu. Frontend tłumaczy komunikat na podstawie tego pola, a nie pola message
              * @example WORKOUT_NOT_FOUND
              */
-            code?: string;
+            code: string;
             /**
              * @description Komunikat błędu po angielsku. Dla błędów walidacji (400) jest to tablica komunikatów, po jednym na każde niepoprawne pole
              * @example Workout not found
@@ -1234,14 +1239,9 @@ export interface components {
              * @description Wartości wstawiane do przetłumaczonego komunikatu
              * @example {}
              */
-            params?: {
+            params: {
                 [key: string]: string | number;
             };
-            /**
-             * @description Nazwa błędu HTTP (zwracana przez wbudowane wyjątki Nest)
-             * @example Not Found
-             */
-            error?: string;
         };
         UpdateUserDto: {
             /**
@@ -1265,9 +1265,9 @@ export interface components {
         Exercise: {
             /**
              * @description Unikalny identyfikator ćwiczenia
-             * @example 1
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c
              */
-            id: number;
+            id: string;
             /**
              * @description Nazwa ćwiczenia (unikalna)
              * @example Wyciskanie sztangi leżąc
@@ -1289,9 +1289,9 @@ export interface components {
         ExerciseSet: {
             /**
              * @description Unikalny identyfikator serii
-             * @example 1
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c
              */
-            id: number;
+            id: string;
             /**
              * @description Numer serii w ramach ćwiczenia (od 1)
              * @example 1
@@ -1323,9 +1323,9 @@ export interface components {
         Workout: {
             /**
              * @description Unikalny identyfikator treningu
-             * @example 1
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c
              */
-            id: number;
+            id: string;
             /**
              * @description Data odbycia treningu (YYYY-MM-DD)
              * @example 2026-09-22
@@ -1355,9 +1355,9 @@ export interface components {
         WorkoutExercise: {
             /**
              * @description Unikalny identyfikator wpisu ćwiczenia w treningu
-             * @example 1
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c
              */
-            id: number;
+            id: string;
             /** @description Ćwiczenie z globalnego katalogu */
             exercise: components["schemas"]["Exercise"];
             /**
@@ -1400,7 +1400,7 @@ export interface components {
              * @description Stały kod błędu. Frontend tłumaczy komunikat na podstawie tego pola, a nie pola message
              * @example AI_UNAVAILABLE
              */
-            code?: string;
+            code: string;
             /**
              * @description Komunikat błędu po angielsku. Dla błędów walidacji (400) jest to tablica komunikatów, po jednym na każde niepoprawne pole
              * @example AI could not pick substitutes, try again later
@@ -1410,14 +1410,9 @@ export interface components {
              * @description Wartości wstawiane do przetłumaczonego komunikatu
              * @example {}
              */
-            params?: {
+            params: {
                 [key: string]: string | number;
             };
-            /**
-             * @description Nazwa błędu HTTP (zwracana przez wbudowane wyjątki Nest)
-             * @example Bad Gateway
-             */
-            error?: string;
         };
         CreateExerciseDto: {
             /**
@@ -1442,7 +1437,7 @@ export interface components {
              * @description Stały kod błędu. Frontend tłumaczy komunikat na podstawie tego pola, a nie pola message
              * @example EXERCISE_NAME_TAKEN
              */
-            code?: string;
+            code: string;
             /**
              * @description Komunikat błędu po angielsku. Dla błędów walidacji (400) jest to tablica komunikatów, po jednym na każde niepoprawne pole
              * @example Exercise with this name already exists
@@ -1452,14 +1447,9 @@ export interface components {
              * @description Wartości wstawiane do przetłumaczonego komunikatu
              * @example {}
              */
-            params?: {
+            params: {
                 [key: string]: string | number;
             };
-            /**
-             * @description Nazwa błędu HTTP (zwracana przez wbudowane wyjątki Nest)
-             * @example Conflict
-             */
-            error?: string;
         };
         UpdateExerciseDto: {
             /**
@@ -1500,10 +1490,11 @@ export interface components {
         };
         AddExerciseToWorkoutDto: {
             /**
+             * Format: uuid
              * @description Identyfikator ćwiczenia z globalnego katalogu (GET /exercise)
-             * @example 1
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c
              */
-            exerciseId: number;
+            exerciseId: string;
             /**
              * @description Kolejność ćwiczenia w treningu (0 = pierwsze)
              * @example 0
@@ -1584,17 +1575,18 @@ export interface components {
              */
             notes?: string;
             /**
+             * Format: uuid
              * @description Identyfikator planu, do którego ma należeć szablon
-             * @example 1
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c
              */
-            planId?: number;
+            planId?: string;
         };
         WorkoutTemplateExercise: {
             /**
              * @description Unikalny identyfikator wpisu ćwiczenia w szablonie
-             * @example 1
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c
              */
-            id: number;
+            id: string;
             /** @description Ćwiczenie z globalnego katalogu */
             exercise: components["schemas"]["Exercise"];
             /**
@@ -1628,9 +1620,9 @@ export interface components {
         WorkoutTemplate: {
             /**
              * @description Unikalny identyfikator szablonu
-             * @example 1
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c
              */
-            id: number;
+            id: string;
             /**
              * @description Nazwa szablonu treningowego
              * @example Push Day A
@@ -1656,9 +1648,9 @@ export interface components {
         WorkoutPlan: {
             /**
              * @description Unikalny identyfikator planu
-             * @example 1
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c
              */
-            id: number;
+            id: string;
             /**
              * @description Nazwa planu treningowego
              * @example Plan siłowy 3x/tydzień
@@ -1693,10 +1685,11 @@ export interface components {
         };
         AddTemplateExerciseDto: {
             /**
+             * Format: uuid
              * @description Identyfikator ćwiczenia z globalnego katalogu (GET /exercise)
-             * @example 1
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c
              */
-            exerciseId: number;
+            exerciseId: string;
             /**
              * @description Kolejność ćwiczenia w szablonie (0 = pierwsze)
              * @example 0
@@ -1725,10 +1718,11 @@ export interface components {
         };
         UpdateTemplateExerciseDto: {
             /**
+             * Format: uuid
              * @description Zamiana ćwiczenia na inne z katalogu (np. podobne); cele i kolejność zostają
-             * @example 2
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c
              */
-            exerciseId?: number;
+            exerciseId?: string;
             /**
              * @description Nowa kolejność ćwiczenia w szablonie
              * @example 1
@@ -1781,10 +1775,11 @@ export interface components {
         };
         CreateScheduledWorkoutDto: {
             /**
+             * Format: uuid
              * @description Identyfikator szablonu treningowego do zaplanowania
-             * @example 1
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c
              */
-            templateId: number;
+            templateId: string;
             /**
              * @description Zaplanowana data treningu (YYYY-MM-DD)
              * @example 2026-09-25
@@ -1794,9 +1789,9 @@ export interface components {
         ScheduledWorkout: {
             /**
              * @description Unikalny identyfikator zaplanowanego treningu
-             * @example 1
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c
              */
-            id: number;
+            id: string;
             /** @description Szablon treningowy, na podstawie którego trening zostanie wygenerowany */
             template?: components["schemas"]["WorkoutTemplate"] | null;
             /**
@@ -1817,10 +1812,11 @@ export interface components {
         };
         ScheduleAssignmentDto: {
             /**
+             * Format: uuid
              * @description Identyfikator szablonu treningowego przypisanego do danego dnia tygodnia
-             * @example 1
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c
              */
-            templateId: number;
+            templateId: string;
             /**
              * @description Dzień tygodnia (0 = niedziela ... 6 = sobota, zgodnie z JS Date#getUTCDay())
              * @example 1
@@ -1842,15 +1838,15 @@ export interface components {
              * @description Przypisania szablonów do dni tygodnia. Dla każdego dnia w zakresie [from, to], którego dzień tygodnia pasuje do wpisu, zostanie utworzony zaplanowany trening.
              * @example [
              *       {
-             *         "templateId": 1,
+             *         "templateId": "3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c",
              *         "dayOfWeek": 1
              *       },
              *       {
-             *         "templateId": 2,
+             *         "templateId": "8a1d4f6b-2c3e-4b5a-9d7e-1f2a3b4c5d6e",
              *         "dayOfWeek": 3
              *       },
              *       {
-             *         "templateId": 3,
+             *         "templateId": "c7e9a2b4-5d6f-4a1b-8c3d-9e0f1a2b3c4d",
              *         "dayOfWeek": 5
              *       }
              *     ]
@@ -1896,15 +1892,48 @@ export interface components {
         };
         ParseWorkoutDto: {
             /**
+             * Format: uuid
              * @description Identyfikator istniejącego treningu, do którego zostaną dopisane rozpoznane ćwiczenia i serie
-             * @example 1
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-5d6e7f8a9b0c
              */
-            workoutId: number;
+            workoutId: string;
             /**
              * @description Swobodny opis wykonanego treningu w języku naturalnym - AI rozpozna ćwiczenia, powtórzenia i ciężary.
              * @example Wyciskanie sztangi leżąc 3 serie po 8 powtórzeń z 80kg, potem rozpiętki 3x12 z 14kg
              */
             text: string;
+        };
+        HealthResponseDto: {
+            /**
+             * @description Stan aplikacji
+             * @example ok
+             * @enum {string}
+             */
+            status: "ok";
+        };
+        ServiceUnavailableErrorDto: {
+            /**
+             * @description Kod statusu HTTP
+             * @example 503
+             */
+            statusCode: number;
+            /**
+             * @description Stały kod błędu. Frontend tłumaczy komunikat na podstawie tego pola, a nie pola message
+             * @example DATABASE_UNAVAILABLE
+             */
+            code: string;
+            /**
+             * @description Komunikat błędu po angielsku. Dla błędów walidacji (400) jest to tablica komunikatów, po jednym na każde niepoprawne pole
+             * @example Database unavailable
+             */
+            message: string | string[];
+            /**
+             * @description Wartości wstawiane do przetłumaczonego komunikatu
+             * @example {}
+             */
+            params: {
+                [key: string]: string | number;
+            };
         };
     };
     responses: never;
@@ -2074,7 +2103,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator użytkownika */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -2124,7 +2153,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator użytkownika do zaktualizowania */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -2270,7 +2299,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator ćwiczenia */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -2311,7 +2340,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator ćwiczenia */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -2370,7 +2399,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator ćwiczenia */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -2433,7 +2462,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator ćwiczenia */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -2515,7 +2544,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator ćwiczenia */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -2574,9 +2603,9 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator ćwiczenia */
-                id: number;
+                id: string;
                 /** @description Identyfikator zamiennika */
-                substituteId: number;
+                substituteId: string;
             };
             cookie?: never;
         };
@@ -2626,7 +2655,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator ćwiczenia */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -2752,7 +2781,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator treningu */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -2793,7 +2822,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator treningu */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -2834,7 +2863,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator treningu */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -2879,7 +2908,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator treningu do zduplikowania */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -2920,7 +2949,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator treningu */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -2961,7 +2990,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator treningu */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -3011,7 +3040,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator treningu */
-                workoutId: number;
+                workoutId: string;
             };
             cookie?: never;
         };
@@ -3056,9 +3085,9 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator treningu */
-                workoutId: number;
+                workoutId: string;
                 /** @description Identyfikator wpisu ćwiczenia w treningu */
-                weId: number;
+                weId: string;
             };
             cookie?: never;
         };
@@ -3099,9 +3128,9 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator treningu */
-                workoutId: number;
+                workoutId: string;
                 /** @description Identyfikator wpisu ćwiczenia w treningu (workout exercise id) */
-                weId: number;
+                weId: string;
             };
             cookie?: never;
         };
@@ -3146,9 +3175,9 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator treningu */
-                workoutId: number;
+                workoutId: string;
                 /** @description Identyfikator wpisu ćwiczenia w treningu */
-                weId: number;
+                weId: string;
             };
             cookie?: never;
         };
@@ -3193,11 +3222,11 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator treningu */
-                workoutId: number;
+                workoutId: string;
                 /** @description Identyfikator wpisu ćwiczenia w treningu */
-                weId: number;
+                weId: string;
                 /** @description Identyfikator serii */
-                setId: number;
+                setId: string;
             };
             cookie?: never;
         };
@@ -3238,11 +3267,11 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator treningu */
-                workoutId: number;
+                workoutId: string;
                 /** @description Identyfikator wpisu ćwiczenia w treningu */
-                weId: number;
+                weId: string;
                 /** @description Identyfikator serii */
-                setId: number;
+                setId: string;
             };
             cookie?: never;
         };
@@ -3292,7 +3321,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator ćwiczenia */
-                exerciseId: number;
+                exerciseId: string;
             };
             cookie?: never;
         };
@@ -3324,7 +3353,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator ćwiczenia */
-                exerciseId: number;
+                exerciseId: string;
             };
             cookie?: never;
         };
@@ -3525,7 +3554,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator ćwiczenia */
-                exerciseId: number;
+                exerciseId: string;
             };
             cookie?: never;
         };
@@ -3759,7 +3788,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator szablonu */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -3800,7 +3829,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator szablonu */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -3841,7 +3870,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator szablonu */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -3886,7 +3915,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator szablonu */
-                templateId: number;
+                templateId: string;
             };
             cookie?: never;
         };
@@ -3931,9 +3960,9 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator szablonu */
-                templateId: number;
+                templateId: string;
                 /** @description Identyfikator wpisu ćwiczenia w szablonie */
-                teId: number;
+                teId: string;
             };
             cookie?: never;
         };
@@ -3974,9 +4003,9 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator szablonu */
-                templateId: number;
+                templateId: string;
                 /** @description Identyfikator wpisu ćwiczenia w szablonie */
-                teId: number;
+                teId: string;
             };
             cookie?: never;
         };
@@ -4092,7 +4121,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator planu */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -4133,7 +4162,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator planu */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -4174,7 +4203,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator planu */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -4369,7 +4398,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator zaplanowanego treningu */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -4410,7 +4439,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator zaplanowanego treningu */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -4455,7 +4484,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description Identyfikator zaplanowanego treningu */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -4585,6 +4614,35 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    Health_check: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Aplikacja i baza działają */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthResponseDto"];
+                };
+            };
+            /** @description Brak połączenia z bazą */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceUnavailableErrorDto"];
+                };
             };
         };
     };

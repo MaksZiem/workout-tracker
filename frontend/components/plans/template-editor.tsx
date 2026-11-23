@@ -13,6 +13,7 @@ import type { Toast } from "@/components/ui/toast";
 import { AddExerciseSheet } from "@/components/log/add-exercise-sheet";
 import { InlineText } from "./inline-text";
 import { SwapExerciseSheet } from "./swap-exercise-sheet";
+import { compareIds } from "@/lib/ids";
 
 const DEFAULT_SETS = 3;
 const DEFAULT_REPS = 10;
@@ -41,7 +42,7 @@ export function TemplateEditor({
   headingLevel?: "h2" | "h3";
   autoFocusName?: boolean;
   variant?: "day" | "page";
-  onDeleted?: (id: number) => void;
+  onDeleted?: (id: string) => void;
   onCountChange?: (count: number) => void;
   showToast: (toast: Omit<Toast, "id">) => void;
 }) {
@@ -130,7 +131,7 @@ export function TemplateEditor({
     );
   };
 
-  const add = async (picked: { id: number; name: string; muscleGroup: string }, values?: Partial<EditorExercise>) => {
+  const add = async (picked: { id: string; name: string; muscleGroup: string }, values?: Partial<EditorExercise>) => {
     setPicking(false);
     const order = values?.order ?? (template.exercises.at(-1)?.order ?? -1) + 1;
     const body = {
@@ -158,12 +159,12 @@ export function TemplateEditor({
       };
       setTemplate((tpl) => ({
         ...tpl,
-        exercises: [...tpl.exercises, exercise].sort((a, b) => a.order - b.order || a.id - b.id),
+        exercises: [...tpl.exercises, exercise].sort((a, b) => a.order - b.order || compareIds(a.id, b.id)),
       }));
     }, () => {});
   };
 
-  const swap = (exercise: EditorExercise, picked: { id: number; name: string; muscleGroup: string }, undoable = true) => {
+  const swap = (exercise: EditorExercise, picked: { id: string; name: string; muscleGroup: string }, undoable = true) => {
     setSwapping(null);
     setSwappingFromCatalog(null);
     if (picked.id === exercise.exerciseId) return;

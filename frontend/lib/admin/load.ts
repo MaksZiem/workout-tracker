@@ -6,7 +6,7 @@ import { MUSCLE_GROUPS, type AdminUsersPage, type MuscleGroup } from "@/lib/api/
 import type { UserListQuery } from "./users-query";
 import { settle, type Section } from "@/lib/stats/model";
 
-export type AdminExercise = { id: number; name: string; muscleGroup: MuscleGroup; substitutesPicked: boolean };
+export type AdminExercise = { id: string; name: string; muscleGroup: MuscleGroup; substitutesPicked: boolean };
 
 export type CatalogHealth = { total: number; missing: number };
 

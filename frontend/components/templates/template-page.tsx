@@ -180,7 +180,7 @@ function ScheduleSheet({
   onScheduled,
 }: {
   open: boolean;
-  templateId: number;
+  templateId: string;
   today: string;
   onClose: () => void;
   onScheduled: (date: string) => void;

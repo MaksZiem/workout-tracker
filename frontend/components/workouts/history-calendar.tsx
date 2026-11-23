@@ -10,7 +10,7 @@ export async function HistoryCalendar({ month, today, rows }: { month: string; t
   const { from, to } = visibleRange("month", month);
   const days = daysBetween(from, to);
   const byDate = new Map<string, HistoryRow[]>();
-  for (const row of [...rows].sort((a, b) => a.id - b.id)) byDate.set(row.date, [...(byDate.get(row.date) ?? []), row]);
+  for (const row of [...rows].sort((a, b) => a.createdAt.localeCompare(b.createdAt))) byDate.set(row.date, [...(byDate.get(row.date) ?? []), row]);
   const weekdays = days.slice(0, 7).map((d) => format.dateTime(displayDate(d), { weekday: "short", timeZone: "UTC" }));
   const inMonthPrefix = month.slice(0, 7);
 
