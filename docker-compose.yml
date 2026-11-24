@@ -18,26 +18,26 @@ services:
 
   backend:
     build: ./backend
-    image: workout-tracker-backend
+    image: ghcr.io/maksziem/workout-tracker-backend:${BACKEND_TAG:-latest}
     restart: unless-stopped
     env_file: .env
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
     ports:
-      - "127.0.0.1:3001:3001"
+      - "127.0.0.1:${BACKEND_PORT:-3001}:3001"
     depends_on:
       postgres:
         condition: service_healthy
 
   frontend:
     build: ./frontend
-    image: workout-tracker-frontend
+    image: ghcr.io/maksziem/workout-tracker-frontend:${FRONTEND_TAG:-latest}
     restart: unless-stopped
     environment:
       BACKEND_URL: http://backend:3001
     ports:
-      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:${FRONTEND_PORT:-3000}:3000"
     depends_on:
       backend:
         condition: service_healthy
