@@ -160,7 +160,7 @@ cp .env.example .env          # PORT, DB_*, JWT_SECRET, GEMINI_*, FRONTEND_URL
 npm install
 npm run migration:run
 npm run start:dev
-npm run seed                  # demo users, exercise catalog, workouts
+npm run seed:demo             # demo account, exercise catalog, workouts
 
 # frontend → http://localhost:3000
 cd ../frontend
@@ -179,7 +179,7 @@ workout-tracker/
 │       ├── stats/      records, e1RM, streaks, stagnation, adherence
 │       ├── ai/         parse workout, generate plan
 │       ├── gemini/     structured JSON calls with retries
-│       └── users/  guards/  seed.ts
+│       └── users/  guards/  database/ (migrations, seed-demo.ts)
 ├── frontend/           Next.js app (BFF proxy in a route handler)
 └── portfolio/          case study (EN/PL) and screenshots
 ```

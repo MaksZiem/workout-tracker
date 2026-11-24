@@ -34,7 +34,7 @@ Open decision. The user hasn't chosen what sets it apart from Strong, Hevy, and 
 - Visual standard: the category canon, played straight. The user chose it deliberately over invented worlds on 2026-09-24. The reference products are **Strong** and **Hevy**, and their level of craft is the bar. Conventions are embraced without irony or smuggled quirks.
 
 ## Evidence on Hand
-- Seed data: `backend/src/seed.ts`. Sample requests: `backend/src/**/*.http`. Example payloads: the Swagger annotations in the controllers.
+- Seed data: `backend/src/database/seed-demo.ts` (`npm run seed:demo`). Sample requests: `backend/src/**/*.http`. Example payloads: the Swagger annotations in the controllers.
 - There are no real users, testimonials, metrics, logo, or brand assets. Don't make any up.
 
 ## Product Principles

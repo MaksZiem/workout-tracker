@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Sparkles } from "lucide-react";
 import { clientApi } from "@/lib/api/client";
-import { unwrap } from "@/lib/api/errors";
+import { ApiError, unwrap } from "@/lib/api/errors";
 import type { Workout } from "@/lib/api/extra-types";
 import { Sheet } from "@/components/ui/sheet";
 
@@ -23,20 +23,20 @@ export function ParseSheet({
   const tNav = useTranslations("nav");
   const [text, setText] = useState("");
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<"error" | "limit" | null>(null);
 
   const submit = async () => {
     if (!text.trim() || pending) return;
     setPending(true);
-    setError(false);
+    setError(null);
     try {
       const workout = await unwrap(
         clientApi.POST("/ai/parse-workout", { body: { workoutId, text: text.trim() } }),
       );
       setText("");
       onParsed(workout);
-    } catch {
-      setError(true);
+    } catch (err) {
+      setError(err instanceof ApiError && err.code === "AI_DAILY_LIMIT" ? "limit" : "error");
     } finally {
       setPending(false);
     }
@@ -74,7 +74,7 @@ export function ParseSheet({
       />
       {error ? (
         <p role="alert" className="mt-2 rounded-lg bg-danger-surface px-3 py-2.5 text-sm text-danger">
-          {t("error")}
+          {t(error)}
         </p>
       ) : null}
     </Sheet>

@@ -2,9 +2,10 @@
 
 import { redirect } from "next/navigation";
 import { serverApi } from "@/lib/api/server";
+import { errorCode } from "@/lib/api/errors";
 import { localDate } from "@/lib/log/model";
 
-export type ParseState = { error?: "empty" | "ai" | "nothing" | "failed"; text?: string };
+export type ParseState = { error?: "empty" | "ai" | "limit" | "nothing" | "failed"; text?: string };
 
 export async function parseToWorkout(_prev: ParseState, formData: FormData): Promise<ParseState> {
   const text = String(formData.get("text") ?? "").trim();
@@ -18,6 +19,7 @@ export async function parseToWorkout(_prev: ParseState, formData: FormData): Pro
   const recognized = parsed?.exercises?.length ?? 0;
   if (error !== undefined || !parsed || recognized === 0) {
     await api.DELETE("/workout/{id}", { params: { path: { id: workout.id } } });
+    if (errorCode(error) === "AI_DAILY_LIMIT") return { error: "limit", text };
     return { error: error !== undefined || !parsed ? "ai" : "nothing", text };
   }
 

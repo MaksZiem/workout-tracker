@@ -1,6 +1,6 @@
 # Screenshots to capture
 
-Run `npm run seed` in `backend/` first. Capture `log.webp` and `parse.webp` at phone width (~390×844); the rest at 1600×1000.
+Run `npm run seed:demo` in `backend/` first. Capture `log.webp` and `parse.webp` at phone width (~390×844); the rest at 1600×1000.
 
 | File | What to show |
 |---|---|

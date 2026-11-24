@@ -6,6 +6,7 @@ import { UsersModule } from 'src/users/users.module';
 import { GeminiModule } from 'src/gemini/gemini.module';
 import { AiController } from './ai.controller';
 import { AiService } from './ai.service';
+import { AiUsageModule } from 'src/ai-usage/ai-usage.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AiService } from './ai.service';
     WorkoutModule,
     UsersModule,
     GeminiModule,
+    AiUsageModule,
   ],
   controllers: [AiController],
   providers: [AiService],

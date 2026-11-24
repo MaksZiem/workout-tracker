@@ -7,16 +7,19 @@ import {
   ApiNotFoundResponse,
   ApiOperation,
   ApiTags,
+  ApiTooManyRequestsResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import {
   BadRequestErrorDto,
   NotFoundErrorDto,
+  TooManyRequestsErrorDto,
   UnauthorizedErrorDto,
 } from 'src/common/swagger/error-response.dto';
 import { BEARER_AUTH } from 'src/common/swagger/swagger.setup';
 import { AiService } from './ai.service';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { AiLimitGuard } from 'src/ai-usage/ai-limit.guard';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { User } from 'src/users/user.entity';
 import { GenerateWorkoutPlanDto } from './dtos/generate-workout-plan.dto';
@@ -31,12 +34,17 @@ import { ParseWorkoutDto } from './dtos/parse-workout.dto';
 @ApiInternalServerErrorResponse({
   description: 'Błąd komunikacji z usługą AI (Gemini)',
 })
+@ApiTooManyRequestsResponse({
+  description:
+    'Dzienny limit wywołań AI na użytkownika wyczerpany (kod AI_DAILY_LIMIT, limit w params.limit)',
+  type: TooManyRequestsErrorDto,
+})
 @Controller('ai')
 export class AiController {
   constructor(private aiService: AiService) {}
 
   @Post('/generate-plan')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AiLimitGuard)
   @ApiOperation({
     summary: 'Wygeneruj plan treningowy przy pomocy AI',
     description:
@@ -88,7 +96,7 @@ export class AiController {
   }
 
   @Post('/parse-workout')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AiLimitGuard)
   @ApiOperation({
     summary: 'Rozpoznaj trening z opisu tekstowego (AI)',
     description:

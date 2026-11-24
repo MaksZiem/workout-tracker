@@ -146,7 +146,8 @@
           "empty": "Wpisz opis treningu.",
           "ai": "AI jest chwilowo niedostępne. Spróbuj za chwilę albo zacznij pusty trening.",
           "nothing": "AI nie rozpoznało żadnych ćwiczeń. Podaj nazwę ćwiczenia, serie, powtórzenia i ciężar.",
-          "failed": "Nie udało się utworzyć treningu. Spróbuj ponownie."
+          "failed": "Nie udało się utworzyć treningu. Spróbuj ponownie.",
+          "limit": "Wykorzystano dzienny limit funkcji AI. Spróbuj ponownie jutro."
         }
       },
       "recent": {
@@ -271,7 +272,8 @@
         "pending": "Rozpoznawanie…",
         "added": "{count, plural, one {Dodano # ćwiczenie} few {Dodano # ćwiczenia} other {Dodano # ćwiczeń}} z opisu",
         "nothing": "AI nie rozpoznało żadnych ćwiczeń. Spróbuj opisać je dokładniej.",
-        "error": "AI jest chwilowo niedostępne. Dodaj serie ręcznie albo spróbuj za chwilę."
+        "error": "AI jest chwilowo niedostępne. Dodaj serie ręcznie albo spróbuj za chwilę.",
+        "limit": "Wykorzystano dzienny limit funkcji AI. Spróbuj ponownie jutro."
       },
       "finish": {
         "title": "Zakończyć trening?",
@@ -534,7 +536,8 @@
         "error": "AI jest chwilowo niedostępne albo nie ułożyło planu. Spróbuj ponownie za chwilę.",
         "decrease": "Mniej dni",
         "increase": "Więcej dni",
-        "pendingShort": "Układanie planu…"
+        "pendingShort": "Układanie planu…",
+        "limit": "Wykorzystano dzienny limit funkcji AI. Spróbuj ponownie jutro."
       }
     },
     "planDetail": {

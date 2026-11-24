@@ -146,7 +146,8 @@
           "empty": "Describe the workout first.",
           "ai": "AI is temporarily unavailable. Try again shortly or start an empty workout.",
           "nothing": "AI didn't recognize any exercises. Include the exercise name, sets, reps and weight.",
-          "failed": "Couldn't create the workout. Try again."
+          "failed": "Couldn't create the workout. Try again.",
+          "limit": "You've used today's AI limit. Try again tomorrow."
         }
       },
       "recent": {
@@ -271,7 +272,8 @@
         "pending": "Recognizing…",
         "added": "{count, plural, one {Added # exercise} other {Added # exercises}} from the description",
         "nothing": "AI didn't recognize any exercises. Try describing them in more detail.",
-        "error": "AI is unavailable right now. Add sets manually or try again shortly."
+        "error": "AI is unavailable right now. Add sets manually or try again shortly.",
+        "limit": "You've used today's AI limit. Try again tomorrow."
       },
       "finish": {
         "title": "Finish workout?",
@@ -534,7 +536,8 @@
         "error": "AI is temporarily unavailable or couldn't build a plan. Try again shortly.",
         "decrease": "Fewer days",
         "increase": "More days",
-        "pendingShort": "Building plan…"
+        "pendingShort": "Building plan…",
+        "limit": "You've used today's AI limit. Try again tomorrow."
       }
     },
     "planDetail": {

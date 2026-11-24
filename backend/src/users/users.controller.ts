@@ -13,6 +13,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { errorBody } from 'src/common/error-body';
+import { demoAccountLocked, isDemoAccount } from 'src/demo/demo-account';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -223,7 +224,7 @@ export class UsersController {
   })
   @ApiForbiddenResponse({
     description:
-      'Próba edycji cudzego konta albo zmiany roli bez uprawnień administratora',
+      'Próba edycji cudzego konta, zmiany roli bez uprawnień administratora albo zmiany e-maila lub hasła konta demo (kod DEMO_ACCOUNT_LOCKED)',
     type: ForbiddenErrorDto,
   })
   @ApiNotFoundResponse({
@@ -245,6 +246,14 @@ export class UsersController {
           'ACTION_NOT_ALLOWED',
           'Action not allowed',
         ),
+      );
+    }
+    if (
+      isDemoAccount(currentUser) &&
+      (body.email !== undefined || body.password !== undefined)
+    ) {
+      throw demoAccountLocked(
+        'The demo account email and password cannot be changed',
       );
     }
     if (!isAdmin && body.role !== undefined) {

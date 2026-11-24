@@ -96,3 +96,10 @@ export const BadGatewayErrorDto = errorDto(
   'AI could not pick substitutes, try again later',
   'AI_UNAVAILABLE',
 );
+
+export const TooManyRequestsErrorDto = errorDto(
+  'TooManyRequestsErrorDto',
+  429,
+  'Daily AI limit reached, try again tomorrow',
+  'AI_DAILY_LIMIT',
+);

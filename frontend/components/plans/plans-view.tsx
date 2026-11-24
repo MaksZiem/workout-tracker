@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { ChevronRight, Minus, Plus, Sparkles } from "lucide-react";
 import { clientApi } from "@/lib/api/client";
-import { unwrap } from "@/lib/api/errors";
+import { ApiError, unwrap } from "@/lib/api/errors";
 import { TRAINING_GOALS, type TrainingGoal } from "@/lib/api/extra-types";
 import type { PlanSummary } from "@/lib/plans/model";
 import { Sheet } from "@/components/ui/sheet";
@@ -154,12 +154,12 @@ function AiPlanSheet({ open, onClose }: { open: boolean; onClose: () => void }) 
   const locale = useLocale();
   const [constraints, setConstraints] = useState("");
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<"error" | "limit" | null>(null);
 
   const submit = async () => {
     if (pending) return;
     setPending(true);
-    setError(false);
+    setError(null);
     try {
       const result = await unwrap(
         clientApi.POST("/ai/generate-plan", {
@@ -172,8 +172,8 @@ function AiPlanSheet({ open, onClose }: { open: boolean; onClose: () => void }) 
         }),
       );
       router.push(`/plans/${result.plan.id}?ai=1`);
-    } catch {
-      setError(true);
+    } catch (err) {
+      setError(err instanceof ApiError && err.code === "AI_DAILY_LIMIT" ? "limit" : "error");
       setPending(false);
     }
   };
@@ -266,7 +266,7 @@ function AiPlanSheet({ open, onClose }: { open: boolean; onClose: () => void }) 
 
         {error ? (
           <p role="alert" className="rounded-lg bg-danger-surface px-3 py-2.5 text-sm text-danger">
-            {t("error")}
+            {t(error)}
           </p>
         ) : null}
       </div>
